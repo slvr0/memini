@@ -1,7 +1,8 @@
 import React, { Component, useEffect } from "react";
+import Calendar from "./components/calendar.jsx";
 
-import logo from './logo.svg';
 import './App.css';
+import './index.css'
 
 class App extends Component{
     constructor(props){
@@ -30,7 +31,6 @@ class App extends Component{
   }
   componentDidMount() {
  
-    this.fetchData();
   }
 
   render() { 
@@ -39,7 +39,8 @@ class App extends Component{
 
         return (
           <>
-          {JSON.stringify(note)}
+           
+            <Calendar/>
           </>
 
         );
