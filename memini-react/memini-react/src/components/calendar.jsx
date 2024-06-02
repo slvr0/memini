@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import CalendarWeekRow from "./calendar-week-row.jsx";
 
 import '../index.css';
 
@@ -18,9 +19,6 @@ class Calendar extends Component{
         this.startingWeek = 0;
         this.endingWeek = 5;
         this.currentWeek = 2;
-
-       
-
     }
 
     initializedRenderDate = () => {
@@ -29,21 +27,21 @@ class Calendar extends Component{
       
     }
     
- 
     componentDidMount() {
       
     }
-
-  
-
 
   render() { 
 
         return (
           <div className="bg-gray-100 flex justify-center items-center min-h-screen">
-            <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Styled Div with Tailwind CSS</h2>
-                <p className="text-gray-600">This div has fresh borders and edges thanks to Tailwind CSS!</p>
+            <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-200">  
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Memini Calendar</h2>
+                <CalendarWeekRow weekDays={[5,6,7,8,9]} ></CalendarWeekRow>
+                <CalendarWeekRow weekDays={[5,6,7,8,9]} ></CalendarWeekRow>
+                <CalendarWeekRow weekDays={[5,6,7,8,9]} ></CalendarWeekRow>
+                <CalendarWeekRow weekDays={[5,6,7,8,9]} ></CalendarWeekRow>
+                <CalendarWeekRow weekDays={[5,6,7,8,9]} ></CalendarWeekRow>
             </div>
           </div>
         );
