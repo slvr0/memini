@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import '../index.css';
 
+import "../computations/date-computations.js";
+
 class CalendarWeekRow extends Component{
     constructor(props){
         super(props);  

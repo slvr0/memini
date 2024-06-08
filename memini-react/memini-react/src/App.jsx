@@ -11,7 +11,8 @@ class App extends Component{
         this.API_URL = "http://localhost:5000/";
         this.state = {
           note: []
-        };      
+        };   
+        
     }
     
   fetchData = async () => {
@@ -38,8 +39,7 @@ class App extends Component{
         const note = this.state.note;
 
         return (
-          <>
-           
+          <>           
             <Calendar/>
           </>
 
