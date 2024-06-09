@@ -1,5 +1,10 @@
 import React, { Component, useEffect } from "react";
-import Calendar from "./components/calendar.jsx";
+
+import MeminiDateComponent from "./components/memini-date-component.jsx";
+
+import { Container, Grid } from 'semantic-ui-react';
+
+
 
 import './App.css';
 import './index.css'
@@ -9,9 +14,13 @@ class App extends Component{
         super(props);  
         
         this.API_URL = "http://localhost:5000/";
-        this.state = {
-          note: []
-        };   
+
+        //this can be global context stuff
+        this.dateNow = new Date();
+        this.yearNow = this.dateNow.getFullYear();
+        this.monthNow = this.dateNow.getMonth() + 1; // who programmed this to need  + 1 to be accurate.
+
+        
         
     }
     
@@ -35,14 +44,28 @@ class App extends Component{
   }
 
   render() { 
-      
-        const note = this.state.note;
-
+    
         return (
-          <>           
-            <Calendar/>
-          </>
+          <>
+            <Container>
+            <Grid>
 
+            <Grid.Row>
+            </Grid.Row>
+
+            <Grid.Row>
+
+            <Grid.Column width={8} tablet={16} computer={8}> {/* Adjusting width for smaller screens */}            
+              <MeminiDateComponent></MeminiDateComponent>
+            </Grid.Column>
+
+            </Grid.Row>
+
+
+            </Grid>
+
+            </Container>
+          </>
         );
     }
   }

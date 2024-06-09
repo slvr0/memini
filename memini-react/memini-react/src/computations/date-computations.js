@@ -1,62 +1,32 @@
 import moment from 'moment';
 
-const getAllDaysInMonth = (month, year) =>
-    Array.from(
-      { length: new Date(year, month, 0).getDate() },
-      (_, i) => new Date(year, month - 1, i + 1)
-    );
-
-const returnEarlyWeekdays = (date) => {
-    const dayOfWeek = date.getDay(); // Get the day of the week (0: Sunday, 1: Monday, ..., 6: Saturday)
-    const daysInWeek = 7;
-    const startOfWeek = new Date(date); // Clone the given date to avoid mutating the original
-    startOfWeek.setDate(date.getDate() - (dayOfWeek === 0 ? daysInWeek - 1 : dayOfWeek - 1)); // Set to the previous Monday
-
-    const result = [];
-    for (let i = 0; i < (dayOfWeek === 0 ? daysInWeek - 2 : dayOfWeek - 1); i++) {
-        const tempDate = new Date(startOfWeek);
-        tempDate.setDate(startOfWeek.getDate() + i);
-        result.push(tempDate);
-    }
-    return result;
-};
-
-const returnLaterWeekdays = (date) => {
-    const dayOfWeek = date.getDay(); // Get the day of the week (0: Sunday, 1: Monday, ..., 6: Saturday)
-    const daysInWeek = 7;
-    const endOfWeek = new Date(date); // Clone the given date to avoid mutating the original
-    endOfWeek.setDate(date.getDate() + (dayOfWeek === 0 ? 1 : daysInWeek - dayOfWeek)); // Set to the next Sunday
-
-    const result = [];
-    for (let i = 1; i <= (dayOfWeek === 0 ? 1 : daysInWeek - dayOfWeek); i++) { // Adjusted loop condition
-        const tempDate = new Date(date);
-        tempDate.setDate(date.getDate() + i);
-        result.push(tempDate);
-    }
-    return result;
-};
-
 Date.prototype.getWeek = function() {
-    var date = new Date(this.getTime());
-    date.setHours(0, 0, 0, 0);
-    date.setDate(date.getDate() + 4 - (date.getDay() || 7));
-    var yearStart = new Date(date.getFullYear(), 0, 1);
-    var weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    const year = this.getFullYear();
+    const month = this.getMonth() + 1;
+    const date = this.getDate();
+    const januaryFirst = new Date(year, 0, 1);
+    const offset = januaryFirst.getDay() === 0 ? 1 : januaryFirst.getDay();
+    const daysSinceYearStart = ((month - 1) * 30) + date + offset - 1;
+    const weekNo = Math.ceil(daysSinceYearStart / 7);
     return weekNo;
 };
 
-// i can reduce this to first week then % on the day enumration
+// i can reduce this to first week then % on the day enumeration
 const getWeeksInMonth = (year, month) => {
-    // Get the first and last dates of the month
-    const firstDateOfMonth = new Date(year, month - 1, 1);
-    const lastDateOfMonth = new Date(year, month, 0); // Setting day to 0 gives the last day of the previous month
 
-    // Determine the week numbers for these dates
+    const firstDateOfMonth = new Date(year, month - 1, 1);
+    const lastDateOfMonth = new Date(year, month, 0); 
+   
     const firstWeek = firstDateOfMonth.getWeek();
-    const lastWeek = lastDateOfMonth.getWeek();
+    const lastWeek = lastDateOfMonth.getWeek();    
 
     return { firstWeek, lastWeek };
 };
+
+//i did this is the function
+const getFirstWeekInMonth = (year, month) => {
+    return new Date(year, month - 1, 1).getWeek();
+}
 
 const getWeekDates = (year, week) => {
     var weekDates = []; 
@@ -70,8 +40,5 @@ const getWeekDates = (year, week) => {
 
     return weekDates; 
 };
-  
 
-
-
-export { getAllDaysInMonth, returnEarlyWeekdays, returnLaterWeekdays, getWeeksInMonth, getWeekDates  };
+export { getWeeksInMonth, getWeekDates, getFirstWeekInMonth  };
