@@ -5,6 +5,7 @@ import MeminiDateComponent from "./components/memini-date-component.jsx";
 import { Container, Grid } from 'semantic-ui-react';
 
 
+import logo from './assets/images/logo_2-removebg-preview.png';
 
 import './App.css';
 import './index.css'
@@ -46,16 +47,21 @@ class App extends Component{
   render() { 
     
         return (
-          <>
+          <>           
+            
             <Container>
+
             <Grid>
 
-            <Grid.Row>
+            <Grid.Row >
+              <Grid.Column style={{ display: 'flex', justifyContent: 'center' }}>
+              <img src={logo} className="ui small image" alt="logo" />  
+              </Grid.Column>
             </Grid.Row>
 
             <Grid.Row>
 
-            <Grid.Column width={8} tablet={16} computer={8}> {/* Adjusting width for smaller screens */}            
+            <Grid.Column>            
               <MeminiDateComponent></MeminiDateComponent>
             </Grid.Column>
 

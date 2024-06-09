@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.todaysDateButton {
+    background-color: rgba(55, 55, 82, 0.01) !important;   
+    border-radius: 25px !important; 
+}
+.todaysDateButton:hover {
+    background-color: rgba(93, 93, 189, 0.3) !important; 
+    border-radius: 25px !important;
+}
+

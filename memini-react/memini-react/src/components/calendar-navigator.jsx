@@ -3,10 +3,7 @@ import React, { Component } from "react";
 import '../index.css';
 
 import 'semantic-ui-css/semantic.min.css';
-import { Button, Icon, Dropdown } from 'semantic-ui-react';
-import { Grid, Ref, Segment } from "semantic-ui-react";
-
-
+import {  Icon, Dropdown } from 'semantic-ui-react';
 
 class CalendarNavigator extends Component{
   constructor(props){
@@ -36,14 +33,6 @@ class CalendarNavigator extends Component{
       { key: 'nov', value: 'November', text: 'November' },
       { key: 'dec', value: 'December', text: 'December' },
     ]; 
-  }
-    
-  //portalling this component
-  componentDidMount() {
-    const portalContainer = document.getElementById('calendar-navigator');
-    if (portalContainer) {
-      this.setState({ isOpen: true });
-    }
   }
 
   chevronOnHoverStyle = () => {
@@ -101,7 +90,7 @@ class CalendarNavigator extends Component{
       const yearDropdownStyling = this.yearSelectionDropdownStyle();
       const monthDropdownStyling = this.monthSelectionDropdownStyle();
       const dropdownHoverStyling = this.dropdownHoverStyle();
-      console.log(dropdownHoverStyling);
+
 
       const monthIndex = this.props.selectedDate.month - 1;
       const selectedMonthName = this.monthOptions[monthIndex]?.value; 
@@ -111,17 +100,16 @@ class CalendarNavigator extends Component{
             <h4 className="text-center">
 
             <Icon onClick={this.onChevronLeftTriggered} className={`chevron left icon ${chevronHoverStyling}`} size="large" style={{ marginRight: '1.25em' }} />
-                  
+
+            {/* Something is broken/deprecated with these Semantic React components, remove them! */} 
             <Dropdown
               placeholder='Select Month'
               selection
               options={this.monthOptions}
               onChange={this.onMonthChange}
               value={selectedMonthName}
-              className={monthDropdownStyling}
-              onMouseLeave={this.handleDropdownLeave}
-              style={{ border: 'none', width:'125px' }}
-              direction='left'
+              className={monthDropdownStyling}                            
+              style={{ border: 'none', width:'125px' }}             
             />
       
            

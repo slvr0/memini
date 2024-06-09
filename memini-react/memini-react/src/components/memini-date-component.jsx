@@ -26,12 +26,11 @@ class MeminiDateComponent extends Component{
     }
 
     onCalendarDateChange = (yearSelected, monthSelected) => {
-
-        console.log(yearSelected);
-        console.log(monthSelected);
-  
         this.setState((prevState) => ({selectedDate: {year: yearSelected, month: monthSelected}})); 
-  
+    }
+
+    onClickTodaysDate = () => {
+        this.setState((prevState) => ({selectedDate: {year: this.yearNow, month: this.monthNow}})); 
     }
 
   render() { 
@@ -43,7 +42,7 @@ class MeminiDateComponent extends Component{
             <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-200">  
                         
             <div className="text-center">
-                <TodaysDate></TodaysDate>
+                <TodaysDate onClickTodaysDate={this.onClickTodaysDate}></TodaysDate>
             </div>
             <br></br>
         

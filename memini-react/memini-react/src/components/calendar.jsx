@@ -2,7 +2,8 @@ import React, { Component, createRef } from "react";
 import CalendarWeekRow from "./calendar-week-row.jsx";
 import CalendarNavigator from "./calendar-navigator.jsx";
 import '../index.css';
-import {getWeekDates, getFirstWeekInMonth} from "../computations/date-computations.js";
+import twStyle from './calendar.css';
+import {getWeekDates, getFirstWeekInMonth, evaluateTodayIsPartOfWeekspan} from "../computations/date-computations.js";
 
 
 
@@ -15,16 +16,13 @@ class Calendar extends Component{
         this.dateNow = new Date();
         this.yearNow = this.dateNow.getFullYear();
         this.monthNow = this.dateNow.getMonth() + 1;
-        this.dayNow =  this.dateNow.getDate();
-        
+        this.dayNow =  this.dateNow.getDate();        
         
     }
     
     componentDidMount() {
       
     }
-
-    
 
     calendarHeaderStyling = () => {
       return "font-family: ui-sans-serif m-5 space-x-1 font-medium";
@@ -35,7 +33,7 @@ class Calendar extends Component{
     }
 
     calendarDateHoverStyle = () => {
-      return "hover:bg-gray-300 hover:text-black hover:rounded-full";
+      return "hover:bg-green-300 hover:text-black hover:rounded-full";
     }
 
   render() { 
@@ -43,11 +41,10 @@ class Calendar extends Component{
         //user controlled selection
 
         var userSelectedDisplayYear = this.props.selectedDate.year;
-        var userSelectedDisplayMonth = this.props.selectedDate.month;
-        
+        var userSelectedDisplayMonth = this.props.selectedDate.month;        
 
         var firstWeek = getFirstWeekInMonth(userSelectedDisplayYear,userSelectedDisplayMonth);
-
+        var dayOfWeek = (this.dateNow.getDay() + 6) % 7;
         var headerStyle = this.calendarHeaderStyling();
         var calendarDateStyle = this.calendarDateStyling();
 
@@ -59,7 +56,11 @@ class Calendar extends Component{
           displayWeekDays.push(getWeekDates(userSelectedDisplayYear, i));
         }
 
+        const {isInWeek, weekIndex} = evaluateTodayIsPartOfWeekspan(this.dateNow, displayWeeks, this.yearNow);
+
+
         var calendarDateHoverStyle = this.calendarDateHoverStyle();
+
       
         return (
           <>  
@@ -78,19 +79,23 @@ class Calendar extends Component{
                       </tr>
                     </thead>
 
-                    <tbody className={calendarDateStyle}>
+                    <tbody >
                   
                     {                   
-                      displayWeeks.map((week, index) => {                    
+                      displayWeeks.map((week, index) => {  
+                        const isCurrentWeek = index === weekIndex;
+
                         return (
-                          <tr key={index}>
-                            <td className="font-thin italic">{week}</td>
+                          <tr key={index} className={isCurrentWeek ? 'currentWeek' : ''}>
+                            <td className={`${calendarDateStyle} font-thin italic` }  >{week}</td>
                             {
                               displayWeekDays[index].map((day, key) => {
+
+                                const isCurrentDay = isCurrentWeek && (dayOfWeek === key);
                                 const uniqueKey = `${index}-${key}`;
                                 return (
-                                  <td 
-                                    className={`${calendarDateStyle} ${calendarDateHoverStyle}`} 
+                                  <td
+                                    className={`${calendarDateStyle} ${calendarDateHoverStyle} ${isCurrentDay ? 'currentDay' : ''}`}
                                     key={uniqueKey}
                                   > { day.date() } </td>
                                 );

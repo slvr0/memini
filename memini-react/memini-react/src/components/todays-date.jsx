@@ -43,11 +43,11 @@ class TodaysDate extends Component{
     const hoverStyle = this.calendarDateHoverStyle();
       return (
         <>
-            <div className={`${hoverStyle} bg-white bg-opacity-25 p-2 rounded-full shadow-sm border-gray-200 inline-block`}>  
+            <button onClick={this.props.onClickTodaysDate} className="ui button todaysDateButton ">
                 <h2 className="text-lg font-semibold text-gray-700"> 
                 {this.dateNow.toLocaleDateString('en-US', { weekday: 'long' })}, { MonthsEnum[this.monthNow] } {this.dayNow} {this.yearNow}
                 </h2>
-            </div>
+            </button>                          
         </>
       );
     }

@@ -41,4 +41,16 @@ const getWeekDates = (year, week) => {
     return weekDates; 
 };
 
-export { getWeeksInMonth, getWeekDates, getFirstWeekInMonth  };
+
+//is today part of current visible weekspan, if yes returns active week and active day index
+const evaluateTodayIsPartOfWeekspan = (today, weeks, year) => {
+    const weekOfYear = Math.floor((today - new Date(year, 0, 1)) / 604800000) + 1;
+  
+    if (weeks.includes(weekOfYear)) {
+      return { isInWeek: true, weekIndex: weeks.indexOf(weekOfYear) };
+    } else {
+      return { isInWeek: false, weekIndex: -1 };
+    }
+}
+
+export { getWeeksInMonth, getWeekDates, getFirstWeekInMonth, evaluateTodayIsPartOfWeekspan  };
