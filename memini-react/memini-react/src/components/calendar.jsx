@@ -17,20 +17,14 @@ class Calendar extends Component{
         this.monthNow = this.dateNow.getMonth() + 1;
         this.dayNow =  this.dateNow.getDate();
         
-        this.state = {
-          selectedDate : {year: this.yearNow, month: this.monthNow}
-        };
+        
     }
     
     componentDidMount() {
       
     }
 
-    onCalendarDateChange = (yearSelected, monthSelected) => {
-
-      this.setState((prevState) => ({selectedDate: {year: yearSelected, month: monthSelected}})); 
-
-    }
+    
 
     calendarHeaderStyling = () => {
       return "font-family: ui-sans-serif m-5 space-x-1 font-medium";
@@ -48,8 +42,9 @@ class Calendar extends Component{
 
         //user controlled selection
 
-        var userSelectedDisplayYear = this.state.selectedDate.year;
-        var userSelectedDisplayMonth = this.state.selectedDate.month;
+        var userSelectedDisplayYear = this.props.selectedDate.year;
+        var userSelectedDisplayMonth = this.props.selectedDate.month;
+        
 
         var firstWeek = getFirstWeekInMonth(userSelectedDisplayYear,userSelectedDisplayMonth);
 
@@ -67,12 +62,7 @@ class Calendar extends Component{
         var calendarDateHoverStyle = this.calendarDateHoverStyle();
       
         return (
-          <>
-          <CalendarNavigator 
-            selectedDate={this.state.selectedDate} 
-            onInputChangeCallback={this.onCalendarDateChange}     
-            />
-              
+          <>  
               <div className="">
                   <table className="w-full">
                     <thead >

@@ -9,16 +9,29 @@ import '../index.css';
 
 class MeminiDateComponent extends Component{
     constructor(props){
-        super(props);  
-      
+        super(props);        
+
+        this.dateNow    = new Date();
+        this.yearNow    = this.dateNow.getFullYear();
+        this.monthNow   = this.dateNow.getMonth() + 1;
+
         this.state = {
-          something: ""
-        };
+            selectedDate : {year: this.yearNow, month: this.monthNow}
+          };
         
     }
     
     componentDidMount() {
       
+    }
+
+    onCalendarDateChange = (yearSelected, monthSelected) => {
+
+        console.log(yearSelected);
+        console.log(monthSelected);
+  
+        this.setState((prevState) => ({selectedDate: {year: yearSelected, month: monthSelected}})); 
+  
     }
 
   render() { 
@@ -28,27 +41,27 @@ class MeminiDateComponent extends Component{
             
             <div className="flex justify-center items-center">
             <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-200">  
-            
-           
-            
+                        
             <div className="text-center">
                 <TodaysDate></TodaysDate>
             </div>
-
-            <br></br>    
+            <br></br>
+        
 
 
             <hr></hr> 
-            <br></br>
+          
 
-            <div id="calendar-navigator">              
-            </div>        
+            <CalendarNavigator 
+            selectedDate={this.state.selectedDate} 
+            onInputChangeCallback={this.onCalendarDateChange}     
+            />       
 
-            <br></br>
+       
             <hr></hr>
             <br></br>
 
-            <Calendar></Calendar>
+            <Calendar selectedDate = {this.state.selectedDate} ></Calendar>
             </div>              
             </div> 
 
