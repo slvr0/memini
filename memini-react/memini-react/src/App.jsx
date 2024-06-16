@@ -1,6 +1,8 @@
 import React, { Component, useEffect } from "react";
 
 import MeminiDateComponent from "./components/memini-date-component.jsx";
+import MeminiDayPlanner from "./components/memini-day-planner.jsx";
+import ModalSimple from "./components/modal-simple.jsx";
 
 import { Container, Grid } from 'semantic-ui-react';
 
@@ -9,6 +11,13 @@ import logo from './assets/images/logo_2-removebg-preview.png';
 
 import './App.css';
 import './index.css'
+
+
+
+import $ from "jquery";
+
+import 'semantic-ui-css/semantic.min.css';
+import 'semantic-ui-css/semantic.min.js'; 
 
 class App extends Component{
     constructor(props){
@@ -21,7 +30,10 @@ class App extends Component{
         this.yearNow = this.dateNow.getFullYear();
         this.monthNow = this.dateNow.getMonth() + 1; // who programmed this to need  + 1 to be accurate.
 
-        
+        this.state = {
+          isOpen:false,
+          saved:false
+        };
         
     }
     
@@ -47,8 +59,7 @@ class App extends Component{
   render() { 
     
         return (
-          <>           
-            
+          <> 
             <Container>
 
             <Grid>
@@ -59,10 +70,22 @@ class App extends Component{
               </Grid.Column>
             </Grid.Row>
 
-            <Grid.Row>
+            <Grid.Row columns={2}>
 
-            <Grid.Column>            
+            <Grid.Column width={8}>            
               <MeminiDateComponent></MeminiDateComponent>
+            </Grid.Column>
+
+            <Grid.Column width={8}>
+
+              <Grid.Row height={4}>
+                <div style={{ height: '100px' }}></div>
+              </Grid.Row>
+
+              <Grid.Row height={2}>
+                <MeminiDayPlanner ></MeminiDayPlanner>
+              </Grid.Row>
+
             </Grid.Column>
 
             </Grid.Row>

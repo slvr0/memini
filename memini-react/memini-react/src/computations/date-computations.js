@@ -53,4 +53,13 @@ const evaluateTodayIsPartOfWeekspan = (today, weeks, year) => {
     }
 }
 
-export { getWeeksInMonth, getWeekDates, getFirstWeekInMonth, evaluateTodayIsPartOfWeekspan  };
+const generateHalfHourIntervals = (startHour, endHour) => {
+    const intervals = [];
+    for (let hour = startHour; hour <= endHour; hour++) {
+      intervals.push(`${hour}:00`);
+      intervals.push(`${hour}:30`);
+    }
+    return intervals;
+  };
+
+export { getWeeksInMonth, getWeekDates, getFirstWeekInMonth, evaluateTodayIsPartOfWeekspan, generateHalfHourIntervals  };

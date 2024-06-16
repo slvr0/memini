@@ -19,4 +19,6 @@ code {
 
 @import "components/calendar.css";
 @import "components/todays-date.css";
+@import "components/memini-day-planner.css";
+@import "components/horizontal-schedule-marker.css";
 
