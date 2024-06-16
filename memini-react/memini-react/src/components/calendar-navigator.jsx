@@ -101,7 +101,7 @@ class CalendarNavigator extends Component{
 
             <Icon onClick={this.onChevronLeftTriggered} className={`chevron left icon ${chevronHoverStyling}`} size="large" style={{ marginRight: '1.25em' }} />
 
-            {/* Something is broken/deprecated with these Semantic React components, remove them! */} 
+            {/* Something is broken/deprecated with these Semantic React components, remove them! Dropdown seems to be using findDOMNode which is giving warnings */} 
             <Dropdown
               placeholder='Select Month'
               selection

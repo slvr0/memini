@@ -27,7 +27,6 @@ class ActivityPickerModal extends Component {
     closeModal = () => {
         this.setState({isOpen:false});
     }
-
     
     handleCancel = (e) => {
         e.preventDefault();
@@ -50,8 +49,6 @@ class ActivityPickerModal extends Component {
     componentDidMount() {
         window.addEventListener('openModal', this.showModal);
     }
-
-
 
     render() {
         return (
@@ -77,6 +74,7 @@ class ActivityPickerModal extends Component {
                         ref={this.endTimeRef}
                         type="time" 
                         name="endTime" 
+                        
                     />
                     </label>
                     <label>
@@ -84,7 +82,8 @@ class ActivityPickerModal extends Component {
                     <input 
                         ref={this.titleRef}
                         type="text" 
-                        name="title" 
+                        name="title"
+                        defaultValue="Enter Title" 
                     />
                     </label>
                     <label>
@@ -93,6 +92,7 @@ class ActivityPickerModal extends Component {
                         ref={this.descriptionRef}
                         type="text" 
                         name="description" 
+                        defaultValue="Enter Description" 
                     />
                     </label>
           
