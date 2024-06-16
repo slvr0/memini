@@ -42,8 +42,6 @@ class ActivityPickerModal extends Component {
         const title = this.titleRef.current.value;
         const description = this.descriptionRef.current.value;
 
-        console.log(startTime, endTime, title, description);
-
         this.props.onSubmit(startTime, endTime, title, description);
 
         this.closeModal();
@@ -60,7 +58,7 @@ class ActivityPickerModal extends Component {
             <>
                 <Modal 
                     ref={(modalContent) => { this.modalContent = modalContent; }}
-                    blurred={true} as={Form} 
+                    blurred="true" as={Form} 
                     onSubmit={e => this.handleSubmit(e)} 
                     open={this.state.isOpen} size="tiny">
                 <Header icon="pencil" content="This is my header" as="h2" />

@@ -20,7 +20,9 @@ class MeminiDayPlanner extends Component{
             modalIsOpen: false
           };
 
-        this.intervals = generateHalfHourIntervals(0, 23);                
+        this.intervals = generateHalfHourIntervals(0, 23);   
+        
+        this.activitiesAdded = 0;
     }
 
     onDragStart = (event, item) => {
@@ -31,13 +33,12 @@ class MeminiDayPlanner extends Component{
 
     // we can be smart when updating the activity matrix to directly sort the new object to re-render more effectively
     // but lets do that later :D 
-    addActivity = (activityFields) => { 
+    
+    //id ? 
+    addActivity = (activity) => {        
        
-        debugger;
-        
-        const newActivity = {name: "abc"}
-
-
+        this.activitiesAdded += 1;
+        const newActivity = {...activity, id:this.activitiesAdded}
 
         this.setState(prevState => {
             const newActivities = [...prevState.activities, newActivity];
@@ -83,9 +84,9 @@ class MeminiDayPlanner extends Component{
     componentDidMount() {
       
     }
-    
-    handleSubmitActivityPicker = (activityFields) => {        
-        this.addActivity(activityFields);        
+
+    handleSubmitActivityPicker = (startTime, endTime, title, description) => {        
+        this.addActivity({start: startTime, end: endTime, title: title, description: description});        
     }
 
     sendModalOpenEvent = () => {
@@ -100,9 +101,10 @@ class MeminiDayPlanner extends Component{
             { id: 2, name: 'Item 2' },
             { id: 3, name: 'Item 3' }
         ];
+
         return (
             <>
-                <ActivityPickerModal onSubmit={() => this.handleSubmitActivityPicker}></ActivityPickerModal>
+                <ActivityPickerModal onSubmit={this.handleSubmitActivityPicker}></ActivityPickerModal>
 
                 {/* Here are the schedule block to drag to add to the day planner */}
                 <div className="items">
@@ -126,7 +128,7 @@ class MeminiDayPlanner extends Component{
                             {/* <h2>Drop items here</h2> */}
                             {this.state.activities.map(item => (
                             
-                                <ScheduleBlock name={item.name} key={item.id}></ScheduleBlock>
+                                <ScheduleBlock name={item.title} key={item.id}></ScheduleBlock>
                             ))}
                     </div>           
                 </div>
