@@ -6,10 +6,9 @@ import {
     Divider,Container, Grid
 } from "semantic-ui-react";
 
-import ScheduleBlock from "./schedule-block.jsx";
+import Block from "./block.jsx";
 import HorizontalScheduleMarker from "./horizontal-schedule-marker.jsx"
 import ActivityPickerModal from "./activity-picker-modal.jsx";
-import ModalSimple from "./modal-simple.jsx";
 
 class MeminiDayPlanner extends Component{
     constructor(props){
@@ -26,24 +25,35 @@ class MeminiDayPlanner extends Component{
         this.minutesInDay = 24 * 60;
 
         this.dropZoneContainer = React.createRef(null);
+        this.dropAreaRef = React.createRef();
+
+        
     }
 
-    onDragStart = (event, item) => {
-        event.dataTransfer.setData('item', JSON.stringify(item));
+    onDragStart = (event, item) => {    
+        
+      
+        //event.dataTransfer.setData('item', JSON.stringify(item));  
+
+        this.selectedItem = item;
 
         this.horizontalScheduleMarker.setRenderMode(true);
     };    
 
-    onDrop = (event) => {
-        debugger;
-        // const item = JSON.parse(event.dataTransfer.getData('item'));
+    onDrop = (event) => {  
+        event.preventDefault();
 
         if (this.horizontalScheduleMarker) {
             this.horizontalScheduleMarker.setRenderMode(false);
         }
 
-        this.sendModalOpenEvent();
-        
+        try {
+            this.sendModalOpenEvent();
+        } catch (error) {
+            console.error('Error parsing JSON:', error);        
+        }
+
+        this.sendModalOpenEvent();        
     };
 
     onDragOver = (event) => {
@@ -53,9 +63,7 @@ class MeminiDayPlanner extends Component{
 
         const container = this.dropZoneContainer.current;
         const containerRect = container.getBoundingClientRect();
-        const mouseY = event.clientY;
-     
-
+        const mouseY = event.clientY;    
         
         this.horizontalScheduleMarker.updatePosition(mouseY);
         this.horizontalScheduleMarker.setRenderMode(true);
@@ -64,7 +72,6 @@ class MeminiDayPlanner extends Component{
 
     onDragLeave = (event) => {
         event.preventDefault();
-
         this.horizontalScheduleMarker.setRenderMode(false);
     }
 
@@ -73,26 +80,33 @@ class MeminiDayPlanner extends Component{
     }
     
     componentDidMount() {
-        this.updateDropAreaHeight();
+        this.updateDropAreaHeight();        
+        window.addEventListener('resize', this.updateDropAreaHeight);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateDropAreaHeight);
     }
 
     componentDidUpdate() {
         this.updateDropAreaHeight();
-      }
+    }
 
       updateDropAreaHeight() {
-        if (this.dropAreaRef.current) {
-          const height = this.dropAreaRef.current.clientHeight;
-          if (height !== this.dropAreaHeight) {
-            this.dropAreaHeight = height;
-            console.log('Height of schedule-drop-area:', this.dropAreaHeight);
-            // Now dropAreaHeight can be used for sizing calculations or other logic
+
+        
+        if (this.dropAreaRef && this.dropAreaRef.current) {
+            console.log(this.dropAreaRef);
+            const height = this.dropAreaRef.current.clientHeight;
+            if (height !== this.dropAreaHeight) {
+                this.dropAreaHeight = height;
           }
         }
       }
 
-    handleSubmitActivityPicker = (startTime, endTime, title, description) => {        
-        this.addActivity({start: startTime, end: endTime, title: title, description: description});        
+    handleSubmitActivityPicker = (startTime, endTime, title, description) => { 
+        
+        this.addActivity({start: startTime, end: endTime, title: title, description: description, duration: this.selectedItem.duration});        
     }
 
     sendModalOpenEvent = () => {
@@ -115,14 +129,13 @@ class MeminiDayPlanner extends Component{
         const startTimeFraction = this.timeAsFraction(activity.start);
         const endTimeFraction = this.timeAsFraction(activity.end);
 
-        console.log(activity);
-
         const newActivity = {...activity, 
             id:this.activitiesAdded,
             startTimeFraction: startTimeFraction,
             endTimeFraction: endTimeFraction,
-            type:"activityBlock"        
-        };       
+            type:"activityBlock",  
+            duration: activity.duration      
+        };   
 
         this.setState(prevState => {
             const newActivities = [...prevState.activities, newActivity];   
@@ -138,7 +151,9 @@ class MeminiDayPlanner extends Component{
     timeAsFraction = (time) => {
         const hhFrac = parseInt(time.slice(0, 2));
         const mmFrac = parseInt(time.slice(3));
-        return hhFrac * 60 + (mmFrac);
+
+        console.log(hhFrac, mmFrac);
+        return (hhFrac * 60) + (mmFrac);
     }
 
     splitOverlappingActivities = (activities) => {
@@ -161,14 +176,12 @@ class MeminiDayPlanner extends Component{
         return {nonOverlappingIntervals, overlappingIntervals}
     }
 
-
-    
     // make like three buttons, sunrise, daysun and moon to quickly toggle different time zone of the day
     render() { 
         const activeScheduleBlocks = [ 
-            { id: 1, name: 'Hour Activity', type:"activityOption" },
-            { id: 2, name: '3 Hour Activity', type:"activityOption" },
-            { id: 3, name: '5 Hour Activity', type:"activityOption" }
+            { id: 1, name: '1 Hour Activity',   type:"activityOption"     , duration : 1   } ,
+            { id: 2, name: '2 Hour Activity',   type:"activityOption"     , duration : 2   },
+            { id: 3, name: '3 Hour Activity',   type:"activityOption"     , duration : 3   }
         ];
 
         return (
@@ -177,14 +190,14 @@ class MeminiDayPlanner extends Component{
                 
                 <span className="h-32 items">
                     {activeScheduleBlocks.map((item, index) => (
-                        <Fragment key={index}>
-                            <ScheduleBlock title={item.name} type={item.type}></ScheduleBlock >
+                        <Fragment key={index} >
+                            <button draggable className="ui button default" onDragStart={(event) => this.onDragStart(event, item)}> {item.name} </button>
                         </Fragment>
                     ))}
                 </span>
 
                 <div className={`h-screen flex-row inline-flex schedule-drop-area`} 
-                    ref={(dropAreaRef) => { this.dropAreaRef = dropAreaRef; }}
+                    ref={this.dropAreaRef}
                 >                    
 
                     <HorizontalScheduleMarker 
@@ -192,34 +205,40 @@ class MeminiDayPlanner extends Component{
                     </HorizontalScheduleMarker>
 
                     <span className={`bg-gray-300 box-border p-4 border-2 w-32 rounded-lg shadow-lg`}>
-                        Time<hr></hr>                        
+                                               
                     </span>
 
-                    <span className={`bg-gray-300 box-border p-4 border-2 w-64 rounded-lg shadow-lg`}
+                    <span className={`bg-gray-300 box-border p-4 border-2 w-64 rounded-lg shadow-lg justify-items-center`}                        
                         onDrop={this.onDrop}
                         onDragOver={this.onDragOver}
                         onDragLeave={this.onDragLeave}
                         ref={this.dropZoneContainer}
+                        style={{ position: 'relative' }}
                     >
-                        Scheduled<hr></hr>
 
                         {this.state.activities.map((item, index) =>   {
-                            const blockStartPosition = (item.startTimeFraction / this.minutesInDay) * this.dropAreaHeight ; 
-                            const blockHeight = (item.endTimeFraction - item.startTimeFraction) / this.minutesInDay * this.dropAreaHeight;  
-                        
+                            const blockStartPosition = item.startTimeFraction * 0.00069444444444  * this.dropAreaHeight;
+                            const blockHeight = (item.endTimeFraction - item.startTimeFraction) / this.minutesInDay * this.dropAreaHeight;
+                            
+                            
+                            console.log(this.dropAreaHeight);
+                            console.log(blockStartPosition);
+                            const heightDuration = this.dropAreaHeight *  item.duration * 0.0416666666666667;
+
+                            console.log(this.dropAreaHeight);                            
+                            console.log(item.duration);
+                            console.log(heightDuration);
+                            
                             return (
-                                <div className="" key={index}> 
-                                    <ScheduleBlock 
-                                        title={item.title} 
-                                        description={item.description}
-                                        blockId={item.id}  
-                                        startPosition={blockStartPosition}
-                                        height={blockHeight}
-                                        startTime={item.start}
-                                        endTime={item.end}
-                                        type={item.type}w
+                                <div className=""
+                                style={{ position: 'absolute', top: blockStartPosition }} 
+                                key={index}> 
+                                    <Block  
+                                        height={heightDuration}
+                                        width={"w-64"}
+                                        content={null}                                        
                                     >                                               
-                                    </ScheduleBlock>
+                                    </Block>
                                 </div>
                             );
                         })}
