@@ -24,6 +24,8 @@ class MeminiDayPlanner extends Component{
         
         this.activitiesAdded = 0;
         this.minutesInDay = 24 * 60;
+
+        this.dropZoneContainer = React.createRef(null);
     }
 
     onDragStart = (event, item) => {
@@ -33,7 +35,8 @@ class MeminiDayPlanner extends Component{
     };    
 
     onDrop = (event) => {
-        const item = JSON.parse(event.dataTransfer.getData('item'));
+        debugger;
+        // const item = JSON.parse(event.dataTransfer.getData('item'));
 
         if (this.horizontalScheduleMarker) {
             this.horizontalScheduleMarker.setRenderMode(false);
@@ -48,10 +51,11 @@ class MeminiDayPlanner extends Component{
 
         //if position y with some discretization has occured trigger callback in child horizontal schedule marker
 
-        const container = event.currentTarget;
+        const container = this.dropZoneContainer.current;
         const containerRect = container.getBoundingClientRect();
-        const mouseY = event.clientY - containerRect.top;
-        
+        const mouseY = event.clientY;
+     
+
         
         this.horizontalScheduleMarker.updatePosition(mouseY);
         this.horizontalScheduleMarker.setRenderMode(true);
@@ -69,8 +73,23 @@ class MeminiDayPlanner extends Component{
     }
     
     componentDidMount() {
-      
+        this.updateDropAreaHeight();
     }
+
+    componentDidUpdate() {
+        this.updateDropAreaHeight();
+      }
+
+      updateDropAreaHeight() {
+        if (this.dropAreaRef.current) {
+          const height = this.dropAreaRef.current.clientHeight;
+          if (height !== this.dropAreaHeight) {
+            this.dropAreaHeight = height;
+            console.log('Height of schedule-drop-area:', this.dropAreaHeight);
+            // Now dropAreaHeight can be used for sizing calculations or other logic
+          }
+        }
+      }
 
     handleSubmitActivityPicker = (startTime, endTime, title, description) => {        
         this.addActivity({start: startTime, end: endTime, title: title, description: description});        
@@ -110,9 +129,7 @@ class MeminiDayPlanner extends Component{
 
             newActivities.sort((a, b) => a.startTimeFraction - b.startTimeFraction);
 
-            //split into row matrices if colliding activities x0_start <= x1_interval <= x0_end
-
-            
+            //split into row matrices if colliding activities x0_start <= x1_interval <= x0_end            
             return { activities: newActivities };
         });
     }
@@ -143,69 +160,73 @@ class MeminiDayPlanner extends Component{
 
         return {nonOverlappingIntervals, overlappingIntervals}
     }
+
+
     
     // make like three buttons, sunrise, daysun and moon to quickly toggle different time zone of the day
     render() { 
         const activeScheduleBlocks = [ 
-            { id: 1, name: 'Item 1', type:"activityOption" },
-            { id: 2, name: 'Item 2', type:"activityOption" },
-            { id: 3, name: 'Item 3', type:"activityOption" }
+            { id: 1, name: 'Hour Activity', type:"activityOption" },
+            { id: 2, name: '3 Hour Activity', type:"activityOption" },
+            { id: 3, name: '5 Hour Activity', type:"activityOption" }
         ];
 
         return (
             <>
-                <ActivityPickerModal onSubmit={this.handleSubmitActivityPicker}></ActivityPickerModal>
-
-                {/* Here are the schedule block to drag to add to the day planner */}
-                <div className="items">
+                <ActivityPickerModal onSubmit={this.handleSubmitActivityPicker}></ActivityPickerModal>                
+                
+                <span className="h-32 items">
                     {activeScheduleBlocks.map((item, index) => (
                         <Fragment key={index}>
                             <ScheduleBlock title={item.name} type={item.type}></ScheduleBlock >
                         </Fragment>
                     ))}
-                </div>           
+                </span>
 
-                {/* Marks the area where the schedule blocks are populated*/}
-                <div className="flex justify-center items-center">
-                    <div 
-                        className="bg-white p-8 rounded-lg shadow-lg border border-gray-200 drop-area"
+                <div className={`h-screen flex-row inline-flex schedule-drop-area`} 
+                    ref={(dropAreaRef) => { this.dropAreaRef = dropAreaRef; }}
+                >                    
+
+                    <HorizontalScheduleMarker 
+                        ref={(horizontalScheduleMarker) => { this.horizontalScheduleMarker = horizontalScheduleMarker; }} >
+                    </HorizontalScheduleMarker>
+
+                    <span className={`bg-gray-300 box-border p-4 border-2 w-32 rounded-lg shadow-lg`}>
+                        Time<hr></hr>                        
+                    </span>
+
+                    <span className={`bg-gray-300 box-border p-4 border-2 w-64 rounded-lg shadow-lg`}
                         onDrop={this.onDrop}
                         onDragOver={this.onDragOver}
                         onDragLeave={this.onDragLeave}
-                        style={{ position: 'relative', height: '700px', width: '100%' }} 
-                        >                              
+                        ref={this.dropZoneContainer}
+                    >
+                        Scheduled<hr></hr>
 
-                            <HorizontalScheduleMarker 
-                                ref={(horizontalScheduleMarker) => { this.horizontalScheduleMarker = horizontalScheduleMarker; }} >
-                            </HorizontalScheduleMarker>
-                            
-                            {/* <h2>Drop items here</h2> */}
-                            {this.state.activities.map((item, index) =>   {
-                                const blockStartPosition = (item.startTimeFraction / this.minutesInDay) * 700 ; 
-                                const blockHeight = (item.endTimeFraction - item.startTimeFraction) / this.minutesInDay * 700;                            
+                        {this.state.activities.map((item, index) =>   {
+                            const blockStartPosition = (item.startTimeFraction / this.minutesInDay) * this.dropAreaHeight ; 
+                            const blockHeight = (item.endTimeFraction - item.startTimeFraction) / this.minutesInDay * this.dropAreaHeight;  
+                        
+                            return (
+                                <div className="" key={index}> 
+                                    <ScheduleBlock 
+                                        title={item.title} 
+                                        description={item.description}
+                                        blockId={item.id}  
+                                        startPosition={blockStartPosition}
+                                        height={blockHeight}
+                                        startTime={item.start}
+                                        endTime={item.end}
+                                        type={item.type}w
+                                    >                                               
+                                    </ScheduleBlock>
+                                </div>
+                            );
+                        })}
 
-                                
-                                console.log(blockStartPosition);
-                                console.log(blockHeight);
-
-                                return (
-                                    <div className="" key={index}
-                                    
-                                        
-                                        > 
-                                        <ScheduleBlock 
-                                            title={item.title} 
-                                            description={item.description}
-                                            blockId={item.id}  
-                                            startPosition={blockStartPosition}
-                                            height={blockHeight}
-                                            type={item.type}
-                                        ></ScheduleBlock>
-                                    </div>
-                                );
-                            })}
-                    </div>           
+                    </span>
                 </div>
+                
             </>
         );
     }

@@ -60,40 +60,22 @@ class App extends Component{
     
         return (
           <> 
-            <Container>
+          {/* <img src={logo} className="ui small image" alt="logo" />   */}
+          
 
-            <Grid>
+        
+            <MeminiDayPlanner ></MeminiDayPlanner>
+      
+            
+       
 
-            <Grid.Row >
-              <Grid.Column style={{ display: 'flex', justifyContent: 'center' }}>
-              <img src={logo} className="ui small image" alt="logo" />  
-              </Grid.Column>
-            </Grid.Row>
+          {/* <div>
+            <MeminiDateComponent></MeminiDateComponent>
+          </div> */}
 
-            <Grid.Row columns={2}>
+          
+          
 
-            <Grid.Column width={8}>            
-              <MeminiDateComponent></MeminiDateComponent>
-            </Grid.Column>
-
-            <Grid.Column width={8}>
-
-              <Grid.Row height={4}>
-                <div style={{ height: '100px' }}></div>
-              </Grid.Row>
-
-              <Grid.Row height={2}>
-                <MeminiDayPlanner ></MeminiDayPlanner>
-              </Grid.Row>
-
-            </Grid.Column>
-
-            </Grid.Row>
-
-
-            </Grid>
-
-            </Container>
           </>
         );
     }

@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import '../index.css';
 import {generateHalfHourIntervals} from "../computations/date-computations.js"
 import {Divider,Container, Grid} from "semantic-ui-react";
-
+import ActivityBlock from "./activity-block.jsx";
 class ScheduleBlock extends Component{
     constructor(props){
         super(props);       
@@ -26,17 +26,16 @@ class ScheduleBlock extends Component{
     };
     
   render() { 
-        const name = this.props.title; //this is right now just a schedule hash
+        const title = this.props.title; //this is right now just a schedule hash
+        
         const description = this.props.description;  
-        const blockId = this.props.blockId;      
-
-
+        const blockId = this.props.blockId; 
         const startPosition = this.props.startPosition;
         const height = this.props.height;
-
-        console.log(this.props.type);
-
+        const startTime = this.props.startTime;
+        const endTime = this.props.endTime;
         
+        console.log(this.props.type);
         return (
           <>
 
@@ -46,18 +45,24 @@ class ScheduleBlock extends Component{
             <button  
               key={blockId}          
               draggable
-              onDragStart={(event) => this.onDragStart(event, name)}
+              onDragStart={(event) => this.onDragStart(event, title)}
               className="draggable-item"
               style={{
                 position: 'absolute',
                 top: `${startPosition}px`,
-                height: `${height}px`,                                      
-                backgroundColor: 'rgba(0, 128, 0, 0.3)', 
-                border: '1px solid #000'
-                
+                height: `${height}px`               
               }}
               >
-              {name}
+              <ActivityBlock 
+                title={title} 
+                description={description} 
+                startTime={startTime} 
+                endTime={endTime}
+                height={height}
+              >
+
+              </ActivityBlock>
+
               </button>
           }
 
@@ -65,10 +70,10 @@ class ScheduleBlock extends Component{
             <button  
               key={blockId}          
               draggable
-              onDragStart={(event) => this.onDragStart(event, name)}
-              className="draggable-item"
+              onDragStart={(event) => this.onDragStart(event, title)}
+              className="draggable-item ui button default"
               >
-              {name}
+              {title}
               </button>
           }
 

@@ -43,7 +43,7 @@ class HorizontalScheduleMarker extends Component{
           {this.state.shouldRender && (
           <div 
           className="horizontal-line" 
-          style={{ top: `${this.state.positionY}px` }}
+          style={{ top: `${this.state.positionY}px`, zIndex: 1000 }}
           />
           )}
           </>
