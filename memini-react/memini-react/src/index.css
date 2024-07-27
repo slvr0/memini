@@ -21,4 +21,5 @@ code {
 @import "components/todays-date.css";
 @import "components/memini-day-planner.css";
 @import "components/horizontal-schedule-marker.css";
-@import "components/block.css";
+
+@import "components/activity-grid-control/activity-grid-control.css"

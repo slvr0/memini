@@ -1,18 +1,11 @@
-import React, { Component, useEffect } from "react";
+import React, { Component, useEffect, Fragment } from "react";
 
-import MeminiDateComponent from "./components/memini-date-component.jsx";
-import MeminiDayPlanner from "./components/memini-day-planner.jsx";
-import ModalSimple from "./components/modal-simple.jsx";
-
-import { Container, Grid } from 'semantic-ui-react';
-
+import DayScheduleGrid from "./components/activity-grid-control/day-schedule-grid.jsx";
 
 import logo from './assets/images/logo_2-removebg-preview.png';
 
 import './App.css';
 import './index.css'
-
-
 
 import $ from "jquery";
 
@@ -56,28 +49,40 @@ class App extends Component{
  
   }
 
+  //some function to connect dragged block
+
   render() { 
     
-        return (
-          <> 
-          {/* <img src={logo} className="ui small image" alt="logo" />   */}
-          
+    
 
-        
-            <MeminiDayPlanner ></MeminiDayPlanner>
+    return (
+      <> 
+
+<DayScheduleGrid />
+
+
+      {/* <img src={logo} className="ui small image" alt="logo" />   */}         
+
       
+     
             
-       
+     
+ 
+    
+        {/* <MeminiDayPlanner ></MeminiDayPlanner> */}
+  
+        
+    
 
-          {/* <div>
-            <MeminiDateComponent></MeminiDateComponent>
-          </div> */}
+      {/* <div>
+        <MeminiDateComponent></MeminiDateComponent>
+      </div> */}
 
-          
-          
+      
+      
 
-          </>
-        );
+      </>
+    );
     }
   }
 

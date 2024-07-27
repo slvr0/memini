@@ -1,11 +1,8 @@
 import React, { Component, Fragment, act } from "react";
 
 import '../index.css';
-import {generateHalfHourIntervals} from "../computations/date-computations.js"
-import {
-    Divider,Container, Grid
-} from "semantic-ui-react";
-
+import { generateHalfHourIntervals } from "../computations/date-computations.js"
+import { Divider,Container, Grid } from "semantic-ui-react";
 import Block from "./block.jsx";
 import HorizontalScheduleMarker from "./horizontal-schedule-marker.jsx"
 import ActivityPickerModal from "./activity-picker-modal.jsx";
@@ -93,7 +90,6 @@ class MeminiDayPlanner extends Component{
     }
 
       updateDropAreaHeight() {
-
         
         if (this.dropAreaRef && this.dropAreaRef.current) {
             console.log(this.dropAreaRef);
