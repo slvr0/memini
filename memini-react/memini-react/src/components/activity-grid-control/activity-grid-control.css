@@ -1,14 +1,10 @@
-.contentBlock {
-    
-  }
-  
 .blockContentDescription {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.1em; /* Adjust line height based on your font-size */
-    max-height: calc(1.2em * 3); /* Adjust max-height based on line-height and line-clamp */
+    line-height: 1.1em;
+    max-height: calc(1.2em * 3);
 }
 
 .activityGridTimeFrame{

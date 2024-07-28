@@ -2,6 +2,8 @@ import React, { Component, useEffect, Fragment } from "react";
 
 import DayScheduleGrid from "./components/activity-grid-control/day-schedule-grid.jsx";
 
+import ScheduleGridContextProvider from "./store/schedule-grid/schedule-grid-context-provider.jsx";
+
 import logo from './assets/images/logo_2-removebg-preview.png';
 
 import './App.css';
@@ -26,8 +28,7 @@ class App extends Component{
         this.state = {
           isOpen:false,
           saved:false
-        };
-        
+        };        
     }
     
   fetchData = async () => {
@@ -58,7 +59,11 @@ class App extends Component{
     return (
       <> 
 
-<DayScheduleGrid />
+      <ScheduleGridContextProvider>
+
+      
+
+      <DayScheduleGrid />
 
 
       {/* <img src={logo} className="ui small image" alt="logo" />   */}         
@@ -80,7 +85,7 @@ class App extends Component{
 
       
       
-
+      </ScheduleGridContextProvider>
       </>
     );
     }

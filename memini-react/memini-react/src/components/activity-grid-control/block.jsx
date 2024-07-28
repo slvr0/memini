@@ -38,14 +38,8 @@ class Block extends Component{
         if(this.props.content)
             backgroundColor = this.setBackgroundColorFromContentType(this.props.content.activityType);   
 
-
-        //sizeY = timeEnd - timeStart, which is an hourly fraction. we have 12 hours on a gridlist (two side by side),
-        //so the height styling is 100% / (sizeY / (60 * 12))
-  
-
-
         const computedHeight = 12 / (this.props.sizeY / 60.0).toString();
-        console.log(computedHeight);
+    
         const blockHeightStylingComputed = 'calc(100%/' + computedHeight + ')';
 
         return (

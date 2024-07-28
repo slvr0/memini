@@ -1,6 +1,6 @@
-import React, { Component, Fragment, createRef } from "react";
+import React, { Component, Fragment, createRef, useContext} from "react";
 
-import BlockManager from "./block-manager.jsx";
+import { ScheduleGridContext } from "../../store/schedule-grid/schedule-grid-context.jsx";
 import Block from "./block";
 
 const exampleBlocks = [
@@ -28,18 +28,20 @@ const exampleBlocks = [
   ];
 
 class DayScheduleGrid extends Component{
+    static contextType = ScheduleGridContext; 
+
     constructor(props){
         super(props); 
         this.state = {           
             tasks : []
         }  
-        
+
         this.clockMarkers = [];
         this.setupClockMarkers();
     
         this.scheduleGridRef = createRef(null);
         this.selectedItem = null;  
-        this.dragOverCurrentTimeBox = -1;
+        this.dragOverCurrentTimeBox = -1;       
         
     } 
 
@@ -60,25 +62,27 @@ class DayScheduleGrid extends Component{
     }
                                                          
     componentDidMount() {
-           
+           const ctx = this.context; // we have context available after mount; (not in constructor...)
     }
+
+    onDrag = (item) => { 
+        this.selectedItem = item;        
+    };
 
     onDragStart = (event, item) => { 
-        this.selectedItem = item;
-        
+        this.selectedItem = item;        
     }; 
 
-    onDrag = (item) => {
-        this.selectedItem = item;        
-    }
 
     onDrop = (event) => {
         if(this.selectedItem            === (null && undefined) || 
            this.dragOverCurrentTimeBox  === (null && undefined && -1))
                 return;
 
+
+        
         const selectedObject = {
-            ...this.selectedItem.props.content,
+            ...this.selectedItem,
             timeIndex : this.dragOverCurrentTimeBox
         };
 
@@ -118,98 +122,77 @@ class DayScheduleGrid extends Component{
         for(var i = 0 ; i < 12 ; ++i) {
             gridBlocks.push(i);
         }
-            //key indexing is entirely broken in this component appareantly...
+
         return (
         <>
+       
             <div className="ui grid h-screen flex-row">
                 <div className="eight wide column">
-                        {exampleBlocks.map((activity, index) => (
-                        <Fragment>
-                            <Block key={index} draggable onDrag={(item) => {this.onDrag(item)}} content={activity} sizeY={activity.endTime - activity.startTime} onDragStart={(event) => this.onDragStart(event, activity)}/>
+                        {exampleBlocks.map((activity, exampleBlockIndex) => (
+                        <Fragment key={exampleBlockIndex}>
+                            <Block  draggable                                 
+                                content={activity} sizeY={activity.endTime - activity.startTime} 
+                                onDrag={() => this.onDrag(activity)}
+                                onDragStart={(event) => this.onDragStart(event, activity)}/>
                         </Fragment>
                         ))}
                 </div> 
 
                 <div className="eight wide column">
                     <div className={`h-screen flex-row inline-flex w-96 activityGrid`}>
-                                <span className="w-32 activityGrid">
-                                    {
-                                        this.clockMarkers.map((marker, index) => {
-                                            return (
-                                            
-                                                    <div className="text-xs text-center italic" style={{ height: 'calc(100% / 24)' }}>
-                                                        <a key={index} className={index % 2 === 0 ? "antialiased" : "text-xs"}>{marker}</a>
-                                                    </div>
-                                        
-                                            
-                                            );
-                                        })
-                                    }        
-                                </span>
+                        <span className="w-32 activityGrid">
+                            {
+                                this.clockMarkers.map((marker, markerIndex) => {
+                                    return (
+                                        <Fragment key={markerIndex}>
+                                            <div className="text-xs text-center italic" style={{ height: 'calc(100% / 24)' }}>
+                                                <a  className={markerIndex % 2 === 0 ? "antialiased" : "text-xs"}>{marker}</a>
+                                            </div>
+                                        </Fragment>
+                                    );
+                                })
+                            }        
+                        </span>
                                 
-                                <div ref={ this.scheduleGridRef } className={`w-64` } 
-                                    onDragLeave ={(event) => {this.onDragLeave(event)}}                        
-                                    onDrop={(event) => this.onDrop(event)}
-                                    >
-
-                                    { gridBlocks.map((blockIndex, index) => {
-                                        const newIndex = blockIndex + index;
-
-                                            return (
-                                                <Fragment >
-                                                    <div key={newIndex} className="ui row gridBLock" style={{ height: 'calc(100% / 12)' }}
-                                                        onDragOver={(event) => {this.onDragOver(event, blockIndex)}}
-                                                    >
-                                                        
-                                                        block {blockIndex}
-                                                    </div>
-                                                </Fragment>
-                                            );
-                                        })
-                                    }
-
-                                </div>  
-
-                            <div ref={ this.scheduleGridRef } className={`w-64` } 
+                        <div ref={ this.scheduleGridRef } className={`w-64` } 
+                            onDragLeave ={(event) => {this.onDragLeave(event)}}                        
+                            onDrop={(event) => this.onDrop(event)}
                             >
-                                {/* { gridBlocks.map((blockIndex, _) => {
 
-                                        return (
-                                            <div key={blockIndex} className="ui row gridBLock" style={{ height: 'calc(100% / 12)' }}
-                                                onDragOver={(event) => {this.onDragOver(event, blockIndex)}}                                        
+                            { gridBlocks.map((blockIndex, index) => {
+                               return (
+                                        <Fragment key={index}>
+                                            <div className="ui row gridBLock" style={{ height: 'calc(100% / 12)' }}
+                                                onDragOver={(event) => {this.onDragOver(event, blockIndex)}}
                                             >
+                                                
                                                 block {blockIndex}
                                             </div>
-                                        );
-                                    })
-                                } */}
+                                        </Fragment>
+                                    );
+                                })
+                            }
 
-                                {
-                                    this.state.tasks.map((task, index) => {
-                                        return (
-                                            <>
-                                                <Fragment key={index}>
-                                                    <Block                                                 
-                                                        content={task} sizeY={task.endTime - task.startTime}                                                 
-                                                    />
-                                                </Fragment>
-                                            </>
+                        </div>  
 
-                                        );
-                                    })
-                                }
+                        <div ref={ this.scheduleGridRef } className={`w-64` } >
+                            {
+                                this.state.tasks.map((task, taskIndex) => {
+                                    return (                                        
+                                        <Fragment key={taskIndex}>
+                                            <Block                                                 
+                                                content={task} sizeY={task.endTime - task.startTime}                                                 
+                                            />
+                                        </Fragment>
+                                       
 
-                            </div>  
+                                    );
+                                })
+                            }
+                        </div>  
                     </div>
                 </div>
             </div>
-
-
-            
-
-            
-            
-            
         </>       
         );
     }
