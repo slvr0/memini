@@ -1,6 +1,6 @@
 import React, { Grid,Component, createRef } from "react";
 
-import "./activity-grid-control.css";
+import "../css/schedule-grid.css";
 
 class BlockContent extends Component{
     constructor(props){

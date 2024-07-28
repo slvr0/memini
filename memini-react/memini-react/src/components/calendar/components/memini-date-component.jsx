@@ -4,7 +4,7 @@ import Calendar  from "./calendar";
 import CalendarNavigator from "./calendar-navigator";
 import TodaysDate from "./todays-date";
 
-import '../index.css';
+import '../../../index.css';
 
 
 class MeminiDateComponent extends Component{

@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import '../index.css';
-import {generateHalfHourIntervals} from "../computations/date-computations.js"
+import '../index.css'; // ?
+
 import {Divider,Container, Grid} from "semantic-ui-react";
 
+//remove entire class?
 class ActivityBlock extends Component{
     constructor(props){
         super(props);       

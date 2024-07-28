@@ -1,5 +1,5 @@
 import React, { Component, createRef, Fragment } from "react";
-import BlockContent from "./block-content";
+import BlockContent from "./block-content.jsx";
 
 class Block extends Component{
     constructor(props){

@@ -1,11 +1,9 @@
 import React, { Component, createRef } from "react";
 import CalendarWeekRow from "./calendar-week-row.jsx";
 import CalendarNavigator from "./calendar-navigator.jsx";
-import '../index.css';
-import twStyle from './calendar.css';
-import {getWeekDates, getFirstWeekInMonth, evaluateTodayIsPartOfWeekspan} from "../computations/date-computations.js";
-
-
+import '../../../index.css';
+import twStyle from '../css/calendar.css';
+import {getWeekDates, getFirstWeekInMonth, evaluateTodayIsPartOfWeekspan} from "../computation/date-computations.js";
 
 //Current day should change when clock goes over 23.59 ! :()
 class Calendar extends Component{
@@ -13,10 +11,10 @@ class Calendar extends Component{
         super(props);  
 
         //put in global context stuff later.
-        this.dateNow = new Date();
-        this.yearNow = this.dateNow.getFullYear();
+        this.dateNow  = new Date();
+        this.yearNow  = this.dateNow.getFullYear();
         this.monthNow = this.dateNow.getMonth() + 1;
-        this.dayNow =  this.dateNow.getDate();        
+        this.dayNow   =  this.dateNow.getDate();        
         
     }
     

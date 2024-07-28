@@ -1,8 +1,10 @@
 import React, { Component, useEffect, Fragment } from "react";
 
-import DayScheduleGrid from "./components/activity-grid-control/day-schedule-grid.jsx";
+import ScheduleGridManager from "./components/schedule-grid/components/schedule-grid-manager.jsx";
 
-import ScheduleGridContextProvider from "./store/schedule-grid/schedule-grid-context-provider.jsx";
+import ScheduleGridContextProvider from "./components/schedule-grid/store/schedule-grid-context-provider.jsx";
+
+import MeminiDateComponent from "./components/calendar/components/memini-date-component.jsx";
 
 import logo from './assets/images/logo_2-removebg-preview.png';
 
@@ -58,32 +60,13 @@ class App extends Component{
 
     return (
       <> 
+<img src={logo} className="ui small image" alt="logo" />   
 
-      <ScheduleGridContextProvider>
+      {/* <MeminiDateComponent></MeminiDateComponent> */}
 
-      
+      <ScheduleGridContextProvider>      
 
-      <DayScheduleGrid />
-
-
-      {/* <img src={logo} className="ui small image" alt="logo" />   */}         
-
-      
-     
-            
-     
- 
-    
-        {/* <MeminiDayPlanner ></MeminiDayPlanner> */}
-  
-        
-    
-
-      {/* <div>
-        <MeminiDateComponent></MeminiDateComponent>
-      </div> */}
-
-      
+      <ScheduleGridManager />
       
       </ScheduleGridContextProvider>
       </>

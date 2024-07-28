@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 
-import '../index.css';
-import {generateHalfHourIntervals} from "../computations/date-computations.js"
-import {Divider,Container, Grid} from "semantic-ui-react";
+import '../../../index.css';
 
 class HorizontalScheduleMarker extends Component{
-    constructor(props){
+    constructor(props) {
         super(props);       
 
 
@@ -32,24 +30,22 @@ class HorizontalScheduleMarker extends Component{
         return {...previousState, shouldRender:value }
         });
       }
-    }
-    
+    }   
 
-    
-  render() { 
+    render() { 
 
-        return (
-          <>
-          {this.state.shouldRender && (
-          <div 
-          className="horizontal-line" 
-          style={{ top: `${this.state.positionY}px`, zIndex: 1000 }}
-          />
-          )}
-          </>
-        );
+          return (
+            <>
+            {this.state.shouldRender && (
+            <div 
+            className="horizontal-line" 
+            style={{ top: `${this.state.positionY}px`, zIndex: 1000 }}
+            />
+            )}
+            </>
+          );
     }
-}
+  }
 
 export default HorizontalScheduleMarker;
 

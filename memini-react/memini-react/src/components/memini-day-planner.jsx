@@ -7,6 +7,8 @@ import Block from "./block.jsx";
 import HorizontalScheduleMarker from "./horizontal-schedule-marker.jsx"
 import ActivityPickerModal from "./activity-picker-modal.jsx";
 
+
+//being scrapped 
 class MeminiDayPlanner extends Component{
     constructor(props){
         super(props);      

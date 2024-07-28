@@ -1,6 +1,6 @@
 import React, { Component, createRef } from "react";
 
-import '../index.css';
+import '../../../index.css';
 import 'semantic-ui-css/semantic.min.css';
 import { Button, Icon, Dropdown } from 'semantic-ui-react';
 import { Grid, Ref, Segment } from "semantic-ui-react";

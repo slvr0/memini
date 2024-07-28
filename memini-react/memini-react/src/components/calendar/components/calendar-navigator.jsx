@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import '../index.css';
+import '../../../index.css';
 
 import 'semantic-ui-css/semantic.min.css';
 import {  Icon, Dropdown } from 'semantic-ui-react';

@@ -1,33 +1,12 @@
 import React, { Component, Fragment, createRef, useContext} from "react";
 
-import { ScheduleGridContext } from "../../store/schedule-grid/schedule-grid-context.jsx";
-import Block from "./block";
+import { ScheduleGridContext } from "../store/schedule-grid-context.jsx";
 
-const exampleBlocks = [
-    {
-        title : 'Tennis', 
-        activityType : 'sport', 
-        description : 'Play tennis on clay with Oliver 1h',
-        startTime : 600,
-        endTime : 660
-    },
-    {
-        title : 'Do Laundry',
-        activityType : 'chore',
-        description : 'Take care of the laundry, wash your dirty jeans 3h',
-        startTime : 780,
-        endTime: 960
-    },
-    {
-        title : 'Watch Avengers',
-        activityType : 'fun',
-        description : 'Its supposed to be a great movie, i know you dont enjoy superhero movies in general but give it a shot! 2h',
-        startTime : 1260,
-        endTime: 1380
-    }
-  ];
+import { setupClockMarkers } from "../computation/computations.js";
 
-class DayScheduleGrid extends Component{
+import Block from "./block.jsx";
+
+class ScheduleGridManager extends Component{
     static contextType = ScheduleGridContext; 
 
     constructor(props){
@@ -36,50 +15,24 @@ class DayScheduleGrid extends Component{
             tasks : []
         }  
 
-        this.clockMarkers = [];
-        this.setupClockMarkers();
-    
-        this.scheduleGridRef = createRef(null);
-        this.selectedItem = null;  
-        this.dragOverCurrentTimeBox = -1;       
-        
-    } 
-
-    setupClockMarkers = () => {
-        this.clockMarkers = [];
-        for(let i = 0 ; i < 12 ; ++i) {
-            this.clockMarkers.push(this.convertClockMarkers(i));
-            this.clockMarkers.push('30');                
-        }
-    }
-
-    convertClockMarkers = (time) => {
-        if(time < 10) {
-            return '0' + time.toString() + '.00';
-        }
-        else 
-            return time.toString() + '.00';
-    }
+        this.scheduleTimestamps     = setupClockMarkers(12);    
+        this.scheduleGridRef        = createRef(null);
+        this.selectedItem           = null;  
+        this.dragOverCurrentTimeBox = -1;   
+    }     
                                                          
     componentDidMount() {
-           const ctx = this.context; // we have context available after mount; (not in constructor...)
+                  
     }
 
-    onDrag = (item) => { 
+    onDrag = (item) => {
         this.selectedItem = item;        
     };
-
-    onDragStart = (event, item) => { 
-        this.selectedItem = item;        
-    }; 
-
 
     onDrop = (event) => {
         if(this.selectedItem            === (null && undefined) || 
            this.dragOverCurrentTimeBox  === (null && undefined && -1))
                 return;
-
-
         
         const selectedObject = {
             ...this.selectedItem,
@@ -115,25 +68,18 @@ class DayScheduleGrid extends Component{
         }
     }
 
-    render() { 
-        
-        //derp
-        var gridBlocks = []
-        for(var i = 0 ; i < 12 ; ++i) {
-            gridBlocks.push(i);
-        }
-
+    render() {        
         return (
         <>
        
             <div className="ui grid h-screen flex-row">
                 <div className="eight wide column">
-                        {exampleBlocks.map((activity, exampleBlockIndex) => (
+                        {this.context.exampleActivityBlocks.map((activity, exampleBlockIndex) => (
                         <Fragment key={exampleBlockIndex}>
                             <Block  draggable                                 
                                 content={activity} sizeY={activity.endTime - activity.startTime} 
                                 onDrag={() => this.onDrag(activity)}
-                                onDragStart={(event) => this.onDragStart(event, activity)}/>
+                            />
                         </Fragment>
                         ))}
                 </div> 
@@ -142,7 +88,7 @@ class DayScheduleGrid extends Component{
                     <div className={`h-screen flex-row inline-flex w-96 activityGrid`}>
                         <span className="w-32 activityGrid">
                             {
-                                this.clockMarkers.map((marker, markerIndex) => {
+                                this.scheduleTimestamps.map((marker, markerIndex) => {
                                     return (
                                         <Fragment key={markerIndex}>
                                             <div className="text-xs text-center italic" style={{ height: 'calc(100% / 24)' }}>
@@ -159,7 +105,7 @@ class DayScheduleGrid extends Component{
                             onDrop={(event) => this.onDrop(event)}
                             >
 
-                            { gridBlocks.map((blockIndex, index) => {
+                            { this.context.emptyGridBlocks.map((blockIndex, index) => {
                                return (
                                         <Fragment key={index}>
                                             <div className="ui row gridBLock" style={{ height: 'calc(100% / 12)' }}
@@ -198,7 +144,7 @@ class DayScheduleGrid extends Component{
     }
 }
 
-export default DayScheduleGrid;
+export default ScheduleGridManager;
 
 
 

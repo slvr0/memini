@@ -1,7 +1,9 @@
 import { createContext } from 'react';
 
 export const ScheduleGridContext = createContext({
-    items: []
+    items: [], 
+    exampleActivityBlocks : [],
+    emptyGridBlocks : []
 });
 
 
