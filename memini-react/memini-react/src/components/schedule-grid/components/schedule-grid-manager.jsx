@@ -2,7 +2,7 @@ import React, { Component, Fragment, createRef, useContext} from "react";
 
 import { ScheduleGridContext } from "../store/schedule-grid-context.jsx";
 
-import { setupClockMarkers } from "../computation/computations.js";
+import { setupClockMarkers, estimateTaskStartIndex } from "../computation/computations.js";
 
 import Block from "./block.jsx";
 
@@ -36,8 +36,11 @@ class ScheduleGridManager extends Component{
         
         const selectedObject = {
             ...this.selectedItem,
-            timeIndex : this.dragOverCurrentTimeBox
+            timeIndex : this.dragOverCurrentTimeBox,
+            
         };
+
+        selectedObject.attached = true;
 
         this.setState(previousState => {
             const updatedTasks = [...previousState.tasks, selectedObject];
@@ -74,11 +77,11 @@ class ScheduleGridManager extends Component{
        
             <div className="ui grid h-screen flex-row">
                 <div className="eight wide column">
-                        {this.context.exampleActivityBlocks.map((activity, exampleBlockIndex) => (
+                        {this.context.exampleActivityBlocks.map((task, exampleBlockIndex) => (
                         <Fragment key={exampleBlockIndex}>
                             <Block  draggable                                 
-                                content={activity} sizeY={activity.endTime - activity.startTime} 
-                                onDrag={() => this.onDrag(activity)}
+                                content={task} sizeY={task.endTime - task.startTime} 
+                                onDrag={() => this.onDrag(task)}
                             />
                         </Fragment>
                         ))}
@@ -121,13 +124,23 @@ class ScheduleGridManager extends Component{
 
                         </div>  
 
-                        <div ref={ this.scheduleGridRef } className={`w-64` } >
+                        <div ref={ this.scheduleGridRef } className={`w-64 schedule-task-grid `} >
                             {
                                 this.state.tasks.map((task, taskIndex) => {
+                                    //const startIndex = estimateTaskStartIndex(task.startTime);
+
+                                    const topPosition = `calc(${task.startTime} * (100% / 12))`;
+
+                                    console.log(topPosition);
+
                                     return (                                        
                                         <Fragment key={taskIndex}>
-                                            <Block                                                 
-                                                content={task} sizeY={task.endTime - task.startTime}                                                 
+                                            <Block draggable 
+                                                className="attached-task"                                                
+                                                content={task} sizeY={task.endTime - task.startTime}    
+                                                onDrag={() => this.onDrag(task)}
+                                                style={{top: '5000px'}}
+
                                             />
                                         </Fragment>
                                        

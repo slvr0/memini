@@ -6,6 +6,6 @@
     right: 0;
     height: 2px;
     background-color: red;
-    pointer-events: none; /* Ensures the line doesn't block mouse events */
+    pointer-events: none; 
   }
   

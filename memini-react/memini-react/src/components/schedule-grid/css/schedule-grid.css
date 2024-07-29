@@ -17,3 +17,10 @@
 .gridBLock{
     border: 1px solid #ccc;
 }
+
+.schedule-task-grid{
+    position: relative;
+}
+.attached-task{
+    position: absolute;
+}

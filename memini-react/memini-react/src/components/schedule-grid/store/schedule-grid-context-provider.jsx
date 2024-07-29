@@ -18,24 +18,24 @@ class ScheduleGridContextProvider extends Component {
               title : 'Tennis', 
               activityType : 'sport', 
               description : 'Play tennis on clay with Oliver 1h',
-              startTime : 600,
-              endTime : 660,
+              startTime : 300,
+              endTime : 360,
               attached : false
           },
           {
               title : 'Do Laundry',
               activityType : 'chore',
               description : 'Take care of the laundry, wash your dirty jeans 3h',
-              startTime : 780,
-              endTime: 960,
+              startTime : 400,
+              endTime: 580,
               attached : false
           },
           {
               title : 'Watch Avengers',
               activityType : 'fun',
               description : 'Its supposed to be a great movie, i know you dont enjoy superhero movies in general but give it a shot! 2h',
-              startTime : 1260,
-              endTime: 1380,
+              startTime : 600,
+              endTime: 720,
               attached : false
           }
         ],

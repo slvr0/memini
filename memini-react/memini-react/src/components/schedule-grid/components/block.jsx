@@ -36,18 +36,26 @@ class Block extends Component{
 
         let backgroundColor = '';
         if(this.props.content)
-            backgroundColor = this.setBackgroundColorFromContentType(this.props.content.activityType);   
+            backgroundColor = this.setBackgroundColorFromContentType(this.props.content.activityType);  
 
         const computedHeight = 12 / (this.props.sizeY / 60.0).toString();
+        const computedTop = 12 / (this.props.content.startTime / 60.0).toString();
+        
+        const blockHeightStylingComputed    = 'calc(100%/' + computedHeight + ')';
+        const blockTopStylingComputed       = 'calc(100%/' + computedTop + ')';
     
-        const blockHeightStylingComputed = 'calc(100%/' + computedHeight + ')';
+        const className = `w-64 contentBlock ${backgroundColor} rounded-lg shadow-lg backdrop-blur filter sepia ${this.props.content.attached ? 'attached-task' : ''}`;
+        const style = {
+            height: this.props.content.attached ? blockHeightStylingComputed : '',
+            top: this.props.content.attached ? blockTopStylingComputed : '0'
+        }     
 
         return (
             <>  
-                <div draggable className={`w-64 contentBlock ${backgroundColor} rounded-lg shadow-lg backdrop-blur filter sepia`}
+                <div draggable className={className}
 
                 onDragStart={(event) => this.props.onDrag(this)}
-                style={{ height: 'calc(100%/4' }}>
+                style={style}>
                     {this.props.content ? (
                     <BlockContent draggable>             
                         {this.props.content}
