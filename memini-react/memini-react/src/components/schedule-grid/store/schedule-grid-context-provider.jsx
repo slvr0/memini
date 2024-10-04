@@ -16,7 +16,7 @@ class ScheduleGridContextProvider extends Component {
         exampleActivityBlocks : [
           {
               title : 'Tennis', 
-              activityType : 'sport', 
+              type : 'sport', 
               description : 'Play tennis on clay with Oliver 1h',
               startTime : 300,
               endTime : 360,
@@ -24,7 +24,7 @@ class ScheduleGridContextProvider extends Component {
           },
           {
               title : 'Do Laundry',
-              activityType : 'chore',
+              type : 'chore',
               description : 'Take care of the laundry, wash your dirty jeans 3h',
               startTime : 400,
               endTime: 580,
@@ -32,7 +32,7 @@ class ScheduleGridContextProvider extends Component {
           },
           {
               title : 'Watch Avengers',
-              activityType : 'fun',
+              type : 'fun',
               description : 'Its supposed to be a great movie, i know you dont enjoy superhero movies in general but give it a shot! 2h',
               startTime : 600,
               endTime: 720,

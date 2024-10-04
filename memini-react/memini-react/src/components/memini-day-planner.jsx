@@ -94,7 +94,7 @@ class MeminiDayPlanner extends Component{
       updateDropAreaHeight() {
         
         if (this.dropAreaRef && this.dropAreaRef.current) {
-            console.log(this.dropAreaRef);
+           
             const height = this.dropAreaRef.current.clientHeight;
             if (height !== this.dropAreaHeight) {
                 this.dropAreaHeight = height;
@@ -149,8 +149,7 @@ class MeminiDayPlanner extends Component{
     timeAsFraction = (time) => {
         const hhFrac = parseInt(time.slice(0, 2));
         const mmFrac = parseInt(time.slice(3));
-
-        console.log(hhFrac, mmFrac);
+        
         return (hhFrac * 60) + (mmFrac);
     }
 
@@ -219,13 +218,11 @@ class MeminiDayPlanner extends Component{
                             const blockHeight = (item.endTimeFraction - item.startTimeFraction) / this.minutesInDay * this.dropAreaHeight;
                             
                             
-                            console.log(this.dropAreaHeight);
-                            console.log(blockStartPosition);
+                        
+                      
                             const heightDuration = this.dropAreaHeight *  item.duration * 0.0416666666666667;
 
-                            console.log(this.dropAreaHeight);                            
-                            console.log(item.duration);
-                            console.log(heightDuration);
+                        
                             
                             return (
                                 <div className=""

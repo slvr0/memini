@@ -2,6 +2,8 @@ import React, { Grid,Component, createRef } from "react";
 
 import "../css/schedule-grid.css";
 
+
+//be replaced by a task remove soon
 class BlockContent extends Component{
     constructor(props){
         super(props); 

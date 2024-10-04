@@ -1,0 +1,26 @@
+
+//input time is displayed in minutes from 00:00, ie 600 is 10:00
+export function convertMinuteTimeToHourMinutes(timeStamp) {
+    const hh = Math.floor(timeStamp / 60);
+    const mm = timeStamp % 60;
+    return {hours : hh, minutes : mm};
+}
+
+//input time is displayed in minutes from 00:00, ie 600 is 10:00
+export function calculateTaskTime(timeStart, timeEnds) {
+    return convertMinuteTimeToHourMinutes(timeEnds - timeStart);    
+}
+
+export function convertHourMinutesToDisplayTime(hourMinutesTime, shortFormat=true, showMinutes=true) {
+    const hourFormat        = shortFormat ? 'h' : 'Hour(s)';
+    const minuteFormat      = shortFormat ? 'm' : 'Minute(s)';
+    const minutesDisplay    = showMinutes ? ' : ' + hourMinutesTime.minutes.toLocaleString() + ' ' + minuteFormat : '';
+
+   
+    return hourMinutesTime.hours.toLocaleString() + ' ' + hourFormat + minutesDisplay;
+}
+
+export function timeMinutesAsString(minutes) {
+    return minutes < 10 ? minutes.toLocaleString() + '0' : minutes.toLocaleString();
+}
+

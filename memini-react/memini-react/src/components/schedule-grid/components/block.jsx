@@ -1,70 +1,98 @@
 import React, { Component, createRef, Fragment } from "react";
 import BlockContent from "./block-content.jsx";
 
+import Task from "../../task/components/task.jsx";
+import { Grid, Icon, Container } from "semantic-ui-react";
+//more like a computational wrapper to a Task, controlling position size and connecting drag/drop events
 class Block extends Component{
     constructor(props){
         super(props); 
+
+        this.blockRef = createRef(null);
+
+        //these are for the Task size computation
+        this.state = {
+            dimensions : {width : 0 , height: 0}
+        };
+
+        this.taskTypeBackgroundColors = {
+            'sport' : ' display-activity-background-sport',
+            'chore' : ' display-activity-background-chore',
+            'fun'   : ' display-activity-background-fun'
+        };
+
+        
+        this.height     = this.props.staticHeight;
+        this.width      = this.props.staticWidth;
+        this.style      = {};
+        this.yPosition  = 0;
+        this.className  = this.props.className;        
+        
     }
     
-    componentDidMount() {
-      
+    // do we really need to updateDimension on load? seems not isnt it just duration height we need to adjust task size for
+    componentDidMount() {       
+        //this.updateDimensions();
     }
 
     setBlockContent() {
 
     }
 
-    setBackgroundColorFromContentType(contentType) {
-        switch(contentType) {
-            case 'sport' : return 'bg-red-300';
-            case 'chore' : return 'bg-yellow-300';
-            case 'fun' : return 'bg-indigo-300';
-            default : return '';
-        }
+    updateDimensions() {
+        const { clientWidth, clientHeight } = this.blockRef.current;
+        this.setState( {dimensions : { width: clientWidth, height: clientHeight}} );
+    } 
+    
+    //block decoration depends on tasktype
+    peekTaskTypeBackground = () => {       
+        return this.taskTypeBackgroundColors[this.props.content.type];
     }
 
-    setContentIcon(contentType) {
-        switch(contentType) {
-            case 'sport' : return 'bg-red-300';
-            case 'chore' : return 'bg-yellow-300';
-            case 'fun' : return 'bg-indigo-300';
-            default : return '';
-        }
+    configureAttachedTaskBlock = () => {
+        const hourPixel = 50;
+        this.height     = hourPixel * (this.props.content.endTime - this.props.content.startTime) / 60;
+
+        this.yPosition  = hourPixel * this.props.content.startTime / 60;     
+        this.className += ` attached-task`;
+    }
+
+    configureFreeTaskBlock = () => {
+
     }
 
     render() { 
+        if(this.props.content.attached) 
+            this.configureAttachedTaskBlock();         
 
-        let backgroundColor = '';
-        if(this.props.content)
-            backgroundColor = this.setBackgroundColorFromContentType(this.props.content.activityType);  
-
-        const computedHeight = 12 / (this.props.sizeY / 60.0).toString();
-        const computedTop = 12 / (this.props.content.startTime / 60.0).toString();
+        if(this.props.applyActivityTypeBackground)
+            this.className += this.peekTaskTypeBackground();
+            
+        this.style = {
+            height: `${this.height}px`,        
+            width:  `${this.width}px`,
+            top:    `${this.yPosition}px`,
+        }   
         
-        const blockHeightStylingComputed    = 'calc(100%/' + computedHeight + ')';
-        const blockTopStylingComputed       = 'calc(100%/' + computedTop + ')';
-    
-        const className = `w-64 contentBlock ${backgroundColor} rounded-lg shadow-lg backdrop-blur filter sepia ${this.props.content.attached ? 'attached-task' : ''}`;
-        const style = {
-            height: this.props.content.attached ? blockHeightStylingComputed : '',
-            top: this.props.content.attached ? blockTopStylingComputed : '0'
-        }     
-
         return (
             <>  
-                <div draggable className={className}
-
-                onDragStart={(event) => this.props.onDrag(this)}
-                style={style}>
-                    {this.props.content ? (
-                    <BlockContent draggable>             
-                        {this.props.content}
-                    </BlockContent>
-                    ) : (
-                    <Fragment>                
-                        <p>No content available</p>
-                    </Fragment>
-                    )}
+                <div 
+                    draggable 
+                    ref={this.blockRef}
+                    className={`${this.className}`}
+                    onDragStart={(event) => this.props.onDrag(this)}
+                    style={this.style}>
+                        {this.props.content ? (
+                            <Task                                 
+                                height={this.height}
+                                content={this.props.content}  
+                            >
+                            </Task>           
+                        ) : (
+                        <Fragment>                
+                            <p>No content available</p>
+                        </Fragment>
+                        )}
                 </div>
         
             </>       

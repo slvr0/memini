@@ -1,0 +1,47 @@
+.display-activity-micro-container {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.display-activity-time-display {
+    border-radius: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    width: calc(10% + 0.3rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 0.6rem;
+    padding-right: 0.3rem;
+    box-sizing: border-box;
+}
+
+.display-activity-options-display {
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.display-activity-micro-title {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 1.0;
+    text-align: center;
+}
+
+.display-activity-micro-description {
+    max-height: 2.6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    line-height: .8rem;
+    opacity: 0.9;
+    font-size: 0.60rem;
+    width: 100%;
+    text-align: center;
+}

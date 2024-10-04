@@ -1,0 +1,24 @@
+.display-activity-background-sport {
+    background: radial-gradient(circle, rgba(173, 216, 230, 0.6) 0%, rgba(173, 216, 230, 0.35) 50%, rgba(173, 216, 230, 0) 100%);
+}
+
+.display-activity-background-sport:hover {
+    background: radial-gradient(circle, rgba(173, 216, 230, 0.8) 0%, rgba(173, 216, 230, 0.5) 50%, rgba(173, 216, 230, 0) 100%);
+}
+
+.display-activity-background-chore {
+    background: radial-gradient(circle, rgba(221, 160, 221, 0.6) 0%, rgba(221, 160, 221, 0.35) 50%, rgba(221, 160, 221, 0) 100%);
+}
+
+.display-activity-background-chore:hover {
+    background: radial-gradient(circle, rgba(221, 160, 221, 0.8) 0%, rgba(221, 160, 221, 0.5) 50%, rgba(221, 160, 221, 0) 100%);
+}
+
+.display-activity-background-fun {
+    background: radial-gradient(circle, rgba(144, 238, 144, 0.6) 0%, rgba(144, 238, 144, 0.35) 50%, rgba(144, 238, 144, 0) 100%);
+}
+
+.display-activity-background-fun:hover {
+    background: radial-gradient(circle, rgba(144, 238, 144, 0.8) 0%, rgba(144, 238, 144, 0.5) 50%, rgba(144, 238, 144, 0) 100%);
+}
+
