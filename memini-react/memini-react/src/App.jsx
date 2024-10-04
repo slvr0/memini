@@ -60,15 +60,64 @@ class App extends Component{
 
     return (
       <> 
+
+<div className="ui visible inverted left vertical sidebar menu">
+    <a className="item">
+      <i className="home icon"></i>
+      Home
+    </a>
+    <a className="item">
+      <i className="gamepad icon"></i>
+      Calendar
+    </a>  
+    <a className="item">
+      <i className="settings icon"></i>
+      Settings
+    </a>
+  </div>
+
+
+  <div className="pusher">
+    <div className="ui basic segment">
+      <h3 className="ui header">Memini</h3>
+        <div className="ui grid">
+          <div className="ui row">
+            <div className="eight wide column gridBlock">
+              <MeminiDateComponent></MeminiDateComponent>
+            </div>
+            <div className="eight wide column">
+              <ScheduleGridContextProvider> 
+                <ScheduleGridManager />
+              </ScheduleGridContextProvider>
+            </div>
+          </div>
+          {/* <div className="ui row">
+            <div className="eight wide column">
+              
+            </div>
+            <div className="eight wide column">
+
+            </div>
+          </div> */}
+        </div>
+
+        
+        
+    </div>
+  </div>
+
+
+
 <img src={logo} className="ui small image" alt="logo" />   
 
-      {/* <MeminiDateComponent></MeminiDateComponent> */}
 
-      <ScheduleGridContextProvider>      
-
-      <ScheduleGridManager />
       
-      </ScheduleGridContextProvider>
+
+           
+
+      
+      
+      
       </>
     );
     }

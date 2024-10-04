@@ -1,6 +1,7 @@
 import React, { Component, Fragment, createRef, useContext} from "react";
 import { ScheduleGridContext } from "../store/schedule-grid-context.jsx";
 import { setupClockMarkers, estimateTaskStartIndex } from "../computation/computations.js";
+import HorizontalScheduleMarker from "./horizontal-schedule-marker.jsx";
 import Block from "./block.jsx";
 
 class ScheduleGridManager extends Component{
@@ -12,10 +13,13 @@ class ScheduleGridManager extends Component{
             tasks : []
         }  
 
-        this.scheduleTimestamps     = setupClockMarkers(12);    
-        this.scheduleGridRef        = createRef(null);
-        this.selectedItem           = null;  
-        this.dragOverCurrentTimeBox = -1;  //TimeBox is a strange name 
+        this.scheduleTimestamps         = setupClockMarkers(12);    
+        this.scheduleGridRef            = createRef(null);
+        this.selectedItem               = null;  
+        this.activityGridSizeY          = 600; // pixels
+        this.isMovingActivity           = false;
+        //some mouse cursor drag start ofset when selecting item ( need better precision on drop )
+
     }     
                                                          
     componentDidMount() {
@@ -23,20 +27,24 @@ class ScheduleGridManager extends Component{
     }
 
     onDrag = (item) => {
-        this.selectedItem = item;        
+        this.selectedItem = item;  
+        this.isMovingActivity = true;     
     };
 
-    onDrop = (event) => {
-        if(this.selectedItem            === (null && undefined) || 
-           this.dragOverCurrentTimeBox  === (null && undefined && -1))
-                return;
-        
+    onDrop = (event) => {        
+        if(this.selectedItem === (null && undefined))
+            return;
+
+        const dropTarget = event.currentTarget;
+        const rect = dropTarget.getBoundingClientRect();    
+        const relativeY = event.clientY - rect.top;
+
         const selectedObject = {
-            ...this.selectedItem,
-            timeIndex : this.dragOverCurrentTimeBox,
-            
+            ...this.selectedItem,           
         };
 
+        selectedObject.startTime = Math.ceil((relativeY / rect.height) * 60 * 12);
+        selectedObject.endTime = selectedObject.startTime + 60;
         selectedObject.attached = true;
 
         this.setState(previousState => {
@@ -45,6 +53,7 @@ class ScheduleGridManager extends Component{
             return { tasks: updatedTasks };
         });
 
+        this.horizontalScheduleMarker.setRenderMode(false);
         this.resetSelection();
     }
 
@@ -54,96 +63,110 @@ class ScheduleGridManager extends Component{
     }
 
     onDragOver = (event, blockIndex) => {
+        if(!this.horizontalScheduleMarker.isRendering()) // user hovers the schedule grid
+            this.horizontalScheduleMarker.setRenderMode(true);
+        
         event.preventDefault();
 
-        if(blockIndex === this.dragOverCurrentTimeBox)
-            return;
-        
-        this.dragOverCurrentTimeBox = blockIndex;
+        const container = this.scheduleGridRef.current;
+        const containerRect = container.getBoundingClientRect();
+        const mouseY = event.clientY - containerRect.top;;    
+
+        this.horizontalScheduleMarker.updatePosition(mouseY);
     }
 
     onDragLeave = (event) => {
-        if (!this.scheduleGridRef.current.contains(event.relatedTarget)) {
-            this.dragOverCurrentTimeBox = -1;
-        }
+        if (!this.scheduleGridRef.current.contains(event.relatedTarget)) 
+            this.horizontalScheduleMarker.setRenderMode(false);
     }
 
     render() {        
         return (
         <>       
-            <div className="ui grid flex-row h-48">
-                <div className="eight wide column">
-                        {
-                            this.context.exampleActivityBlocks.map((task, exampleBlockIndex) => (
-                                <Fragment key={exampleBlockIndex}>
-                                    <Block  draggable                                 
-                                        content={task} 
-                                        sizeY={task.endTime - task.startTime} 
-                                        staticHeight={50}
-                                        staticWidth={150}
-                                        className={'gridBlock w-48 h-[50px]'}
-                                        applyActivityTypeBackground={true}
-                                        onDrag={() => this.onDrag(task)} // dual setters with sizeY and staticHeight
-                                    />
-                                </Fragment>
-                        ))}
-                </div> 
+            <div className="h-48 w-2/3">
+                
+                <div className="ui menu">
+                    <a className="header item">
+                        <i className="large rocket icon"></i>
+                        Add activity
+                    </a>
 
-                <div className="eight wide column">
-                    <div className={`flex-row inline-flex w-96 activityGrid h-[600px]`}>
-                        <span className="w-16 activityGridTimeFrame">
-                            {
-                                this.scheduleTimestamps.map((marker, markerIndex) => {
-                                    return (
-                                        <Fragment key={markerIndex}>
-                                            <div className="text-xs text-center italic h-[25px]">
-                                                <a className={markerIndex % 2 === 0 ? "antialiased" : "text-xs"}>{marker}</a>
-                                            </div>
-                                        </Fragment>
-                                    );
-                                })
-                            }        
-                        </span>
-                                
-                        <div ref={ this.scheduleGridRef } className={`w-32 activityGridTimeFrame` } 
-                            onDragLeave ={(event) => {this.onDragLeave(event)}}                        
-                            onDrop={(event) => this.onDrop(event)}
-                            >
-                                { this.context.emptyGridBlocks.map((blockIndex, index) => {
-                               return (
-                                        <Fragment key={index}>
-                                            <div className="w-32 ui row gridBlock h-[50px]"
-                                                onDragOver={(event) => {this.onDragOver(event, blockIndex)}}
-                                            >
-                                                
-                                                block {blockIndex}
-                                            </div>
-                                        </Fragment>
-                                    );
-                                })
-                            }
-
-
-                        </div>  
-
-                        <div ref={ this.scheduleGridRef } className={`w-48 schedule-task-grid`} >
-                            {
-                                this.state.tasks.map((task, taskIndex) => {
-                                    return (                                        
-                                        <Fragment key={taskIndex}>
-                                            <Block draggable 
-                                                className="attached-task w-48"                                                
-                                                content={task} sizeY={task.endTime - task.startTime}    
-                                                onDrag={() => this.onDrag(task)}    
-                                                applyActivityTypeBackground={true}                                          
-                                            />
-                                        </Fragment>
-                                    );
-                                })
-                            }
-                        </div>  
-                    </div>
+                    <a className="item">
+                        <i className="text-blue-400 moon icon"></i>
+                        
+                    </a>
+                    <a className="item">
+                        <i className="text-orange-400 sun icon"></i>                        
+                    </a>
+                    <a className="item">
+                        <i className="text-red-200 trash icon"></i>     
+                        Clear                    
+                    </a>
+                    
                 </div>
+
+                <div className="ui grid">
+                    <div className="twelve wide column">
+                        <div className={`flex-row inline-flex activityGrid h-[${this.activityGridSizeY}]px`}>
+                            <span className="w-16">
+                                {
+                                    this.scheduleTimestamps.map((marker, markerIndex) => {
+                                        return (
+                                            <Fragment key={markerIndex}>
+                                                <div className="text-left italic h-[25px]" style={{marginLeft: '15px'}}>
+                                                    <i className={markerIndex % 2 === 0 ? "antialiased" : "text-xs"}>{marker}</i>
+                                                </div>
+                                            </Fragment>
+                                        );
+                                    })
+                                }        
+                            </span>
+
+                            <div ref={ this.scheduleGridRef } className={`w-48 schedule-task-grid`} 
+                                onDragLeave ={(event) => {this.onDragLeave(event)}}                        
+                                onDrop={(event) => this.onDrop(event)}
+                                onDragOver={(event) => {this.onDragOver(event)}}
+                            >
+                            <HorizontalScheduleMarker 
+                                ref={(horizontalScheduleMarker) => { this.horizontalScheduleMarker = horizontalScheduleMarker; }} >
+                            </HorizontalScheduleMarker>
+                                {
+                                    this.state.tasks.map((task, taskIndex) => {
+                                        return (                                        
+                                            <Fragment key={taskIndex}>
+                                                <Block draggable 
+                                                    className="attached-task w-48"                                                
+                                                    content={task} sizeY={task.endTime - task.startTime}    
+                                                    onDrag={() => this.onDrag(task)}    
+                                                    applyActivityTypeBackground={true}                                          
+                                                />
+                                            </Fragment>
+                                        );
+                                    })
+                                }
+                            </div>                     
+                        </div>
+                    </div>
+
+                    <div className="four wide column">
+                    {
+                        this.context.exampleActivityBlocks.map((task, exampleBlockIndex) => (
+                            <Fragment key={exampleBlockIndex}>
+                                <Block  draggable                                 
+                                    content={task} 
+                                    sizeY={task.endTime - task.startTime} 
+                                    staticHeight={50}
+                                    staticWidth={150}
+                                    className={'w-48 h-[50px]'}
+                                    applyActivityTypeBackground={true}
+                                    onDrag={() => this.onDrag(task)} // dual setters with sizeY and staticHeight
+                                />
+                            </Fragment>
+                    ))}
+                    </div>
+
+                </div>
+                
             </div>
         </>       
         );

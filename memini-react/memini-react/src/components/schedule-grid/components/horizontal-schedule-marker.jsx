@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 
-import '../../../index.css';
-
 class HorizontalScheduleMarker extends Component{
     constructor(props) {
         super(props);       
@@ -16,6 +14,10 @@ class HorizontalScheduleMarker extends Component{
 
     componentDidMount() {
       
+    }
+
+    isRendering = () => {
+      return this.state.shouldRender;
     }
 
     updatePosition = (positionY) => {
@@ -38,7 +40,7 @@ class HorizontalScheduleMarker extends Component{
             <>
             {this.state.shouldRender && (
             <div 
-            className="horizontal-line" 
+            className="horizontal-schedule-marker-line" 
             style={{ top: `${this.state.positionY}px`, zIndex: 1000 }}
             />
             )}

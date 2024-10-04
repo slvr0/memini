@@ -45,8 +45,6 @@ class MeminiDateComponent extends Component{
                 <TodaysDate onClickTodaysDate={this.onClickTodaysDate}></TodaysDate>
             </div>
             <br></br>
-        
-
 
             <hr></hr> 
           
@@ -55,7 +53,6 @@ class MeminiDateComponent extends Component{
             selectedDate={this.state.selectedDate} 
             onInputChangeCallback={this.onCalendarDateChange}     
             />       
-
        
             <hr></hr>
             <br></br>
