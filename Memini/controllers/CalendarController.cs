@@ -1,8 +1,10 @@
 ﻿
-using Memini.db;
+using Memini.entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using Memini.dto;
+using Memini.managers;
 
 namespace Memini.Controllers;
 
@@ -10,36 +12,27 @@ namespace Memini.Controllers;
 [ApiController]
 public class CalendarController : ControllerBase
 {
-
     private IConfiguration _configuration;
     public CalendarController(IConfiguration configuration)
     {
         _configuration = configuration;
     }
 
-
     [HttpGet]
     [Route("GetCalendar")]
     public JsonResult GetCalendar()
     {
-        //return new JsonResult("Durper");
-
         using(var context = new MeminiDbContext())
         {
-            User? user = context.Users.FirstOrDefault(user => user.Name == "Dan Johansson");
+            User? user = new UserManager().GetUserBasic("Dan Johansson", "johansson_dan@hotmail.com", context);
 
-            if(user != null)
-            {
-                var res = new
-                {
-                    Name = user.Name,
-                    Email = user.Email
-                };
-                return new JsonResult(res);
-            }
-        }
+            if (user == null)
+                return new JsonResult("couldnt find the user");
 
-        return new JsonResult("Durper still");
+            var userDto = user.ToDto();
+
+            return new JsonResult(userDto);
+        }        
     }
 
 }
