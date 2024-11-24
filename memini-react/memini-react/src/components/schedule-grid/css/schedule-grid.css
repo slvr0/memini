@@ -7,10 +7,24 @@
     max-height: calc(1.2em * 3);
 }
 
+
+
+.schedule-grid-content-main-background-low{
+    background: rgba(136, 220, 182, 0.05) !important; 
+}
+.schedule-grid-content-main-background-medium{
+    background: rgba(136, 220, 182, 0.1) !important; 
+}
+.schedule-grid-content-main-background-intense{
+    background: rgba(136, 220, 182, 0.2) !important; 
+}
+
+
 .activityGridTimeFrame{
     border: 1px solid #ccc;
 }
 .activityGrid{
+    background-color: white;
     border: 1px solid rgba(204, 204, 204, 0.4); /* Light gray with reduced opacity */
     border-radius: 8px; /* Rounded corners for a softer look */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for a subtle depth effect */
@@ -22,20 +36,61 @@
 
 .schedule-task-grid{
     position: relative;
+    max-height: 600px;
+    overflow-y:auto;
 }
 
 .attached-task{
     position: absolute;
 }
 
-.horizontal-schedule-marker-line {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(to right, rgba(255, 99, 99, 0) 0%, rgba(255, 99, 99, 1) 50%, rgba(255, 99, 99, 0) 100%);
-    pointer-events: none;
+.time-marker-column{
+    background: rgba(136, 220, 182, 0.1); 
 }
+
+.schedule-grid-timemark-whole{
+    font-size: medium;
+    font-weight: 550;
+    text-align: left;
+}
+
+.schedule-grid-timemark-half{
+    font-size: 12px;
+    text-align: left;
+    margin-left:14px;
+}
+
+.schedule-grid-recommended-activities-area{
+    margin-top:10px;
+}
+
+/* Style the scrollbar */
+.scrollable-div::-webkit-scrollbar {
+    width: 24px; /* Wider scrollbar */
+}
+
+/* Style the track (background of the scrollbar) */
+.scrollable-div::-webkit-scrollbar-track {
+    background: rgba(136, 220, 182, 0.366); 
+    border-radius: 10px; /* Rounded corners for the track */
+}
+
+/* Style the thumb (the draggable part of the scrollbar) */
+.scrollable-div::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.424); /* Darker with transparency */
+    border-radius: 12px; /* More rounded corners for the thumb */
+    border: 2px solid rgba(241, 241, 241, 0.8); /* Light border to match Semantic UI */
+}
+
+/* Style the thumb when hovered */
+.scrollable-div::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(85, 85, 85, 0.8); /* Darker color when hovered, still slightly transparent */
+}
+
+.schedule-grid-add-item-menu-option{
+
+}
+
 
 
 

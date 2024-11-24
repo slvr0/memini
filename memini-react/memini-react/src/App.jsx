@@ -1,10 +1,14 @@
-import React, { Component, useEffect, Fragment } from "react";
+import React, { Component, useEffect, Fragment, act } from "react";
 
 import ScheduleGridManager from "./components/schedule-grid/components/schedule-grid-manager.jsx";
 
 import ScheduleGridContextProvider from "./components/schedule-grid/store/schedule-grid-context-provider.jsx";
 
 import MeminiDateComponent from "./components/calendar/components/memini-date-component.jsx";
+
+import MainMenuBar from "./components/main-menu-bar/components/main-menu-bar.jsx";
+
+import UserMainPage from "./components/user/components/user-main-page.jsx"
 
 import logo from './assets/images/logo_2-removebg-preview.png';
 
@@ -16,22 +20,28 @@ import $ from "jquery";
 import 'semantic-ui-css/semantic.min.css';
 import 'semantic-ui-css/semantic.min.js'; 
 
+
+
 class App extends Component{
-    constructor(props){
-        super(props);  
-        
-        this.API_URL = "http://localhost:5000/";
+  constructor(props){
+      super(props);  
+      
+      this.API_URL = "http://localhost:5000/";
 
-        //this can be global context stuff
-        this.dateNow = new Date();
-        this.yearNow = this.dateNow.getFullYear();
-        this.monthNow = this.dateNow.getMonth() + 1; // who programmed this to need  + 1 to be accurate.
+      this.applicationTabs = {
+        Planning : 'planning',
+        Events : 'events',
+        User : 'user'
+      }
 
-        this.state = {
-          isOpen:false,
-          saved:false
-        };        
-    }
+      this.state = {
+        activeTab : this.applicationTabs.Planning
+      };    
+      
+      this.fetchData();
+
+  }
+    
     
   fetchData = async () => {
     fetch(this.API_URL + "api/Calendar/GetCalendar")
@@ -42,82 +52,79 @@ class App extends Component{
       return response.json(); 
     })
     .then(data => {
-      this.setState({note:data});
+      console.log(data);
     })
     .catch(error => {
       console.error('Error fetching data:', error);
     });
   }
+
+
+  fetchCurrentUser = () => {
+    //figure out how to get credentials
+    const endpointURL = this.API_URL + "api/User/GetCurrentUser";
+    
+
+
+    
+  }
+
+
   componentDidMount() {
  
   }
 
-  //some function to connect dragged block
+  onChangeTab = (activeTab) => {
+    if(this.state.activeTab === activeTab)
+      return;
+
+    this.setState({ activeTab });   
+  } 
 
   render() { 
-    
-    
-
     return (
       <> 
 
-<div className="ui visible inverted left vertical sidebar menu">
-    <a className="item">
-      <i className="home icon"></i>
-      Home
-    </a>
-    <a className="item">
-      <i className="gamepad icon"></i>
-      Calendar
-    </a>  
-    <a className="item">
-      <i className="settings icon"></i>
-      Settings
-    </a>
-  </div>
+        <div className="ui grid centered main-page-main-grid">
+        <div className="ui row main-page-row gridBlock h-screen">
+        <div className="one wide column main-page-left-void"> {/* Left void */}</div>
+        <div className="two wide column" style={{display:'flex'}}> {/* Nav bar */}
 
-
-  <div className="pusher">
-    <div className="ui basic segment">
-      <h3 className="ui header">Memini</h3>
-        <div className="ui grid">
-          <div className="ui row">
-            <div className="eight wide column gridBlock">
-              <MeminiDateComponent></MeminiDateComponent>
-            </div>
-            <div className="eight wide column">
-              <ScheduleGridContextProvider> 
-                <ScheduleGridManager />
-              </ScheduleGridContextProvider>
-            </div>
-          </div>
-          {/* <div className="ui row">
-            <div className="eight wide column">
-              
-            </div>
-            <div className="eight wide column">
-
-            </div>
-          </div> */}
+        <MainMenuBar onChangeTab={(newTab) => this.onChangeTab(newTab)} availableTabs={this.applicationTabs}/>
         </div>
 
-        
-        
-    </div>
-  </div>
+        <div className="twelve wide column main-page-content">
+          <div className="ui grid">
+          {/* This reloads constructor everytime the page is loaded, maybe we just want visibility control on the tabs */}
 
+            {this.state.activeTab === this.applicationTabs.Planning &&            
+              <>
+              <div className="eight wide column">
+                    <MeminiDateComponent /> 
+              </div>
 
+              <div className="eight wide column">
+              <ScheduleGridContextProvider> 
+                  <ScheduleGridManager />
+              </ScheduleGridContextProvider>
+              </div>
+              </>
+            }
 
-<img src={logo} className="ui small image" alt="logo" />   
+            {this.state.activeTab === this.applicationTabs.Events &&
+              <h3>Not implemented yet, To be continued !</h3>
+            }
 
+            {this.state.activeTab === this.applicationTabs.User &&
+              <UserMainPage> </UserMainPage>
+            }   
+          </div>
+        </div>
+        <div className="one wide column"> {/* Right void */}</div>
 
-      
+        </div>
+        </div>
 
-           
-
-      
-      
-      
       </>
     );
     }

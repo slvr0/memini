@@ -1,0 +1,32 @@
+.main-nav-bar {
+  background-color: rgba(255, 255, 255, 0.8); 
+  border-radius: 30px !important; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding-top: 20px;
+
+  border: 1px solid rgba(204, 204, 204, 0.4); 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+.menu-item {
+  padding: 10px; /* Padding for a nicer look */
+  margin: 0; /* No margin between items */
+  width: 100%; /* Make sure it fills the width */
+  transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
+  display: flex; /* Enable flexbox */
+  align-items: center; /* Center items vertically */
+  justify-content: center; /* Center items horizontally */
+}
+
+.menu-item:hover {
+  cursor:pointer;
+  color:darkgray;
+}
+
+/* Specific styling for Sign out item */
+.sign-out-item {  
+  border-radius: 0 0 30px 30px; /* Only round the bottom corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect */
+  width: 100%; /* Ensure it fills the width */
+  margin: 0; /* No margin to ensure proper alignment */
+}

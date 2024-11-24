@@ -28,9 +28,8 @@ class Block extends Component{
         this.yPosition  = 0;
         this.className  = this.props.className;        
         
-    }
-    
-    // do we really need to updateDimension on load? seems not isnt it just duration height we need to adjust task size for
+    }    
+
     componentDidMount() {       
         //this.updateDimensions();
     }
@@ -40,8 +39,7 @@ class Block extends Component{
     }
 
     updateDimensions() {
-        const { clientWidth, clientHeight } = this.blockRef.current;
-        this.setState( {dimensions : { width: clientWidth, height: clientHeight}} );
+        
     } 
     
     //block decoration depends on tasktype

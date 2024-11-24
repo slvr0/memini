@@ -7,6 +7,7 @@ import {  Icon, Dropdown } from 'semantic-ui-react';
 
 class CalendarNavigator extends Component{
   constructor(props){
+
     super(props); 
 
     const currentYear = new Date().getFullYear();
@@ -89,9 +90,6 @@ class CalendarNavigator extends Component{
       const chevronHoverStyling = this.chevronOnHoverStyle();     
       const yearDropdownStyling = this.yearSelectionDropdownStyle();
       const monthDropdownStyling = this.monthSelectionDropdownStyle();
-      const dropdownHoverStyling = this.dropdownHoverStyle();
-
-
       const monthIndex = this.props.selectedDate.month - 1;
       const selectedMonthName = this.monthOptions[monthIndex]?.value; 
 
