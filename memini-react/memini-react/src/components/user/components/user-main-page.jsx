@@ -1,13 +1,22 @@
 import React, { Component } from "react";
 import { Input } from 'semantic-ui-react'
 
-class UserMainPage extends Component{
-    constructor(props){
-        super(props); 
 
-    }  
+import {useSelector, useDispatch} from 'react-redux'
 
-    render() { 
+
+const UserMainPage  = () => {    
+        const dispatch = useDispatch();
+        const authState = useSelector((state) => state.auth.isAuthorized);
+       
+
+        const loginHandler = () => {            
+            //dispatch(authActions.login());
+        }
+        
+        const logoutHandler = () => {
+
+        }
 
         return (
             <> 
@@ -23,15 +32,11 @@ class UserMainPage extends Component{
                     </div>
 
                     <div className="four wide column">
-                    <div>
-
-                    </div>
+                       
                     </div>
 
                     <div className="four wide column">
-                        <div>
-
-                        </div>
+                        
                     </div>                  
 
                 </div>
@@ -80,7 +85,8 @@ class UserMainPage extends Component{
                             Login                       
                         </div>
 
-                        <div className="ui button big basic user-main-login-button">
+                        <div className="ui button big basic user-main-login-button" 
+                            onClick={ (event,data) => {loginHandler() }}>
                             I am god                       
                         </div>
                       
@@ -128,8 +134,8 @@ class UserMainPage extends Component{
           
             </>       
         );
-    }
-}
+ }
+
 
 export default UserMainPage;
 

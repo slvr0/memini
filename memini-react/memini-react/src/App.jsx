@@ -1,15 +1,9 @@
 import React, { Component, useEffect, Fragment, act } from "react";
-
 import ScheduleGridManager from "./components/schedule-grid/components/schedule-grid-manager.jsx";
-
 import ScheduleGridContextProvider from "./components/schedule-grid/store/schedule-grid-context-provider.jsx";
-
-import MeminiDateComponent from "./components/calendar/components/memini-date-component.jsx";
-
+import CalendarContainer from "./components/calendar/components/calendar-container.jsx";
 import MainMenuBar from "./components/main-menu-bar/components/main-menu-bar.jsx";
-
 import UserMainPage from "./components/user/components/user-main-page.jsx"
-
 import logo from './assets/images/logo_2-removebg-preview.png';
 
 import './App.css';
@@ -19,8 +13,6 @@ import $ from "jquery";
 
 import 'semantic-ui-css/semantic.min.css';
 import 'semantic-ui-css/semantic.min.js'; 
-
-
 
 class App extends Component{
   constructor(props){
@@ -38,7 +30,7 @@ class App extends Component{
         activeTab : this.applicationTabs.Planning
       };    
       
-      this.fetchData();
+      //this.fetchData();
 
   }
     
@@ -52,14 +44,14 @@ class App extends Component{
       return response.json(); 
     })
     .then(data => {
-      console.log(data);
+      
     })
     .catch(error => {
       console.error('Error fetching data:', error);
     });
   }
 
-
+  //can we do this one time instead of reloading the we F5 the mainpage...
   fetchCurrentUser = () => {
     //figure out how to get credentials
     const endpointURL = this.API_URL + "api/User/GetCurrentUser";
@@ -99,11 +91,11 @@ class App extends Component{
 
             {this.state.activeTab === this.applicationTabs.Planning &&            
               <>
-              <div className="eight wide column">
-                    <MeminiDateComponent /> 
+              <div className="eight wide column content-container">
+                    <CalendarContainer /> 
               </div>
 
-              <div className="eight wide column">
+              <div className="eight wide column content-container">
               <ScheduleGridContextProvider> 
                   <ScheduleGridManager />
               </ScheduleGridContextProvider>

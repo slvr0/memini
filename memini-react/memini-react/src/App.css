@@ -13,6 +13,12 @@
   }
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif !important;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -40,8 +46,58 @@
 }
 
 .main-page-content{
-  background-color: rgba(160, 120, 130, 0.1);
+  /*background-color: rgba(160, 120, 130, 0.1);*/
 }
+
+.content-container {
+  border: 1px solid rgba(200, 200, 200, 0.8);
+}
+
+.memini-icon{
+  color:darkslategray;
+}
+
+.memini-icon.interactive:hover{
+  color:brown;
+  cursor: pointer;
+}
+
+.memini-icon-medium {
+  font-size:10px;
+}
+
+.memini-icon-medium {  
+  font-size:12px;
+}
+
+.memini-icon-large {  
+  font-size:14px;
+}
+
+.memini-background-dimmed {
+  background-color: rgb(47, 79, 79, 0.1);
+}
+
+.memini-background-light {
+  background-color: rgb(47, 79, 79, 0.25);
+}
+
+.memini-background-medium {
+  background-color: rgb(47, 79, 79, 0.5);
+}
+
+.memini-background-strong {
+  background-color: rgb(47, 79, 79, 0.75);
+}
+
+.memini-background-full {
+  background-color: rgb(47, 79, 79, 0.75);
+}
+
+.memini-content-row {
+  margin: 5px 0 5px 0;
+}
+
 
 /* @keyframes App-logo-spin {
   from {

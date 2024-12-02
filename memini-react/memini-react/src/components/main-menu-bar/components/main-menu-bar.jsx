@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { Menu, Image } from "semantic-ui-react";
 import logo from "../../../assets/images/memini_logo_f4.png";
 
+import {connect} from 'react-redux';
+
+
 class MainMenuBar extends Component{
     constructor(props){
         super(props); 
@@ -73,7 +76,20 @@ class MainMenuBar extends Component{
     }
 }
 
-export default MainMenuBar;
+const mapStateToProps = (state) => {
+    return {
+        counter : state.counter
+    };
+}
+//have to bind this to these stuff?
+const mapDispatchToProps = (dispatch) => {
+    return {
+        increment: () => {dispatch({type:'increment'})}
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainMenuBar);
 
 
 

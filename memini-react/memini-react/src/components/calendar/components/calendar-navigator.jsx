@@ -1,135 +1,45 @@
-import React, { Component } from "react";
+import CustomDropdown from '../../tools/custom-dropdown.jsx';
+import {GetMonthsOptions, GetYearsOptions} from '../computation/date-computations.js';
 
-import '../../../index.css';
+const  CalendarNavigator = ({selectedMonth, onChangeSelectedMonth,selectedYear, onChangeSelectedYear, currentYear}) => { 
+  const monthsOptions      = GetMonthsOptions();
+  const yearsOptions       = GetYearsOptions(currentYear, 10);
+  const navigationElements = 'calendar-navigation-elements';
+  const isInMonthInterval  = (month) => month > 0 && month < 13;
 
-import 'semantic-ui-css/semantic.min.css';
-import {  Icon, Dropdown } from 'semantic-ui-react';
-
-class CalendarNavigator extends Component{
-  constructor(props){
-
-    super(props); 
-
-    const currentYear = new Date().getFullYear();
-    const startYear = currentYear - 10;
-    const endYear = currentYear + 10;
-    
-    
-    this.yearOptions = [];
-    for (let year = startYear; year <= endYear; year++) {
-      this.yearOptions.push({ key: year, value: year, text: year });
-    }
-
-    this.monthOptions = [
-      { key: 'jan', value: 'January', text: 'January' },
-      { key: 'feb', value: 'February', text: 'February' },
-      { key: 'mar', value: 'March', text: 'March' },
-      { key: 'apr', value: 'April', text: 'April' },
-      { key: 'may', value: 'May', text: 'May' },
-      { key: 'jun', value: 'June', text: 'June' },
-      { key: 'jul', value: 'July', text: 'July' },
-      { key: 'aug', value: 'August', text: 'August' },
-      { key: 'sep', value: 'September', text: 'September' },
-      { key: 'oct', value: 'October', text: 'October' },
-      { key: 'nov', value: 'November', text: 'November' },
-      { key: 'dec', value: 'December', text: 'December' },
-    ]; 
-  }
-
-  chevronOnHoverStyle = () => {
-    return "inline-block hover:text-red-500 transition-colors duration-100 cursor-pointer";
-  } 
-
-  onMonthChange = (e, { value }) => {
-    const  monthSelectedValue= this.monthOptions.findIndex(month => month.value === value) + 1;
-    this.props.onInputChangeCallback(this.props.selectedDate.year, monthSelectedValue);
-  }
-
-  onYearChange = (e, { value }) => {   
-    this.props.onInputChangeCallback(value, this.props.selectedDate.month);
-  }
-
-  //tailwind css and semantic components does not work together at all
-  yearSelectionDropdownStyle = () => {
-    return "compact rounded-dropdown mx-1 border-dashed";
-  }
-
-  monthSelectionDropdownStyle = () => {
-    return "calendar-navigator-dropdown-month compact rounded-dropdown mx-1 border-dashed";
-  }
-
-  dropdownHoverStyle = () => {
-    return "hover:bg-blue-100 hover:text-black hover:rounded-full cursor-pointer";
-  }
-
-  onChevronLeftTriggered = (e, { value }) => {  
-    const monthIndex = this.props.selectedDate.month - 1;
-
-    if(monthIndex < 1) {
-      this.props.onInputChangeCallback(this.props.selectedDate.year - 1, 12);
-    } 
+  const onChevronClick = (currentMonth, currentYear, increment) => {
+    const newMonth = currentMonth + increment;    
+    const isNewMonthInInterval = isInMonthInterval(newMonth);
+    if(isNewMonthInInterval) onChangeSelectedMonth(newMonth);
     else {
-      this.props.onInputChangeCallback(this.props.selectedDate.year, monthIndex);
+      onChangeSelectedMonth(Math.abs(12 - newMonth));
+      onChangeSelectedYear(currentYear + increment);
     }
-        
   }
 
-  onChevronRightTriggered = (e, { value }) => {  
-    const monthIndex = this.props.selectedDate.month + 1;
-
-    if(monthIndex > 12) {
-      this.props.onInputChangeCallback(this.props.selectedDate.year + 1, 1);
-    }
-    else {
-      this.props.onInputChangeCallback(this.props.selectedDate.year, monthIndex);
-    }        
-  } 
-
-  render() {    
-
-      const chevronHoverStyling = this.chevronOnHoverStyle();     
-      const yearDropdownStyling = this.yearSelectionDropdownStyle();
-      const monthDropdownStyling = this.monthSelectionDropdownStyle();
-      const monthIndex = this.props.selectedDate.month - 1;
-      const selectedMonthName = this.monthOptions[monthIndex]?.value; 
-
-      return (
+  return( 
         <>
-            <h4 className="text-center">
+          <div className={navigationElements}>
+            <i className="ui icon large chevron left memini-icon interactive calendar-navigation-chevron-left"
+               onClick={() => {onChevronClick(selectedMonth, selectedYear, -1)}}
+            ></i> 
+            <CustomDropdown 
+              options={monthsOptions}
+              value={selectedMonth}
+              onChange={onChangeSelectedMonth}
+            ></CustomDropdown>
+            <CustomDropdown 
+              options={yearsOptions}
+              value={selectedYear}
+              onChange={onChangeSelectedYear}
+            ></CustomDropdown>
 
-            <Icon onClick={this.onChevronLeftTriggered} className={`chevron left icon ${chevronHoverStyling}`} size="large" style={{ marginRight: '1.25em' }} />
-
-            {/* Something is broken/deprecated with these Semantic React components, remove them! Dropdown seems to be using findDOMNode which is giving warnings */} 
-            <Dropdown
-              placeholder='Select Month'
-              selection
-              options={this.monthOptions}
-              onChange={this.onMonthChange}
-              value={selectedMonthName}
-              className={monthDropdownStyling}                            
-              style={{ border: 'none', width:'125px' }}             
-            />
-      
-           
-            <Dropdown
-              placeholder='Select Year'
-              selection
-              options={this.yearOptions}
-              onChange={this.onYearChange}
-              value={this.props.selectedDate.year}
-              className={yearDropdownStyling}
-              style={{ border: 'none', width:'90px' }}
-            />
-
-            {" "}             
-                        
-            <Icon onClick={this.onChevronRightTriggered} className={`chevron right icon ${chevronHoverStyling}`} size="large" style={{ marginLeft: '1.25em' }}/>
-
-            </h4>
-      
+            <i className="ui icon large chevron right memini-icon interactive calendar-navigation-chevron-right"
+              onClick={() => {onChevronClick(selectedMonth, selectedYear, 1)}}
+            ></i>
+          </div>          
         </>
-      );
-    }
+      );      
 }
 
 export default CalendarNavigator;

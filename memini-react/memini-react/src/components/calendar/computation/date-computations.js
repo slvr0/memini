@@ -24,7 +24,7 @@ const getWeeksInMonth = (year, month) => {
 };
 
 //i did this is the function
-const getFirstWeekInMonth = (year, month) => {
+const getFirstWeekInMonth = (month, year) => {
     return new Date(year, month - 1, 1).getWeek();
 }
 
@@ -41,18 +41,6 @@ const getWeekDates = (year, week) => {
     return weekDates; 
 };
 
-
-//is today part of current visible weekspan, if yes returns active week and active day index
-const evaluateTodayIsPartOfWeekspan = (today, weeks, year) => {
-    const weekOfYear = Math.floor((today - new Date(year, 0, 1)) / 604800000) + 1;
-  
-    if (weeks.includes(weekOfYear)) {
-      return { isInWeek: true, weekIndex: weeks.indexOf(weekOfYear) };
-    } else {
-      return { isInWeek: false, weekIndex: -1 };
-    }
-}
-
 const generateHalfHourIntervals = (startHour, endHour) => {
     const intervals = [];
     for (let hour = startHour; hour <= endHour; hour++) {
@@ -62,4 +50,55 @@ const generateHalfHourIntervals = (startHour, endHour) => {
     return intervals;
   };
 
-export { getWeeksInMonth, getWeekDates, getFirstWeekInMonth, evaluateTodayIsPartOfWeekspan, generateHalfHourIntervals  };
+const GetMonthsOptions = () => {
+  return [
+    { key: '1', value: 'January' },
+    { key: '2', value: 'February' },
+    { key: '3', value: 'March' },
+    { key: '4', value: 'April' },
+    { key: '5', value: 'May' },
+    { key: '6', value: 'June' },
+    { key: '7', value: 'July' },
+    { key: '8', value: 'August' },
+    { key: '9', value: 'September' },
+    { key: '10', value: 'October' },
+    { key: '11', value: 'November' },
+    { key: '12', value: 'December' },
+  ]; 
+}
+
+const GetYearsOptions = (currentYear, interval) => {
+  const yearsOptions = [];
+  for (let year = currentYear - interval; year <= currentYear + interval; year++) {
+    yearsOptions.push({ key: year, value: year });
+  }
+  return yearsOptions;
+}
+
+const MonthsEnum = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+
+  const WeekDaysEnum = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+
+export { getWeeksInMonth, getWeekDates, getFirstWeekInMonth, 
+  generateHalfHourIntervals, MonthsEnum, WeekDaysEnum,GetMonthsOptions, GetYearsOptions };

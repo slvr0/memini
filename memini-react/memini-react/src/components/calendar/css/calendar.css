@@ -6,10 +6,38 @@
     @apply text-center px-4 py-2 cursor-pointer transition duration-100 ease-in-out rounded-full bg-white bg-opacity-50 shadow-lg border border-gray-200;
 }
 
-.currentWeek {
-    background-color: gainsboro;
+.calendar-display-current-week {
+    background-color:rgb(47, 79, 79, 0.5);
 }
 
-.currentDay {
-    background-color: rgb(215, 110, 64);
+.calendar-container{    
+    @apply text-center px-4 py-2 cursor-pointer transition duration-100 ease-in-out bg-white bg-opacity-50 shadow-lg border border-gray-200;
+}
+
+.calendar-display-date:hover {
+    @apply bg-gray-100 text-gray-700 shadow-md scale-95 transition-transform duration-200 ease-in-out rounded-md;
+}  
+
+.calendar-display-selected-day{
+    border: 1px solid;    
+    color: brown;  
+    @apply shadow-lg border min-w-[10px] min-h-[10px] flex items-center justify-center rounded-md scale-95;
+}
+
+.calendar-navigation-elements {
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+}
+
+.calendar-navigation-elements.icon {
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 20px; 
+}
+
+.calendar-selected-date-container{
+    font-size:16px;    
 }

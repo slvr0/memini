@@ -2,7 +2,7 @@ import React, { Component, Fragment, createRef, useContext} from "react";
 import { ScheduleGridContext } from "../store/schedule-grid-context.jsx";
 import { setupClockMarkers, estimateTaskStartIndex } from "../computation/computations.js";
 import HorizontalScheduleMarker from "./horizontal-schedule-marker.jsx";
-import TodaysDate from "../../calendar/components/todays-date.jsx";
+
 
 import Block from "./block.jsx";
 
@@ -23,8 +23,6 @@ class ScheduleGridManager extends Component{
         this.selectedItem               = null;  
         this.activityGridSizeY          = 1200; // pixels
         this.isMovingActivity           = false;
-        //some mouse cursor drag start ofset when selecting item ( need better precision on drop )
-
     }     
                                                          
     componentDidMount() {
@@ -79,7 +77,7 @@ class ScheduleGridManager extends Component{
 
         const container = this.scheduleGridRef.current;
         const containerRect = container.getBoundingClientRect();
-        const mouseY = event.clientY - containerRect.top;;    
+        const mouseY = event.clientY - containerRect.top;
 
         this.horizontalScheduleMarker.updatePosition(mouseY);
     }
@@ -93,8 +91,8 @@ class ScheduleGridManager extends Component{
         return (
         <>       
             <div className="ui row">
-                <h2 class="ui center aligned icon header">
-                <i class="circular users icon schedule-grid-content-main-background-low"></i>
+                <h2 className="ui center aligned icon header">
+                <i className="circular users icon schedule-grid-content-main-background-low"></i>
                 Schedule
                 </h2>
                 
@@ -107,19 +105,19 @@ class ScheduleGridManager extends Component{
                             </a>
 
                             <a className="item">
-                                <TodaysDate></TodaysDate>
+                                
                             </a>   
 
                             <a className="item">
-                                <i class="cloud icon large"></i>                    
+                                <i className="cloud icon large"></i>                    
                             </a>
 
                             <a className="item">
-                                <i class="sun icon large"></i>                    
+                                <i className="sun icon large"></i>                    
                             </a>
 
                             <a className="item">
-                                <i class="moon icon large"></i>                    
+                                <i className="moon icon large"></i>                    
                             </a>
                             
                         </div>

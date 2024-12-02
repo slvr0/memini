@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import '../index.css';
 import { Form, Header, Modal, Button, ModalHeader, ModalContent, ModalActions } from "semantic-ui-react";
 
+
+//eh remove?
 class ModalSimple extends Component {
     constructor(props) {
         super(props);
