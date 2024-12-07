@@ -33,14 +33,14 @@ const CalendarMonthDisplay = ({selectedMonth, selectedYear}) => {
           <table className="w-full">
                   <thead >
                     <tr>
-                      <th>Week</th>
-                      <th>Mon</th>
-                      <th>Tue</th>
-                      <th>Wed</th>
-                      <th>Thu</th>
-                      <th>Fri</th>
-                      <th>Sat</th>
-                      <th>Sun</th>
+                      <th className="weekday-header-text">Week</th>
+                      <th className="weekday-header-text">Mon</th>
+                      <th className="weekday-header-text">Tue</th>
+                      <th className="weekday-header-text">Wed</th>
+                      <th className="weekday-header-text">Thu</th>
+                      <th className="weekday-header-text">Fri</th>
+                      <th className="weekday-header-text">Sat</th>
+                      <th className="weekday-header-text">Sun</th>
                     </tr>
                   </thead>
 
@@ -48,8 +48,8 @@ const CalendarMonthDisplay = ({selectedMonth, selectedYear}) => {
                   {                   
                     displayWeeks.map((week, index) => {
                       return (
-                        <tr key={index} className={currentWeekIsVisible && calendarDateState.todaysDate.week === week ? 'memini-background-light' : ''}>
-                          <td className="font-thin italic">{week}</td>
+                        <tr key={index} className={currentWeekIsVisible && calendarDateState.todaysDate.week === week ? 'memini-background-dimmed' : ''}>
+                          <td className="calendar-display-date">{week}</td>
                           {
                             displayWeekDays[index].map((day, key) => {
                               const isSelectedDay = calendarDateState.selectedDate.week === week && (((calendarDateState.selectedDate.weekDay + 6) % 7) === key);

@@ -5,7 +5,7 @@ import {MonthsEnum, WeekDaysEnum} from '../computation/date-computations.js'
 const  CalendarSelectedDate = (props) => {   
   const calendarDateState = useSelector((state) => state.calendarDate); 
   const weekDay = WeekDaysEnum[(calendarDateState.selectedDate.weekDay + 6) % 7]; 
-  const selectDateClass = 'calendar-selected-date-container';
+  const selectDateClass = props.className ?? 'calendar-selected-date-container';
   return (
     <>  
       <div>

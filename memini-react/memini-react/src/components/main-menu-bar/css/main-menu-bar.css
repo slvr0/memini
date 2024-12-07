@@ -1,32 +1,45 @@
-.main-nav-bar {
-  background-color: rgba(255, 255, 255, 0.8); 
-  border-radius: 30px !important; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding-top: 20px;
 
-  border: 1px solid rgba(204, 204, 204, 0.4); 
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+.main-menu-bar-container{
+  
 }
 
-.menu-item {
-  padding: 10px; /* Padding for a nicer look */
-  margin: 0; /* No margin between items */
-  width: 100%; /* Make sure it fills the width */
-  transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
-  display: flex; /* Enable flexbox */
-  align-items: center; /* Center items vertically */
-  justify-content: center; /* Center items horizontally */
+.main-menu-project-icon{
+
 }
 
-.menu-item:hover {
-  cursor:pointer;
-  color:darkgray;
+.main-menu-option-row{
+  align-self: center !important;
+  font-size:15px;
+  letter-spacing: 1.5px;  
 }
 
-/* Specific styling for Sign out item */
-.sign-out-item {  
-  border-radius: 0 0 30px 30px; /* Only round the bottom corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow effect */
-  width: 100%; /* Ensure it fills the width */
-  margin: 0; /* No margin to ensure proper alignment */
+.main-menu-option-row-right{
+  align-self: center !important;
+  font-size:15px;
+  letter-spacing: 1.5px;  
+  margin-left: auto; /* Pushes the element to the right */
+  text-align: right; /* Ensures text aligns properly */
+
 }
+
+.main-menu-option{
+  margin:0 10px 0 10px;
+  @apply antialiased font-medium ;
+}
+
+.main-menu-option:hover{
+  cursor: pointer;
+  border-bottom: 1px solid rgba(139, 69, 19, 0.5);
+  padding-bottom: 5px;
+}
+
+.main-menu-selected-menu-option{
+  border-bottom: 2px solid rgba(139, 69, 19, 0.5);
+  padding-bottom: 5px;  
+}
+
+.main-menu-get-started-button{
+  background-color: rgba(40, 100, 152,0.25) !important;
+}
+
+

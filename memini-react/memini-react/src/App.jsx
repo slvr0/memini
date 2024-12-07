@@ -2,7 +2,7 @@ import React, { Component, useEffect, Fragment, act } from "react";
 import ScheduleGridManager from "./components/schedule-grid/components/schedule-grid-manager.jsx";
 import ScheduleGridContextProvider from "./components/schedule-grid/store/schedule-grid-context-provider.jsx";
 import CalendarContainer from "./components/calendar/components/calendar-container.jsx";
-import MainMenuBar from "./components/main-menu-bar/components/main-menu-bar.jsx";
+import MainMenuBarNew from "./components/main-menu-bar/components/main-menu-bar-new.jsx";
 import UserMainPage from "./components/user/components/user-main-page.jsx"
 import logo from './assets/images/logo_2-removebg-preview.png';
 
@@ -79,20 +79,27 @@ class App extends Component{
 
         <div className="ui grid centered main-page-main-grid">
         <div className="ui row main-page-row gridBlock h-screen">
-        <div className="one wide column main-page-left-void"> {/* Left void */}</div>
-        <div className="two wide column" style={{display:'flex'}}> {/* Nav bar */}
-
-        <MainMenuBar onChangeTab={(newTab) => this.onChangeTab(newTab)} availableTabs={this.applicationTabs}/>
-        </div>
+        <div className="one wide column"> {/* Left void */}</div>    
 
         <div className="twelve wide column main-page-content">
           <div className="ui grid">
-          {/* This reloads constructor everytime the page is loaded, maybe we just want visibility control on the tabs */}
+              <div className="ui row main-menu-bar-container">                
+                <MainMenuBarNew></MainMenuBarNew>                
+              </div>
+     
+              <div className="ui divider main-menu-divider"></div>
 
-            {this.state.activeTab === this.applicationTabs.Planning &&            
+              <div className="ui row">
+             
+
+              {this.state.activeTab === this.applicationTabs.Planning &&            
               <>
-              <div className="eight wide column content-container">
+              <div className="four wide column content-container">
                     <CalendarContainer /> 
+              </div>
+
+              <div className="four wide column content-container">
+                  
               </div>
 
               <div className="eight wide column content-container">
@@ -109,7 +116,15 @@ class App extends Component{
 
             {this.state.activeTab === this.applicationTabs.User &&
               <UserMainPage> </UserMainPage>
-            }   
+            }
+
+              </div>
+
+
+
+          
+
+               
           </div>
         </div>
         <div className="one wide column"> {/* Right void */}</div>

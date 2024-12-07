@@ -1,101 +1,68 @@
-import React, { Component, createRef, Fragment } from "react";
-import BlockContent from "./block-content.jsx";
-
+import React, { createRef, Fragment } from "react";
 import Task from "../../task/components/task.jsx";
-import { Grid, Icon, Container } from "semantic-ui-react";
+
 //more like a computational wrapper to a Task, controlling position size and connecting drag/drop events
-class Block extends Component{
-    constructor(props){
-        super(props); 
-
-        this.blockRef = createRef(null);
-
-        //these are for the Task size computation
-        this.state = {
-            dimensions : {width : 0 , height: 0}
-        };
-
-        this.taskTypeBackgroundColors = {
-            'sport' : ' display-activity-background-sport',
-            'chore' : ' display-activity-background-chore',
-            'fun'   : ' display-activity-background-fun'
-        };
-
-        
-        this.height     = this.props.staticHeight;
-        this.width      = this.props.staticWidth;
-        this.style      = {};
-        this.yPosition  = 0;
-        this.className  = this.props.className;        
-        
-    }    
-
-    componentDidMount() {       
-        //this.updateDimensions();
-    }
-
-    setBlockContent() {
-
-    }
-
-    updateDimensions() {
-        
-    } 
+const Block = (props) => {
+    const blockRef = createRef(null);
     
-    //block decoration depends on tasktype
-    peekTaskTypeBackground = () => {       
-        return this.taskTypeBackgroundColors[this.props.content.type];
-    }
+    //goes to some computation js
+    const taskTypeBackgroundColors = {
+        'sport' : ' display-activity-background-sport',
+        'chore' : ' display-activity-background-chore',
+        'fun'   : ' display-activity-background-fun'
+    };
 
-    configureAttachedTaskBlock = () => {
+    //constant variables
+    const width      = props.staticWidth ?? 200;    
+
+    const configureAttachedTaskBlock = (endTime, startTime) => {
         const hourPixel = 50;
-        this.height     = hourPixel * (this.props.content.endTime - this.props.content.startTime) / 60;
-
-        this.yPosition  = hourPixel * this.props.content.startTime / 60;     
-        this.className += ` attached-task`;
+        const height     = hourPixel * (endTime - startTime) / 60;
+        const yPosition  = hourPixel * startTime / 60;  
+        return {height: height, yPosition: yPosition, cssName: ` attached-task` }
+    }
+    //block decoration depends on tasktype
+    const peekTaskTypeBackground = (contentType) => {       
+        return taskTypeBackgroundColors[contentType];
     }
 
-    configureFreeTaskBlock = () => {
-
+    let height = props.staticHeight, yPosition = 0, cssName = '';
+    if (props.content.attached === true) {
+        ({ height, yPosition, cssName } = configureAttachedTaskBlock(props.content.endTime, props.content.startTime));
     }
 
-    render() { 
-        if(this.props.content.attached) 
-            this.configureAttachedTaskBlock();         
-
-        if(this.props.applyActivityTypeBackground)
-            this.className += this.peekTaskTypeBackground();
-            
-        this.style = {
-            height: `${this.height}px`,        
-            width:  `${this.width}px`,
-            top:    `${this.yPosition}px`,
-        }   
-        
-        return (
-            <>  
-                <div 
-                    draggable 
-                    ref={this.blockRef}
-                    className={`${this.className}`}
-                    onDragStart={(event) => this.props.onDrag(this)}
-                    style={this.style}>
-                        {this.props.content ? (
-                            <Task                                 
-                                height={this.height}
-                                content={this.props.content}  
-                            >
-                            </Task>           
-                        ) : (
-                        <Fragment>                
-                            <p>No content available</p>
-                        </Fragment>
-                        )}
-                </div>
-        
-            </>       
-        );
-    }
+    const style = {
+        height: `${height}px`,        
+        width:  `${width}px`,
+        top:    `${yPosition}px`,
+    }  
+    
+    const cssBackgroundColorForTaskType = props.applyActivityTypeBackground ? peekTaskTypeBackground(props.content.type) : '';   
+   
+    return (
+        <>  
+            <div 
+                draggable 
+                ref={blockRef}
+                className={`${cssName}`}
+                onDragStart={(event) => props.onDrag(this)}
+                style={style}>
+                    {props.content ? (
+                        <Task                                 
+                            height={height}
+                            content={props.content}  
+                        >
+                        </Task>           
+                    ) : (
+                    <Fragment>                
+                        <p>No content available</p>
+                    </Fragment>
+                    )}
+            </div>
+    
+        </>       
+    );
+    
 }
 
 export default Block;

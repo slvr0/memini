@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 
-const CustomDropdown = ({ options, value, onChange, defaultValue = '' }) => {
+const CustomDropdown = ({ options, value, onChange, defaultValue = '', className = '' }) => {
     return(
         <select  
-        className="ui dropdown"  
+        className={`ui dropdown ${className}`} 
         value={value}
         onChange={(e) => {onChange(+e.target.value)}}
         >

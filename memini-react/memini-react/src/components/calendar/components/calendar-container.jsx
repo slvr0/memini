@@ -21,26 +21,7 @@ const CalendarContainer = () => {
 
     return (
       <>
-        <div className="content-container calendar-container">
-          <div className="ui row">
-            <div className="ui grid">
-              <div className="ui row memini-content-row">
-                <div className="two wide column">
-                <i className="ui icon large calendar check memini-icon interactive"
-                onClick={() => {onSetSelectedDateToToday()}}
-                ></i> 
-                </div>
-
-                <div className="twelve wide column">
-                <CalendarSelectedDate/>
-                </div>
-
-                <div className="two wide column">
-
-                </div>
-              </div>              
-            </div>
-          </div>
+        <div className="content-container calendar-container">          
 
           <div className="ui row memini-content-row">
             <CalendarNavigator
@@ -48,7 +29,8 @@ const CalendarContainer = () => {
               onChangeSelectedMonth = {onMonthChange}
               selectedYear = {selectedYear}
               onChangeSelectedYear = {onYearChange}
-              currentYear={calendarDateState.selectedDate.year}
+              currentYear={calendarDateState.selectedDate.year}    
+              onClickSelectToday={onSetSelectedDateToToday}          
             />
           </div>
 

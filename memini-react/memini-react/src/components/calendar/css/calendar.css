@@ -7,14 +7,18 @@
 }
 
 .calendar-display-current-week {
-    background-color:rgb(47, 79, 79, 0.5);
+    background-color:rgba(47, 79, 79, 0.5);
 }
 
 .calendar-container{    
     @apply text-center px-4 py-2 cursor-pointer transition duration-100 ease-in-out bg-white bg-opacity-50 shadow-lg border border-gray-200;
 }
 
-.calendar-display-date:hover {
+.calendar-display-date {     
+    font-size:12px;
+}
+
+.calendar-display-date:hover {     
     @apply bg-gray-100 text-gray-700 shadow-md scale-95 transition-transform duration-200 ease-in-out rounded-md;
 }  
 
@@ -24,20 +28,37 @@
     @apply shadow-lg border min-w-[10px] min-h-[10px] flex items-center justify-center rounded-md scale-95;
 }
 
-.calendar-navigation-elements {
-    display: flex; 
+.weekday-header-text{
+    font-size:12px;
+}
+
+.calendar-navigation-elements {    
     align-items: center; 
     justify-content: center; 
     gap: 10px; 
+    margin-bottom: 15px;   
+    align-self: center !important;
+    vertical-align: middle !important;
+}
+
+.calendar-navigation-dropdown {
+    margin: 0 5px 0 5px;
 }
 
 .calendar-navigation-elements.icon {
     display: flex; 
     align-items: center; 
     justify-content: center; 
+    vertical-align: middle !important;
     gap: 20px; 
 }
 
 .calendar-selected-date-container{
     font-size:16px;    
+}
+
+.calendar-navigation-select-today{
+    font-size:16px !important;
+    padding: 0 15px 20px 0 !important;
+    vertical-align: middle !important;
 }
