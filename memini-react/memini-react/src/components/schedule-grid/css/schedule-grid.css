@@ -90,12 +90,27 @@
 }
 
 .schedule-grid-menu-new-task{
-    width: 150px;
+    width: 150px;   
     background-color: rgba(40, 100, 152, 0.1) !important;
 }
 
 .schedule-grid-menu-partofday-icon{
     margin:0 10px 0 10px !important;
+}
+
+.memini-modal-compact{
+    width: 500px !important;
+}
+
+.memini-modal-input-field{
+    margin: 10px 0 10px 0;
+}
+.memini-modal-input-area{
+    height: 100px;
+}
+
+.memini-modal-label{
+    font-size:12px;
 }
 
 

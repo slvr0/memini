@@ -14,15 +14,13 @@ Date.prototype.getWeek = function() {
     return weekNo;
 };
 
-const today = moment();  // Example: current date and tim
+const today = moment();
 const momentToObject = (date) => {
     return {year: date.year(), month: date.month() + 1, day: date.date(), week: date.isoWeek(), weekDay: date.weekday()};
 }
 
 const calendarDateState = {selectedDate: momentToObject(today), todaysDate: momentToObject(today)};
 
-
-//change to not send a Date object its non serializable and causes issues send year month and day
 const calendarDateSlice = createSlice({
     name: 'calendarDate',
     initialState: calendarDateState,

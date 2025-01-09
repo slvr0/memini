@@ -1,8 +1,19 @@
 import React, { createRef, Fragment } from "react";
 import Task from "../../task/components/task.jsx";
+import TaskNew from "../../task/components/task-new.jsx";
 
 //more like a computational wrapper to a Task, controlling position size and connecting drag/drop events
 const Block = (props) => {
+
+    if(!props.content){
+        return (<>
+            <button draggable className="ui button schedule-grid-menu-new-task"  onDragStart={(event) => props.onDrag(this)}                     
+                        >New Task
+            </button>       
+        </>)
+    }
+
+
     const blockRef = createRef(null);
     
     //goes to some computation js
@@ -27,13 +38,13 @@ const Block = (props) => {
     }
 
     let height = props.staticHeight, yPosition = 0, cssName = '';
-    if (props.content.attached === true) {
+    if (props.content?.attached === true) {
         ({ height, yPosition, cssName } = configureAttachedTaskBlock(props.content.endTime, props.content.startTime));
     }
-
-    const style = {
+    //element sizing applies here
+    const blockComputationStyling = {
         height: `${height}px`,        
-        width:  `${width}px`,
+        width:  `90%`,
         top:    `${yPosition}px`,
     }  
     
@@ -46,16 +57,18 @@ const Block = (props) => {
                 ref={blockRef}
                 className={`${cssName}`}
                 onDragStart={(event) => props.onDrag(this)}
-                style={style}>
+                style={blockComputationStyling}>
                     {props.content ? (
-                        <Task                                 
+                        <TaskNew                                 
                             height={height}
                             content={props.content}  
-                        >
-                        </Task>           
+                        >       
+                        </TaskNew>           
                     ) : (
                     <Fragment>                
-                        <p>No content available</p>
+                        <button className="ui button schedule-grid-menu-new-task"                      
+                        >New Task
+                        </button>
                     </Fragment>
                     )}
             </div>

@@ -9,37 +9,37 @@
 
 .main-menu-option-row{
   align-self: center !important;
-  font-size:15px;
-  letter-spacing: 1.5px;  
+  font-size:16px;
+  letter-spacing: 1.75px;  
 }
 
 .main-menu-option-row-right{
   align-self: center !important;
-  font-size:15px;
-  letter-spacing: 1.5px;  
+  font-size:16px;
+  letter-spacing: 1.75px;  
   margin-left: auto; /* Pushes the element to the right */
   text-align: right; /* Ensures text aligns properly */
 
 }
 
 .main-menu-option{
-  margin:0 10px 0 10px;
-  @apply antialiased font-medium ;
+  margin:0 10px 0 5px;
+  @apply font-medium ;
 }
 
 .main-menu-option:hover{
   cursor: pointer;
-  border-bottom: 1px solid rgba(139, 69, 19, 0.5);
+  border-bottom: 1px solid rgba(139, 69, 19, 0.8);
   padding-bottom: 5px;
 }
 
 .main-menu-selected-menu-option{
-  border-bottom: 2px solid rgba(139, 69, 19, 0.5);
+  border-bottom: 2px solid rgba(139, 69, 19, 0.95);
   padding-bottom: 5px;  
 }
 
 .main-menu-get-started-button{
-  background-color: rgba(40, 100, 152,0.25) !important;
+  background-color: rgba(40, 100, 152, 0.15) !important;
 }
 
 

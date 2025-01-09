@@ -24,3 +24,11 @@ export function timeMinutesAsString(minutes) {
     return minutes < 10 ? minutes.toLocaleString() + '0' : minutes.toLocaleString();
 }
 
+//display a minute counter as clocktime
+export function timestampDisplay(time) {
+    const hh = Math.floor(time / 60);
+    const mm = time % 60;
+    const mmDigitFixed = mm > 10 ? mm.toLocaleString() : '0' + mm.toLocaleString();    
+    return hh.toLocaleString() + ':' + mmDigitFixed;
+}
+

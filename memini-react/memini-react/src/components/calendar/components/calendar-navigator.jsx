@@ -17,7 +17,6 @@ const  CalendarNavigator = ({selectedMonth, onChangeSelectedMonth,selectedYear, 
       onChangeSelectedYear(currentYear + increment);
     }
   }
- 
 
   return( 
         <>  

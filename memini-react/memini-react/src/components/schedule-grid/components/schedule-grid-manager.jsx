@@ -3,6 +3,9 @@ import { ScheduleGridContext } from "../store/schedule-grid-context.jsx";
 import { setupClockMarkers, estimateTaskStartIndex } from "../computation/computations.js";
 import HorizontalScheduleMarker from "./horizontal-schedule-marker.jsx";
 import CalendarSelectedDate from "../../calendar/components/calendar-selected-date.jsx";
+import {convertHourMinutesToDisplayTime, timestampDisplay} from "../../task/computations/time-display-formatting.js";
+import NewActivityModal from "./new-activity-modal.jsx";
+
 import Block from "./block.jsx";
 
 const  ScheduleGridManager = () => {
@@ -37,36 +40,57 @@ const  ScheduleGridManager = () => {
     const scheduleTimestamps         = setupClockMarkers(hoursPerScheduleGrid, false); 
     let scheduleGridRef              = useRef(null);  
     let horizontalScheduleMarker     = useRef(null);
+    let newActivityModal             = useRef(null);
     const activityGridSizeY          = 1200; // pixels
 
     let selectedItem = null;  
 
     const [tasks, setTasks] = useState([]);      
     
-    const onDrag = (item) => {
+    const onDrag = (item = null) => {
         selectedItem = item;  
-        horizontalScheduleMarker.current.onSetIsDragging(true);    
+        horizontalScheduleMarker.current.onSetIsDragging(true); 
     };
 
-    //this is abit complicated do something to nest it out
-    const onDrop = (event) => {        
-        if(selectedItem === (null && undefined))
-            return;
 
+    const onCloseNewActivityModal = () => {
+
+    }
+
+    //this is abit complicated do something to nest it out
+    const onDrop = (event) => {  
+        
         const dropTarget = event.currentTarget;
         const rect = dropTarget.getBoundingClientRect();
         const scrollTop = dropTarget.scrollTop;
-
         // Correct mouse position inside the element, accounting for scroll
         const relativeY = event.clientY + scrollTop - rect.top;
 
-        const selectedObject = structuredClone({
-            ...selectedItem, 
-        });
+        //new activity is being created
+        if(selectedItem === (null && undefined)){
+            const startTime = Math.ceil((relativeY / rect.height) * 60 * hoursPerScheduleGrid);            
+            newActivityModal.current.onShowModal(startTime);
+            return;
+        } 
+
+        // const selectedObject = structuredClone({
+        //     ...selectedItem, 
+        // });
+
+
+        console.log(selectedItem);
+        //how do we know if its a new one or existing drag?
+
+        
+
+        const selectedObject = exampleActivityBlocks[0]; // for testing 
         
         // Update properties of the cloned object
         selectedObject.startTime = Math.ceil((relativeY / rect.height) * 60 * hoursPerScheduleGrid);
+        selectedObject.startTimeDisplay = timestampDisplay(selectedObject.startTime);
+
         selectedObject.endTime = selectedObject.startTime + 60;
+        selectedObject.endTimeDisplay = timestampDisplay(selectedObject.endTime);
         selectedObject.attached = true;
         
         // Update the tasks array
@@ -107,12 +131,15 @@ const  ScheduleGridManager = () => {
 
     return (
     <>      
+    <NewActivityModal ref={newActivityModal}></NewActivityModal>
     <div className="calendar-container">
         <div className="ui row">
             <div className="ui grid">
                 <div className="four wide column schedule-grid-menu-block">
-                    <button class="ui button schedule-grid-menu-new-task">New Task</button>
-                </div>  
+                    <Block onDrag={() => {onDrag()}}>
+                    </Block>                    
+                </div> 
+                 
 
                 <div className="eight wide column schedule-grid-menu-block">
                     <CalendarSelectedDate className={'schedule-grid-selected-day'}></CalendarSelectedDate>
@@ -122,8 +149,7 @@ const  ScheduleGridManager = () => {
                     <i className="ui icon sync alternate large memini-icon memini-icon-large interactive schedule-grid-menu-partofday-icon"></i>    
                     <i className="ui icon bookmark outline large memini-icon memini-icon-large interactive schedule-grid-menu-partofday-icon"></i> 
                     <i className="ui icon cogs large memini-icon memini-icon-large interactive schedule-grid-menu-partofday-icon"></i>  
-                </div>                
-
+                </div>    
             </div>
         </div> 
 
@@ -143,6 +169,7 @@ const  ScheduleGridManager = () => {
                                 </div>
                             </Fragment>
                         ))}
+
                     </div>
 
                     {/* Schedule Task Grid */}

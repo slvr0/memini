@@ -13,8 +13,3 @@ export function setupClockMarkers (hours = 12, isLate = false) {
     }
     return clockMarkers;
 }
-
-
-export function estimateTaskStartIndex (startTime) {
-    return startTime % 60;
-}
