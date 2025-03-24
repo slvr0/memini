@@ -1,45 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.main-menu-bar-container{
-  
+/*General Menu bar*/
+.menu-bar-row {
+  @apply border-t border-b border-black/10 shadow-none  flex items-center justify-between;
 }
 
-.main-menu-project-icon{
-
+/* Main Menu Items*/
+.main-menu-item {
+  @apply text-black font-medium tracking-wider py-1 px-2 whitespace-nowrap;
 }
 
-.main-menu-option-row{
-  align-self: center !important;
-  font-size:16px;
-  letter-spacing: 1.75px;  
+.main-menu-item:hover {
+  cursor: pointer; /* Set cursor to pointer on hover */
 }
 
-.main-menu-option-row-right{
-  align-self: center !important;
-  font-size:16px;
-  letter-spacing: 1.75px;  
-  margin-left: auto; /* Pushes the element to the right */
-  text-align: right; /* Ensures text aligns properly */
-
+.main-menu-item::after {
+  content: "";
+  @apply absolute bottom-0 left-0 w-full h-[2px] bg-transparent opacity-0;
+  transition: opacity 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
-.main-menu-option{
-  margin:0 10px 0 5px;
-  @apply font-medium ;
+.main-menu-item:hover::after {
+  opacity: 1;
+  background-color: theme('colors.miMedium');
 }
 
-.main-menu-option:hover{
-  cursor: pointer;
-  border-bottom: 1px solid rgba(139, 69, 19, 0.8);
-  padding-bottom: 5px;
+.main-menu-item-active::after {
+  opacity: 1;
+  background-color: theme('colors.miMedium');
 }
 
-.main-menu-selected-menu-option{
-  border-bottom: 2px solid rgba(139, 69, 19, 0.95);
-  padding-bottom: 5px;  
+/*Subheader Row*/
+.menu-subheader-row {
+  @apply border-b flex border-black/5 bg-miInfo bg-opacity-50; 
 }
 
-.main-menu-get-started-button{
-  background-color: rgba(40, 100, 152, 0.15) !important;
-}
+
+
+
+
+
+
+
 
 

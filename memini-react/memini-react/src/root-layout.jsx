@@ -4,24 +4,27 @@ import MainMenuBarNew from './components/main-menu-bar/components/main-menu-bar-
 
 const RootLayout = () => {
   return (
-    <div className="ui grid centered main-page-main-grid">
-        <div className="ui row main-page-row gridBlock h-screen">
-        <div className="one wide column"> {/* Left void */}</div>    
-
-        <div className="twelve wide column main-page-content">
-          <div className="ui grid">
-              <div className="ui row main-menu-bar-container">                
-                <MainMenuBarNew></MainMenuBarNew>                
-              </div>
-              <div className="ui row">      
-                <Outlet />
-              </div>               
-          </div>
-        </div>
-        <div className="one wide column"> {/* Right void */}</div>
-
-        </div>
-        </div>
+    <div className="grid grid-cols-12 h-screen">
+    {/* Left Void */}
+    <div className="col-span-1"></div>
+  
+    {/* Main Content */}
+    <div className="col-span-10 flex flex-col">
+      {/* Menu Bar */}
+      <div className="w-full memini-main-container">
+        <MainMenuBarNew />
+      </div>
+  
+      {/* Page Content */}
+      <div className="flex-1 w-full memini-main-container">
+        <Outlet />
+      </div>
+    </div>
+  
+    {/* Right Void */}
+    <div className="col-span-1"></div>
+  </div>
+  
   );
 };
 

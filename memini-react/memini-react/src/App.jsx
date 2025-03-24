@@ -16,6 +16,9 @@ import PlanningPage from "./components/planning-page.jsx";
 import EventsPage from "./components/events-page.jsx";
 import ProfilePage from "./components/profile-page.jsx";
 import RootLayout from "./root-layout.jsx";
+import UiTest from "./components/ui-test.jsx";
+import SignupPage from "./components/signup-page.jsx";
+import LoginPage from "./components/login-page.jsx";
 
 function App() {
 
@@ -55,7 +58,7 @@ function App() {
   }
 
   const [activeTab, setActiveTab] = useState(applicationTabs.Home);
-  console.log("restarting the app");
+
   //this.fetchData();
 
   return (
@@ -64,10 +67,13 @@ function App() {
           {/* Define the root layout */}
           <Route path="/" element={<RootLayout />}>
           {/* Define nested routes */}
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage />}/>
+          <Route path="ui-test" element={<UiTest />} />
           <Route path="home" element={<HomePage />} />
           <Route path="planning" element={<PlanningPage />} />
           <Route path="events" element={<EventsPage />} />
+          <Route path="signup" element={<SignupPage />} />
+          <Route path="login" element={<LoginPage />} />
           <Route path="profile" element={<ProfilePage />} />
           {/* Add more nested routes here */}
           </Route>

@@ -39,17 +39,16 @@ const NewActivityModal = forwardRef((props, ref) => {
     } 
 
     const onInputChange = (event, data) => {
-        console.log(event);
-        console.log(data);
+        
 
 
     }
     const displayData = (e) => {
         e.preventDefault(); // Prevent default form submission behavior
         
-        console.log(formRef.current);
+    
         const formData = new FormData(formRef.current); // Create a FormData object with the form
-        console.log(formData); 
+       
        
     }
 

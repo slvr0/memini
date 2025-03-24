@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import "../css/task.css";
 
+
+//remove these
 class DisplayTaskLarge extends Component{
     constructor(props){
         super(props); 

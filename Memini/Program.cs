@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Newtonsoft.Json.Serialization;
 using Memini.Controllers;
-
+using Memini.services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +16,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 ).AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+
+builder.Services.AddScoped<AuthorisationService>();
 
 builder.Services.AddControllers();
 

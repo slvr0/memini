@@ -32,10 +32,39 @@ const calendarDateSlice = createSlice({
     }
 });
 
+const meminiUserSlice = createSlice( {
+    name: 'meminiUser',
+    initialState: {userSession: (() => {
+        const storedSession = localStorage.getItem('authToken');
+        try {
+            return storedSession ? JSON.parse(storedSession) : null;
+        } catch (e) {
+            console.error('Error parsing user session from localStorage:', e);
+            return null;  
+        }
+    })()},
+    reducers: {
+        login: (state, action) => {        
+            if(state.token == null) {
+                state.userSession = action.payload.userSession;        
+                localStorage.setItem('authToken', JSON.stringify(action.payload.userSession));              
+            }            
+        },
+        logout: (state) => {      
+            state.userSession = null;            
+            localStorage.removeItem('authToken');
+        }
+    }
+})
+
 const store = configureStore({
-    reducer: {calendarDate : calendarDateSlice.reducer}
+    reducer: {
+        calendarDate : calendarDateSlice.reducer,
+        meminiUser: meminiUserSlice.reducer    
+    }
 });
 
 export const calendarDateActions = calendarDateSlice.actions;
+export const meminiUserActions = meminiUserSlice.actions;
 
 export default store;

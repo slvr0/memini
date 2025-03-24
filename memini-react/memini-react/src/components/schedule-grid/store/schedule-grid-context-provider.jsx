@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { ScheduleGridContext } from './schedule-grid-context.jsx';
 
+
+//remove
 class ScheduleGridContextProvider extends Component {
 
   constructor(props) {

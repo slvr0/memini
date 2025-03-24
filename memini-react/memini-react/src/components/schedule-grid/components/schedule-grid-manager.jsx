@@ -78,7 +78,6 @@ const  ScheduleGridManager = () => {
         // });
 
 
-        console.log(selectedItem);
         //how do we know if its a new one or existing drag?
 
         

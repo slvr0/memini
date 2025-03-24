@@ -2,6 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/*Overlay , applies to whole project*/
+@layer components {
+    .memini-main-container {
+        @apply bg-slate-50;
+        font-family: 'Lato', 'Arial', 'Roboto', 'Helvetica', sans-serif !important;
+    }
+
+    /*for debugging remove later*/
+    .debug-container {
+        border: 1px solid rgba(200, 200, 200, 0.8);
+    }
+}
+
+/* Home page signup */
+@layer components {
+    .signup-card-image {
+        @apply w-full h-96;
+    }
+}
+
+@layer components {
+    .memini-form-style-icon-xs {
+        @apply w-4 h-4 flex items-center justify-center rounded-full border-4 border-miMedium bg-miLight text-white text-lg font-bold shadow-md;
+    }
+    .memini-form-style-icon-sm {
+        @apply w-8 h-8 flex items-center justify-center rounded-full border-4 border-miMedium bg-miLight text-white text-lg font-bold shadow-md;
+    }
+    .memini-form-style-icon-md {
+        @apply w-16 h-16 flex items-center justify-center rounded-full border-4 border-miMedium bg-miLight text-white text-lg font-bold shadow-md;
+    }
+}
+
+
+
 @import "components/calendar/css/calendar.css";
 @import "components/calendar/css/todays-date.css";
 @import "components/schedule-grid/css/schedule-grid.css";

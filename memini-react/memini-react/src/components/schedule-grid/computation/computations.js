@@ -13,3 +13,11 @@ export function setupClockMarkers (hours = 12, isLate = false) {
     }
     return clockMarkers;
 }
+
+
+
+//create task object 
+
+
+//calculate mouse pointers
+
