@@ -4,11 +4,15 @@ import { setupClockMarkers, estimateTaskStartIndex } from "../computation/comput
 import HorizontalScheduleMarker from "./horizontal-schedule-marker.jsx";
 import CalendarSelectedDate from "../../calendar/components/calendar-selected-date.jsx";
 import {convertHourMinutesToDisplayTime, timestampDisplay} from "../../task/computations/time-display-formatting.js";
-import NewActivityModal from "./new-activity-modal.jsx";
+
+import {useSelector, useDispatch} from 'react-redux';
 
 import Block from "./block.jsx";
 
 const  ScheduleGridManager = () => {
+
+    const userTasks = useSelector((state) => state.userTasks.userTasks);
+
     const exampleActivityBlocks = [
         {
             title : 'Tennis', 
@@ -37,15 +41,13 @@ const  ScheduleGridManager = () => {
     ];
 
     const hoursPerScheduleGrid       = 24;
-    const scheduleTimestamps         = setupClockMarkers(hoursPerScheduleGrid, false); 
+    const scheduleTimestamps         = setupClockMarkers(hoursPerScheduleGrid, false); //TODO: should be moved to redux 
     let scheduleGridRef              = useRef(null);  
     let horizontalScheduleMarker     = useRef(null);
     let newActivityModal             = useRef(null);
     const activityGridSizeY          = 1200; // pixels
 
-    let selectedItem = null;  
-
-    const [tasks, setTasks] = useState([]);      
+    let selectedItem = null; 
     
     const onDrag = (item = null) => {
         selectedItem = item;  
@@ -92,15 +94,15 @@ const  ScheduleGridManager = () => {
         selectedObject.endTimeDisplay = timestampDisplay(selectedObject.endTime);
         selectedObject.attached = true;
         
-        // Update the tasks array
-        setTasks((previousTasks) => {
-            const updatedTasks = [
-                ...(previousTasks || []),
-                selectedObject
-            ].sort((a, b) => a.startTime - b.startTime);
+        // // Update the tasks array
+        // setTasks((previousTasks) => {
+        //     const updatedTasks = [
+        //         ...(previousTasks || []),
+        //         selectedObject
+        //     ].sort((a, b) => a.startTime - b.startTime);
             
-            return  updatedTasks;
-        });
+        //     return  updatedTasks;
+        // });
         
         horizontalScheduleMarker.current.onSetIsDragging(false);   
         horizontalScheduleMarker.current.onSetIsRendering(false);
@@ -130,33 +132,9 @@ const  ScheduleGridManager = () => {
 
     return (
     <>      
-    <NewActivityModal ref={newActivityModal}></NewActivityModal>
+
     <div className="calendar-container">
-        <div className="ui row">
-            <div className="ui grid">
-                <div className="four wide column schedule-grid-menu-block">
-                    <Block onDrag={() => {onDrag()}}>
-                    </Block>                    
-                </div> 
-                 
-
-                <div className="eight wide column schedule-grid-menu-block">
-                    <CalendarSelectedDate className={'schedule-grid-selected-day'}></CalendarSelectedDate>
-                </div>
-
-                <div className="four wide column schedule-grid-menu-block">                                      
-                    <i className="ui icon sync alternate large memini-icon memini-icon-large interactive schedule-grid-menu-partofday-icon"></i>    
-                    <i className="ui icon bookmark outline large memini-icon memini-icon-large interactive schedule-grid-menu-partofday-icon"></i> 
-                    <i className="ui icon cogs large memini-icon memini-icon-large interactive schedule-grid-menu-partofday-icon"></i>  
-                </div>    
-            </div>
-        </div> 
-
-        <div className="ui divider"></div>
-        
-        <div className="ui row">        
             <div className="fourteen wide column schedule-task-grid scrollable-div">
-            <HorizontalScheduleMarker ref={horizontalScheduleMarker} /> 
                 <div className={`h-[${activityGridSizeY}]px`} style={{ display: 'flex' }}>
                     {/* Time Marker Column */}
                     <div className="" style={{ width: '64px', display: 'flex', flexDirection: 'column' }}>
@@ -180,33 +158,23 @@ const  ScheduleGridManager = () => {
                         onDrop={(event) => onDrop(event)}
                         onDragOver={(event) => { onDragOver(event); }}
                     >  
-                                                                         
-
-                        {tasks.length === 0 && (
+                        {userTasks.length === 0 && (
                             <div style={{ textAlign: 'center', color: 'gray' }}></div>
                         )}                    
-                        {tasks.map((task, taskIndex) => (
+                        {userTasks.map((task, taskIndex) => (
                             <Fragment key={taskIndex}>
                                 <Block 
                                     draggable
                                     content={task} 
-                                    className="attached-task w-48"       
-                                    onDrag={() => onDrag(task)}    
-                                    applyActivityTypeBackground={true}
+                                    className="attached-task"       
+                                    onDrag={() => onDrag(task)}   
+                                    applyActivityTypeBackground={false} //no effect.
                                 />
                             </Fragment>
                         ))}
                     </div>
                 </div>
             </div>
-
-            <div className="two wide column">
-            
-                
-            </div>                   
-                       
-        </div> 
-        
     </div> 
     </>       
     );

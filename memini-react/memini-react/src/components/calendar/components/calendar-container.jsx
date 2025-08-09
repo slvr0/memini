@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import CalendarMonthDisplay  from "./calendar-month-display";
 import CalendarNavigator from "./calendar-navigator";
-import CalendarSelectedDate from "./calendar-selected-date";
 import {useSelector, useDispatch} from 'react-redux';
 import { calendarDateActions } from "../../../redux-memini-store.js";
 
@@ -21,20 +20,8 @@ const CalendarContainer = () => {
 
     return (
       <>
-        <div className="content-container calendar-container">          
-
-          <div className="ui row memini-content-row">
-            <CalendarNavigator
-              selectedMonth = {selectedMonth}
-              onChangeSelectedMonth = {onMonthChange}
-              selectedYear = {selectedYear}
-              onChangeSelectedYear = {onYearChange}
-              currentYear={calendarDateState.selectedDate.year}    
-              onClickSelectToday={onSetSelectedDateToToday}          
-            />
-          </div>
-
-          <div className="ui row">
+        <div className="">
+          <div className="mb-2">
             <CalendarMonthDisplay
               selectedMonth = {selectedMonth}
               selectedYear  = {selectedYear}

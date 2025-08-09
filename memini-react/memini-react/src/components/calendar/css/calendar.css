@@ -11,7 +11,7 @@
 }
 
 .calendar-container{    
-    @apply text-center px-4 py-2 cursor-pointer transition duration-100 ease-in-out bg-white bg-opacity-50 shadow-lg border border-gray-200;
+    @apply text-center cursor-pointer ;
 }
 
 .calendar-display-date {     
@@ -19,13 +19,13 @@
 }
 
 .calendar-display-date:hover {     
-    @apply bg-gray-100 text-gray-700 shadow-md scale-95 transition-transform duration-200 ease-in-out rounded-md;
+    @apply bg-gray-100;
 }  
 
 .calendar-display-selected-day{
     border: 1px solid;    
     color: brown;  
-    @apply shadow-lg border min-w-[10px] min-h-[10px] flex items-center justify-center rounded-md scale-95;
+    @apply shadow-lg border min-w-[10px] min-h-[10px] flex items-center justify-center rounded-md;
 }
 
 .weekday-header-text{

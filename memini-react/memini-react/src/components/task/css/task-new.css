@@ -1,0 +1,88 @@
+.task-container {
+    @apply grid grid-cols-[5%_85%_5%] grid-rows-[30%_70%] gap-1 w-full h-full; /* Tailwind grid utilities */
+    border-left: 4px solid rgba(47, 79, 79, 0.5);
+    background-color:aliceblue ;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Subtle glow effect */
+    transition: box-shadow 0.3s ease-in-out; /* Smooth transition */   
+
+  display: grid;  
+  padding: 10px 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+}
+
+.task-container-compressed {
+    @apply grid grid-cols-[5%_85%_5%] grid-rows-[100%_0%] gap-1 w-full h-full; /* Tailwind grid utilities */
+    border-left: 4px solid rgba(47, 79, 79, 0.5);
+    background-color:aliceblue ;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Subtle glow effect */
+    transition: box-shadow 0.3s ease-in-out; /* Smooth transition */   
+
+  align-items: center;    ;
+  display: grid;  
+  padding: 6px 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+}
+
+
+.task-container .title { 
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  font-weight: 700;
+  font-size: 1.0rem;
+  color: #222;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-container .description {
+  grid-column: 2 / 3;
+  grid-row: 2 / 2;
+  font-size: 0.9rem;
+  color: #444;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-container-compressed .title-description-compressed {
+  grid-column: 2 / 3;
+  grid-row: 1 / 1;
+  font-weight: 500;
+  font-size: 0.7rem;
+  color: #222;
+}
+
+.task-container .icon-container {
+
+  display: flex;
+  align-items: top !important;
+
+  color: #555;
+  font-size: 1.6rem;
+}
+
+.task-container .icon-edit {
+    
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
+.task-container .icon-delete {
+
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+}
+
+.ui.icon {
+  cursor: default;
+}
+

@@ -1,3 +1,4 @@
+import MeminiButton from '../../general-components/components/memini-button.jsx';
 import CustomDropdown from '../../tools/custom-dropdown.jsx';
 import {GetMonthsOptions, GetYearsOptions} from '../computation/date-computations.js';
 
@@ -21,9 +22,13 @@ const  CalendarNavigator = ({selectedMonth, onChangeSelectedMonth,selectedYear, 
   return( 
         <>  
           <div className={`sixteen wide column ${navigationElements}`}>
-              <i className="ui icon calendar outline check memini-icon interactive calendar-navigation-select-today"
-                    onClick={() => {onClickSelectToday()}}
-              ></i>
+
+              <MeminiButton
+                size="small"
+                onClick={() => {onClickSelectToday()}}
+              >
+                Today
+              </MeminiButton>    
 
               <i className="ui icon large chevron left memini-icon interactive calendar-navigation-chevron-left"
                 onClick={() => {onChevronClick(selectedMonth, selectedYear, -1)}}

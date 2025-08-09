@@ -12,8 +12,6 @@ const Block = (props) => {
             </button>       
         </>)
     }
-
-
     const blockRef = createRef(null);
     
     //goes to some computation js
@@ -43,8 +41,7 @@ const Block = (props) => {
     }
     //element sizing applies here
     const blockComputationStyling = {
-        height: `${height}px`,        
-        width:  `90%`,
+        height: `${height}px`,    
         top:    `${yPosition}px`,
     }  
     
@@ -59,8 +56,7 @@ const Block = (props) => {
                 onDragStart={(event) => props.onDrag(this)}
                 style={blockComputationStyling}>
                     {props.content ? (
-                        <TaskNew                                 
-                            height={height}
+                        <TaskNew
                             content={props.content}  
                         >       
                         </TaskNew>           

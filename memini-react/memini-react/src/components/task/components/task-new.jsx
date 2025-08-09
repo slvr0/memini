@@ -1,37 +1,56 @@
 import React from 'react';
+import "../css/task-new.css";
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
+import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
+import Tooltip from '@mui/material/Tooltip';
 
 const taskTypeIcons = {
-    'sport' : 'basketball ball',
-    'chore' : 'shopping cart',
-    'fun'   : 'bowling ball'
+  sport: 'basketball ball',
+  chore: 'shopping cart',
+  fun: 'bowling ball',
 };
 
 const TaskNew = (props) => {
+  const { content } = props;
 
-    const content           = props.content;   
+  const getTaskIconClass = (taskType) => {
+    const taskTypeIcon = taskTypeIcons[taskType];
+    return 'ui icon memini-icon ' + taskTypeIcon;
+  };
 
-    const getTaskIconClass = (taskType) => {
-        const taskTypeIcon = taskTypeIcons[taskType];
-      
-        return 'ui icon memini-icon ' +  taskTypeIcon;
-    }
+  const isCompresedTask = (content.endTime - content.startTime) < 60;
+  const containerType = !isCompresedTask ? 'task-container' : 'task-container-compressed';
+  const tooltip = content.title + " - " + content.description + " , scheduled between " + (content.startTime / 60).toString() + " and " +(content.endTime / 60).toString();
 
-    return (
-    <>
- 
+  return (
+    <>   
+        <Tooltip title={tooltip|| ''}arrow>
+            <div className={containerType}>
+            <div className="icon-edit icon-container">
+                <EditNoteRoundedIcon></EditNoteRoundedIcon>        
+            </div>
+            <div className="icon-delete icon-container">
+                <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
+            </div>
+                {isCompresedTask && (
+                <>
+                    <div className="title-description-compressed">{content.title} - {content.description}</div>
+                </>
+                )}
 
- <div className="grid-container">
-    <div className="grid-item time-stamp-start task-display-time-marker">{props.content.startTimeDisplay}</div>
-    <div className="grid-item title">{props.content.title}</div>
-    <div className="grid-item description">{props.content.description}</div>
-    <div className="grid-item time-stamp-end task-display-time-marker">{props.content.endTimeDisplay}</div>
-    <div className="grid-item item5">
-        <i className={getTaskIconClass(content.type)}></i> 
-    </div>
-</div>  
-   
+                {!isCompresedTask && (
+                <>
+                    <div className="title">{content.title}</div>
+                    <div className="description">{content.description}</div>
+                </>
+                )}
+            
+            </div>
+        </Tooltip>
+    </>
     
-    </>);
-}
+  );
+};
 
 export default TaskNew;
+

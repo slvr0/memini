@@ -57,14 +57,29 @@ const meminiUserSlice = createSlice( {
     }
 })
 
+const userTasksSlice = createSlice({
+    name: 'userTasks',
+    initialState: { //fetch user tasks, not an empty array
+        userTasks : []
+    },
+    reducers: {
+        addTask(state, action) { 
+            state.userTasks.push(action.payload);         
+        }           
+    }
+
+})
+
 const store = configureStore({
     reducer: {
         calendarDate : calendarDateSlice.reducer,
-        meminiUser: meminiUserSlice.reducer    
+        meminiUser: meminiUserSlice.reducer,
+        userTasks: userTasksSlice.reducer,
     }
 });
 
 export const calendarDateActions = calendarDateSlice.actions;
 export const meminiUserActions = meminiUserSlice.actions;
+export const userTasksActions = userTasksSlice.actions;
 
 export default store;

@@ -2,6 +2,8 @@ import {createRef, React,  useState} from "react";
 import "../css/input-fields.css"
 import InputFieldRow from "./input-field-row";
 import MeminiButton from "./memini-button";
+import GenericHeaderSegment from "./generic-header-segment"
+import MeminiIconButton from "./memini-icon-button"
 
 /*
  * Send in a list of rows in this format 
@@ -27,14 +29,7 @@ const GeneralForm = (props) => {
     return (
       <>
         <div className="generic-form-container">
-            {
-                props.headerText &&
-                <div className="generic-form-header">{props.headerText}</div>
-            }            
-            {
-                props.headerSubText &&
-                <div className="generic-form-subheader">{props.headerSubText}</div>
-            }
+            <GenericHeaderSegment headerText={props.headerText} headerSubText={props.headerSubText}></GenericHeaderSegment>
             
             {
                 props.rows.map((row, index) => {                    

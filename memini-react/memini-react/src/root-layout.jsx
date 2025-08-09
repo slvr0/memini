@@ -1,29 +1,34 @@
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 
 import MainMenuBarNew from './components/main-menu-bar/components/main-menu-bar-new';
+import DateSelector from './components/calendar/components/date-selector';
+import CalendarContainer from "../src/components/calendar/components/calendar-container";
+import ScheduleGridManager from "../src/components/schedule-grid/components/schedule-grid-manager";
 
 const RootLayout = () => {
   return (
-    <div className="grid grid-cols-12 h-screen">
-    {/* Left Void */}
-    <div className="col-span-1"></div>
-  
-    {/* Main Content */}
-    <div className="col-span-10 flex flex-col">
-      {/* Menu Bar */}
-      <div className="w-full memini-main-container">
-        <MainMenuBarNew />
-      </div>
-  
-      {/* Page Content */}
-      <div className="flex-1 w-full memini-main-container">
-        <Outlet />
-      </div>
+
+    
+<div className="grid grid-cols-12 gap-0">
+  <div className="col-span-12 flex items-stretch bg-[#14181B]">
+    <div className="flex-[0_0_66.6667%]">
+      <MainMenuBarNew />
     </div>
-  
-    {/* Right Void */}
-    <div className="col-span-1"></div>
+    <div className="flex-[0_0_33.3333%] flex items-center justify-end">
+      <DateSelector />
+    </div>
   </div>
+
+  <div className="col-span-9">
+    <Outlet />
+  </div>
+
+  <div className="col-span-3">
+    <CalendarContainer></CalendarContainer> 
+     <ScheduleGridManager />
+  </div>
+</div>
+
   
   );
 };

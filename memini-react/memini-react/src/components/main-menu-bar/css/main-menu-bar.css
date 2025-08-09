@@ -4,12 +4,12 @@
 
 /*General Menu bar*/
 .menu-bar-row {
-  @apply border-t border-b border-black/10 shadow-none  flex items-center justify-between;
+  @apply border-t border-b border-black/10 shadow-none  flex items-center justify-between bg-[#14181B] text-white;
 }
 
 /* Main Menu Items*/
 .main-menu-item {
-  @apply text-black font-medium tracking-wider py-1 px-2 whitespace-nowrap;
+  @apply text-white font-medium tracking-wider py-1 px-2 whitespace-nowrap;
 }
 
 .main-menu-item:hover {

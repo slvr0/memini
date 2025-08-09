@@ -1,0 +1,15 @@
+
+
+
+
+.generic-segment-page-header {
+    @apply text-lg font-semibold text-gray-800 mb-4 ml-1;
+    font-family: 'Lato', 'Arial', 'Roboto', 'Helvetica', sans-serif !important;
+}
+
+
+.generic-segment-page-subheader {
+    margin: 2px 10px 2px 4px;
+    color: #666;
+    font-size:10px;
+}

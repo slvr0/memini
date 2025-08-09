@@ -3,7 +3,7 @@ import "../css/input-fields.css"
 import InputFieldText from "./input-field-text";
 import InputFieldLabel from "./input-field-label";
 import InputFieldDropdown from "./input-field-dropdown";
-
+import DiscreteTimeSlider from "./discrete-time-slider";
 
 const InputFieldRow = (props) => { 
     const textPlaceholder = props.textPlaceholder ?? ''; 
@@ -21,6 +21,8 @@ const InputFieldRow = (props) => {
             <InputFieldDropdown fieldListener={props.fieldListener} placeholder={textPlaceholder} options={props.options} />
             ) : rowType === 'input' ? (
             <InputFieldText fieldListener={props.fieldListener} placeholder={textPlaceholder} />
+            ) : rowType === 'discrete-time-slider' ? (
+              <DiscreteTimeSlider fieldListener={props.fieldListener} placeholder={textPlaceholder} />
             ) : null}            
           </div>
         </div>         

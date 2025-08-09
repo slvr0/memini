@@ -9,7 +9,7 @@ export function setupClockMarkers (hours = 12, isLate = false) {
     for(let i = 0; i <= hours; ++i) {      
         clockMarkers.push(clockMarkerToString(isLate ? i + 12 : i)); 
 
-        if(i != hours) clockMarkers.push('30');                        
+        if(i != hours) clockMarkers.push('-');                        
     }
     return clockMarkers;
 }
