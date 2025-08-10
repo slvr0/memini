@@ -6,9 +6,7 @@ import CalendarContainer from "../src/components/calendar/components/calendar-co
 import ScheduleGridManager from "../src/components/schedule-grid/components/schedule-grid-manager";
 
 const RootLayout = () => {
-  return (
-
-    
+  return (    
 <div className="grid grid-cols-12 gap-0">
   <div className="col-span-12 flex items-stretch bg-[#14181B]">
     <div className="flex-[0_0_66.6667%]">

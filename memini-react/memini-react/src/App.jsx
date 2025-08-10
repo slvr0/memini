@@ -12,7 +12,7 @@ import 'semantic-ui-css/semantic.min.css';
 import 'semantic-ui-css/semantic.min.js'; 
 
 import HomePage from "./components/home/homepage.jsx";
-import PlanningPage from "./components/planning-page.jsx";
+import PlanningPage from "./components/planning/components/planning-page.jsx";
 import EventsPage from "./components/events-page.jsx";
 import ProfilePage from "./components/profile-page.jsx";
 import RootLayout from "./root-layout.jsx";

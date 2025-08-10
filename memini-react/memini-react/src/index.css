@@ -41,7 +41,6 @@
     .memini-form-style-icon-md {
         @apply w-16 h-16 flex items-center justify-center rounded-full border-4 border-miMedium bg-miLight text-white text-lg font-bold shadow-md;
     }
-
     .memini-container-section {
         @apply rounded-xl border border-gray-200 bg-white shadow-md overflow-hidden mx-auto;
     }
