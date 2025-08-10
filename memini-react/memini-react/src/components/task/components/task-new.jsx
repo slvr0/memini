@@ -18,14 +18,14 @@ const TaskNew = (props) => {
     return 'ui icon memini-icon ' + taskTypeIcon;
   };
 
-  const isCompresedTask = (content.endTime - content.startTime) < 60;
+  const isCompresedTask = (content.EndTime - content.StartTime) < 60;
   const containerType = !isCompresedTask ? 'task-container' : 'task-container-compressed';
-  const tooltip = content.title + " - " + content.description + " , scheduled between " + (content.startTime / 60).toString() + " and " +(content.endTime / 60).toString();
+  const tooltip = content.Title + " - " + content.Description + " , scheduled between " + (content.StartTime / 60).toString() + " and " +(content.EndTime / 60).toString();
 
   return (
     <>   
         <Tooltip title={tooltip|| ''}arrow>
-            <div className={containerType}>
+            <div className={`${containerType} `}>
             <div className="icon-edit icon-container">
                 <EditNoteRoundedIcon></EditNoteRoundedIcon>        
             </div>
@@ -34,14 +34,14 @@ const TaskNew = (props) => {
             </div>
                 {isCompresedTask && (
                 <>
-                    <div className="title-description-compressed">{content.title} - {content.description}</div>
+                    <div className="title-description-compressed">{content.Title} - {content.Description}</div>
                 </>
                 )}
 
                 {!isCompresedTask && (
                 <>
-                    <div className="title">{content.title}</div>
-                    <div className="description">{content.description}</div>
+                    <div className="title">{content.Title}</div>
+                    <div className="description">{content.Description}</div>
                 </>
                 )}
             

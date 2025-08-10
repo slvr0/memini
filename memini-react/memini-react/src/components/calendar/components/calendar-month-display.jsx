@@ -2,9 +2,12 @@ import {getWeekDates, getFirstWeekInMonth} from "../computation/date-computation
 import {useSelector, useDispatch} from 'react-redux';
 import { calendarDateActions } from "../../../redux-memini-store.js";
 
-const CalendarMonthDisplay = ({selectedMonth, selectedYear}) => {
+const CalendarMonthDisplay = () => {
   const dispatch          = useDispatch();
   const calendarDateState = useSelector((state) => state.calendarDate);  
+  const selectedMonth = calendarDateState.selectedDate.month;
+  const selectedYear = calendarDateState.selectedDate.year;
+
   const selectedMonthFirstWeek  = getFirstWeekInMonth(selectedMonth, selectedYear);
 
   const displayWeeks    = [];
@@ -20,7 +23,7 @@ const CalendarMonthDisplay = ({selectedMonth, selectedYear}) => {
 
   const onChangeSelectedDate = (newDate) => {
     const year    = newDate.year();  
-    const month   = newDate.month() + 1; 
+    const month   = newDate.month(); 
     const day     = newDate.date(); 
     const week    = newDate.isoWeek();
     const weekDay = newDate.weekday();

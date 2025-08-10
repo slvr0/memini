@@ -15,8 +15,10 @@ public class AuthorisationService
         _configuration = configuration;
     }
     public string GetJWTKey()
-    {
-        return _configuration["JwtSettings:SecretKey"];
+    {      
+        var secretKey = _configuration["JwtSettings:SecretKey"];
+        var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+        return secretKey;
     }
 
     public string PasswordHash(string inputPassword)
@@ -45,10 +47,12 @@ public class AuthorisationService
 
         var claims = new[]
         {
-        new Claim(JwtRegisteredClaimNames.Name, user.FirstName.ToString()),
-        new Claim(JwtRegisteredClaimNames.Name, user.LastName.ToString()),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email),   
-    };
+        new Claim("FirstName", user.FirstName),
+        new Claim("LastName", user.LastName),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email),
+        new Claim("UserKey", user.UserKey.ToString())   // custom claim with key "UserKey"
+        };
+
 
         var token = new JwtSecurityToken(
             issuer: "memini",

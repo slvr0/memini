@@ -87,6 +87,11 @@ public class UserManager
 
     }
 
+    public bool SessionTokenIsValid(DtoUser user)
+    {
+        return true;
+    }
+
     
 
 

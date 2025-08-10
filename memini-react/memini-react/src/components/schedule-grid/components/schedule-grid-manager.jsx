@@ -1,134 +1,67 @@
-import React, { Component, Fragment, createRef, useState, useRef} from "react";
+import React, { Component, Fragment, createRef, useState, useRef, useEffect} from "react";
 import { ScheduleGridContext } from "../store/schedule-grid-context.jsx";
 import { setupClockMarkers, estimateTaskStartIndex } from "../computation/computations.js";
 import HorizontalScheduleMarker from "./horizontal-schedule-marker.jsx";
 import CalendarSelectedDate from "../../calendar/components/calendar-selected-date.jsx";
 import {convertHourMinutesToDisplayTime, timestampDisplay} from "../../task/computations/time-display-formatting.js";
 
+
+import { meminiUserActions, userTasksActions } from "../../../redux-memini-store.js";
 import {useSelector, useDispatch} from 'react-redux';
 
 import Block from "./block.jsx";
 
+const hoursPerScheduleGrid       = 24;
+let scheduleTimestamps         = setupClockMarkers(hoursPerScheduleGrid, false); //TODO: should be moved to redux 
+
+
+const fetchTasksForDate = async (userToken, year, month, day) => {
+  const API_URL = "http://localhost:5000/";
+  const endpointURL = API_URL + "api/UserTask/GetTasksForDate";  
+
+  const formData = { year, month, day };
+
+  try {
+    const response = await fetch(endpointURL, {
+      method: "POST", 
+      headers: {
+        'Authorization': `Bearer ${userToken}`,
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch tasks');
+    }
+    const data = await response.json();
+    return data.tasks.Tasks;
+
+  } catch (error) {
+    console.error("Error:", error); 
+    throw error;
+  }
+};
+
 const  ScheduleGridManager = () => {
 
+    const dispatch  = useDispatch();
     const userTasks = useSelector((state) => state.userTasks.userTasks);
+    const userToken = useSelector((state) => state.meminiUser); 
+    const selectedDate = useSelector((state) => state.calendarDate).selectedDate;    
 
-    const exampleActivityBlocks = [
-        {
-            title : 'Tennis', 
-            type : 'sport', 
-            description : 'Play tennis on clay with Oliver 1h',
-            startTime : 300,
-            endTime : 360,
-            attached : false
-        },
-        {
-            title : 'Do Laundry',
-            type : 'chore',
-            description : 'Take care of the laundry, wash your dirty jeans 3h',
-            startTime : 400,
-            endTime: 580,
-            attached : false
-        },
-        {
-            title : 'Watch Avengers',
-            type : 'fun',
-            description : 'Its supposed to be a great movie, i know you dont enjoy superhero movies in general but give it a shot! 2h',
-            startTime : 600,
-            endTime: 720,
-            attached : false
-        }
-    ];
+    useEffect(() => {
+        if (!selectedDate) return;
 
-    const hoursPerScheduleGrid       = 24;
-    const scheduleTimestamps         = setupClockMarkers(hoursPerScheduleGrid, false); //TODO: should be moved to redux 
-    let scheduleGridRef              = useRef(null);  
-    let horizontalScheduleMarker     = useRef(null);
-    let newActivityModal             = useRef(null);
-    const activityGridSizeY          = 1200; // pixels
+        const fetchTasks = async () => {
+            let updatedTasks = await fetchTasksForDate(userToken.userSession.token, selectedDate.year, selectedDate.month, selectedDate.day);
 
-    let selectedItem = null; 
+            dispatch(userTasksActions.setTasks(updatedTasks));
+        };
+        fetchTasks();
+    }, [selectedDate]);
     
-    const onDrag = (item = null) => {
-        selectedItem = item;  
-        horizontalScheduleMarker.current.onSetIsDragging(true); 
-    };
-
-
-    const onCloseNewActivityModal = () => {
-
-    }
-
-    //this is abit complicated do something to nest it out
-    const onDrop = (event) => {  
-        
-        const dropTarget = event.currentTarget;
-        const rect = dropTarget.getBoundingClientRect();
-        const scrollTop = dropTarget.scrollTop;
-        // Correct mouse position inside the element, accounting for scroll
-        const relativeY = event.clientY + scrollTop - rect.top;
-
-        //new activity is being created
-        if(selectedItem === (null && undefined)){
-            const startTime = Math.ceil((relativeY / rect.height) * 60 * hoursPerScheduleGrid);            
-            newActivityModal.current.onShowModal(startTime);
-            return;
-        } 
-
-        // const selectedObject = structuredClone({
-        //     ...selectedItem, 
-        // });
-
-
-        //how do we know if its a new one or existing drag?
-
-        
-
-        const selectedObject = exampleActivityBlocks[0]; // for testing 
-        
-        // Update properties of the cloned object
-        selectedObject.startTime = Math.ceil((relativeY / rect.height) * 60 * hoursPerScheduleGrid);
-        selectedObject.startTimeDisplay = timestampDisplay(selectedObject.startTime);
-
-        selectedObject.endTime = selectedObject.startTime + 60;
-        selectedObject.endTimeDisplay = timestampDisplay(selectedObject.endTime);
-        selectedObject.attached = true;
-        
-        // // Update the tasks array
-        // setTasks((previousTasks) => {
-        //     const updatedTasks = [
-        //         ...(previousTasks || []),
-        //         selectedObject
-        //     ].sort((a, b) => a.startTime - b.startTime);
-            
-        //     return  updatedTasks;
-        // });
-        
-        horizontalScheduleMarker.current.onSetIsDragging(false);   
-        horizontalScheduleMarker.current.onSetIsRendering(false);
-        resetSelection();
-    }
-
-    const onDragOver = (event) => {
-        event.preventDefault();        
-        if (scheduleGridRef.current.contains(event.target)) 
-            horizontalScheduleMarker.current.onSetIsRendering(true);
-
-        const container     = scheduleGridRef.current;
-        const containerRect = container.getBoundingClientRect();
-        const mouseY        = event.clientY - containerRect.top;
-
-        horizontalScheduleMarker.current.onSetPositionY(mouseY);
-    }
-
-    const onDragLeave = (event) => {
-        if (!scheduleGridRef.current.contains(event.relatedTarget)) 
-            horizontalScheduleMarker.current.onSetIsRendering(false);
-    } 
-
-    const resetSelection = () => {
-        selectedItem = null;
-    }
+    const activityGridSizeY          = 1200; // pixels
 
     return (
     <>      
@@ -151,12 +84,9 @@ const  ScheduleGridManager = () => {
 
                     {/* Schedule Task Grid */}
                     <div 
-                        ref={scheduleGridRef} 
+                        
                         className=""
-                        style={{ flexGrow: 1, minHeight: '150px', border: '' }}
-                        onDragLeave={onDragLeave}                        
-                        onDrop={(event) => onDrop(event)}
-                        onDragOver={(event) => { onDragOver(event); }}
+                        style={{ flexGrow: 1, minHeight: '150px', border: '' }}                        
                     >  
                         {userTasks.length === 0 && (
                             <div style={{ textAlign: 'center', color: 'gray' }}></div>
@@ -166,8 +96,7 @@ const  ScheduleGridManager = () => {
                                 <Block 
                                     draggable
                                     content={task} 
-                                    className="attached-task"       
-                                    onDrag={() => onDrag(task)}   
+                                    className="attached-task"   
                                     applyActivityTypeBackground={false} //no effect.
                                 />
                             </Fragment>

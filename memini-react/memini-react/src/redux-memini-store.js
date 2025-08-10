@@ -1,7 +1,7 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit';
 import moment from 'moment';
 
-Date.prototype.getWeek = function() {
+Date.prototype.getWeek = function() { //its not used anymore ?
     const date = new Date(this.getFullYear(), this.getMonth(), this.getDate());
     // Set to the nearest Thursday (current date + 4 - current day of week)
     date.setDate(date.getDate() + 4 - (date.getDay() || 7));
@@ -16,10 +16,14 @@ Date.prototype.getWeek = function() {
 
 const today = moment();
 const momentToObject = (date) => {
-    return {year: date.year(), month: date.month() + 1, day: date.date(), week: date.isoWeek(), weekDay: date.weekday()};
+    return {year: date.year(), month: date.month(), day: date.date(), week: date.isoWeek(), weekDay: date.weekday()};
 }
 
-const calendarDateState = {selectedDate: momentToObject(today), todaysDate: momentToObject(today)};
+const calendarDateState = {
+    selectedDate: momentToObject(today), 
+    todaysDate: momentToObject(today)
+
+};
 
 const calendarDateSlice = createSlice({
     name: 'calendarDate',
@@ -28,7 +32,14 @@ const calendarDateSlice = createSlice({
         setSelectedDate(state, action) { 
             state.selectedDate  = action.payload.newDate;
             state.todaysDate    = state.todaysDate;
-        }           
+        },
+        setSelectedYearMonth(state, action) {
+            state.selectedDate = {
+                ...state.selectedDate,
+                year: action.payload.year,
+                month: action.payload.month
+            };         
+        }          
     }
 });
 
@@ -65,7 +76,11 @@ const userTasksSlice = createSlice({
     reducers: {
         addTask(state, action) { 
             state.userTasks.push(action.payload);         
-        }           
+        },
+
+        setTasks(state, action) {
+            state.userTasks = action.payload;
+        }                 
     }
 
 })

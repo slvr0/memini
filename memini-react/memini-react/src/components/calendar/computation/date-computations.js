@@ -25,7 +25,7 @@ const getWeeksInMonth = (year, month) => {
 
 //i did this is the function
 const getFirstWeekInMonth = (month, year) => {
-    return new Date(year, month - 1, 1).getWeek();
+    return new Date(year, month, 1).getWeek();
 }
 
 const getWeekDates = (year, week) => {

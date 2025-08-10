@@ -16,7 +16,6 @@ function LoginPage() {
             password: formData.password
         };
 
-        //console.log(loginRequestData);
         fetch(endpointURL, {
             method: "POST", 
             headers: {

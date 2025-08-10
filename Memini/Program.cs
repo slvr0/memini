@@ -3,7 +3,33 @@ using Newtonsoft.Json.Serialization;
 using Memini.Controllers;
 using Memini.services;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
+
+var jwtKey = builder.Configuration["JwtSettings:SecretKey"];
+var keyBytes = Encoding.ASCII.GetBytes(jwtKey);
+
+//Add security
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false; // set to true in production with HTTPS
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+    };
+});
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -51,12 +77,12 @@ app.Use(async (context, next) =>
 
 app.UseRouting();
 
+app.UseAuthentication();  // must come before UseAuthorization
+
 app.UseAuthorization();
 
 app.MapRazorPages();
 
-app.MapControllerRoute(
-    name: "Memini",
-    pattern: "{controller=Calendar}/{action=GetCalendar}");
+app.MapControllers();
 
 app.Run();

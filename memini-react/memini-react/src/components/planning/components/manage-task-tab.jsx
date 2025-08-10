@@ -4,35 +4,61 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { userTasksActions } from "../../../redux-memini-store.js";
 import {createRef, React,  useState} from "react";
+import MuiDatePicker from "../../general-components/components/mui-date-picker.jsx";
 
-function ManageTaskTab() { 
+function addNewTask(userToken, title, description, year, month, day, startTime, endTime) {
+        const API_URL = "http://localhost:5000/";
+        const endpointURL = API_URL + "api/UserTask/AddNewTask";  
+
+
+        const newTaskInformation = {          
+          title : title,
+          description: description,
+          year: year,
+          month : month,
+          day  : day, 
+          startTime: startTime,
+          endTime: endTime
+        };
+        
+        fetch(endpointURL, {
+            method: "POST", 
+            headers: {
+                'Authorization': `Bearer ${userToken.userSession.token}`,
+                "Content-Type": "application/json", 
+            },
+            body: JSON.stringify(newTaskInformation),
+        })
+        .then(response => response.json())     
+        .catch(error => {
+            console.error("Error:", error); 
+        });
+}
+
+function ManageTaskTab({providedTask}) { 
     const dispatch          = useDispatch(); 
     const titleRef = createRef();
     const descriptionRef = createRef();
-    const timeIntervalRef = createRef();  
+    const timeIntervalRef = createRef(); 
+    const taskDateRef = createRef(); 
+    const userToken = useSelector((state) => state.meminiUser); 
 
     const onSubmitForm = () => {
         const title = titleRef.current.value;
         const description = descriptionRef.current.value;
         const timeInterval = timeIntervalRef.current.getValue();
         const startTime = parseInt(timeInterval[0]);
-        const endTime = parseInt(timeInterval[1]);
-        // console.log(timeIntervalRef.current.getValue()); // [480, 1020]
-        // console.log(timeIntervalRef.current.getValueAsTime()); // ["08:00", "17:00"]
-
-
-        // console.log(title, description, timeInterval);
-
-        // const startTime = parseInt(formData.startTime);
-        // const endTime = parseInt(formData.endTime);
-        const type = "fun";
+        const endTime = parseInt(timeInterval[1]);       
+        const taskDate = taskDateRef.current.getPickedDate();
         
-        console.log(startTime, endTime);
-        dispatch(userTasksActions.addTask({ title: title, description: description, startTime: startTime, endTime:endTime, type:type, attached: true }));
+        const type = "fun";  
+      //only dispatch if this is successful afterwards
+        addNewTask(userToken, title, description ,taskDate.year, taskDate.month, taskDate.day, startTime, endTime);
 
+        dispatch(userTasksActions.addTask({ Title: title, Description: description, StartTime: startTime, EndTime:endTime, Type:type, Attached: true }));
     }
 
     return (
@@ -75,6 +101,13 @@ function ManageTaskTab() {
       </Button>
     </Stack>
   </Box>
+
+     <div className="w-128 ml-4">
+      <MuiDatePicker ref={taskDateRef} />
+      
+    </div>
+
+
 
   {/* Second row for the slider */}
   <DiscreteDoubleTimeSlider ref={timeIntervalRef} />

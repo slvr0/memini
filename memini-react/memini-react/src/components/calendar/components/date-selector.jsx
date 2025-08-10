@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import { calendarDateActions } from "../../../redux-memini-store.js";
+import moment from 'moment';
+
+
 import {
   IconButton,
   Select,
@@ -66,44 +71,53 @@ const menuProps = {
 };
 
 const DateSelector = () => {
-  const today = new Date();
-  const [year, setYear] = useState(today.getFullYear());
-  const [monthIndex, setMonthIndex] = useState(today.getMonth());
+
+  const dispatch          = useDispatch();
+  const calendarDateState = useSelector((state) => state.calendarDate);  
+  const today = moment();
+
+  const [selectedMonth, setSelectedMonth]   = useState(calendarDateState.selectedDate.month);
+  const [selectedYear,  setSelectedYear]    = useState(calendarDateState.selectedDate.year);  
+
+  const onUpdateDate = (year, month) => {
+    setSelectedYear(year);
+    setSelectedMonth(month);
+    dispatch(calendarDateActions.setSelectedYearMonth({year: year, month: month}));  
+  }
 
   const handleTodayClick = () => {
-    setYear(today.getFullYear());
-    setMonthIndex(today.getMonth());
+    setSelectedYear(today.year());
+    setSelectedMonth(today.month());
+    dispatch(calendarDateActions.setSelectedDate({newDate:calendarDateState.todaysDate})); 
   };
 
   const handleYearChange = (event) => {
-    setYear(event.target.value);
+    onUpdateDate(event.target.value, selectedMonth);
   };
 
   const handleMonthChange = (event) => {
-    setMonthIndex(event.target.value);
+    onUpdateDate(selectedYear, event.target.value);
   };
 
   const handleMonthIncrement = () => {
-    if (monthIndex === 11) {
-      setMonthIndex(0);
-      setYear(year + 1);
+    if (selectedMonth === 11) {
+      onUpdateDate(selectedYear + 1, 0);
     } else {
-      setMonthIndex(monthIndex + 1);
+      onUpdateDate(selectedYear, selectedMonth + 1);
     }
   };
 
-  const handleMonthDecrement = () => {
-    if (monthIndex === 0) {
-      setMonthIndex(11);
-      setYear(year - 1);
+  const handleMonthDecrement = () => {    
+    if (selectedMonth === 0) {    
+      onUpdateDate(selectedYear - 1, 11);
     } else {
-      setMonthIndex(monthIndex - 1);
+      onUpdateDate(selectedYear, selectedMonth - 1);
     }
   };
 
-  // Year range ±10 years from current
+  // selectedYear range ±10 years from current
   const yearOptions = [];
-  for (let y = today.getFullYear() - 10; y <= today.getFullYear() + 10; y++) {
+  for (let y = today.year() - 10; y <= today.year() + 10; y++) {
     yearOptions.push(y);
   }
 
@@ -120,9 +134,9 @@ const DateSelector = () => {
         color: 'white',
       }}
     >
-      {/* Year Select */}
+      {/* selectedYear Select */}
       <SmallSelect
-        value={year}
+        value={selectedYear}
         onChange={handleYearChange}
         size="small"
         MenuProps={menuProps}
@@ -137,7 +151,7 @@ const DateSelector = () => {
 
       {/* Month Select */}
       <SmallSelect
-        value={monthIndex}
+        value={selectedMonth}
         onChange={handleMonthChange}
         size="small"
         MenuProps={menuProps}
@@ -172,12 +186,12 @@ const DateSelector = () => {
         </IconButton>
       </Box>
 
-      {/* Display selected year and month */}
+      {/* Display selected selectedYear and month */}
       <Typography
         variant="subtitle1"
         sx={{ ml: 2, minWidth: 120, textAlign: 'right', userSelect: 'none' }}
       >
-        {year} - {months[monthIndex]}
+        {selectedYear} - {months[selectedMonth]}
       </Typography>
 
       {/* Today Icon */}

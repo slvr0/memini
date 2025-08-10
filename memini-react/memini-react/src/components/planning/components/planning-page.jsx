@@ -1,22 +1,6 @@
-import CalendarContainer from "../../calendar/components/calendar-container.jsx";
-import ScheduleGridContextProvider from "../../schedule-grid/store/schedule-grid-context-provider.jsx";
-import ScheduleGridManager from "../../schedule-grid/components/schedule-grid-manager.jsx";
-import GeneralForm from "../../general-components/components/general-form.jsx";
-import MeminiIconButton from "../../general-components/components/memini-icon-button.jsx"
-import MenuBarInverted from "../../general-components/components/menu-bar-inverted.jsx"
-import CalendarSelectedDate from "../../calendar/components/calendar-selected-date.jsx"
 import QuoteSegment from "../../general-components/components/quote-segment.jsx";
-import {useSelector, useDispatch} from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { userTasksActions } from "../../../redux-memini-store.js";
-import { Menu, Icon } from 'semantic-ui-react';
-import LoupeRoundedIcon from '@mui/icons-material/LoupeRounded';
-import EventNoteTwoToneIcon from '@mui/icons-material/LoupeRounded';
-import Tooltip from '@mui/material/Tooltip';
-import DehazeRoundedIcon from '@mui/icons-material/DehazeRounded';
-import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
-import ManageSearchRoundedIcon from '@mui/icons-material/ManageSearchRounded';
-import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
-import CrisisAlertRoundedIcon from '@mui/icons-material/CrisisAlertRounded';
 import PlanningMainDashboard from './planning-main-dashboard.jsx'
 
 function PlanningPage() {

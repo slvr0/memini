@@ -39,6 +39,15 @@ public class DtoUserLoginResponse
     public string Email { get; set; } = String.Empty;
 }
 
+public class DtoUserSessionToken
+{
+    public string FirstName { get; set; } = String.Empty;
+    public string LastName { get; set; } = String.Empty;
+    public string Email { get; set; } = String.Empty;
+    public string SessionToken { get; set; } = String.Empty;
+
+}
+
 public static class UserExtensions
 {
     public static DtoUser ToDto(this User user)

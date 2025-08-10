@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "EIx/0bFF1cIDUIvVzXDkEfTYiF6yn39Bs0988jJG294iNJ60ZuL5Yehl04om2HpnGu2nhL/jrczJVLYN438IdQ==",
+  "dgSpecHash": "xov9ARLvXIg15QP1q5qBWJry2Ixs5TjOalMNmb84pydnhQHfa0/ND6F8x5gZLgFj+ClkHt4gzoOhnT4+t0xpqg==",
   "success": true,
   "projectFilePath": "C:\\Users\\johan\\source\\repos\\Memini\\Memini\\Memini.csproj",
   "expectedPackageFiles": [
@@ -9,6 +9,7 @@
     "C:\\Users\\johan\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\johan\\.nuget\\packages\\castle.core\\5.1.0\\castle.core.5.1.0.nupkg.sha512",
     "C:\\Users\\johan\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\johan\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\7.0.0\\microsoft.aspnetcore.authentication.jwtbearer.7.0.0.nupkg.sha512",
     "C:\\Users\\johan\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\7.0.20\\microsoft.aspnetcore.jsonpatch.7.0.20.nupkg.sha512",
     "C:\\Users\\johan\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\7.0.20\\microsoft.aspnetcore.mvc.newtonsoftjson.7.0.20.nupkg.sha512",
     "C:\\Users\\johan\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\1.1.1\\microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512",
