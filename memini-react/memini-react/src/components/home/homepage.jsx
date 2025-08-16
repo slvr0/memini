@@ -6,36 +6,59 @@ import eventsImage from "../../../src/assets/images/events_image.jpg";
 import notificationImage from "../../../src/assets/images/notification_image_2.jpg";
 import MeminiButton from "../general-components/components/memini-button";
 import { useNavigate, useLocation } from "react-router-dom";
-const HomePage = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
 
+import { useDispatch, useSelector } from 'react-redux';
+const HomePage = () => {
+        
+    const navigate = useNavigate();
+    const userSession = useSelector(state => state.meminiUser.userSession);
+
+    console.log(userSession)
     const navigateToSignup = () => {
         navigate('/signup')
+    }
+
+    function capitalizeFirstLetter(str) {
+        if (!str) return "";
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
 
     return (
         <>
         <Container className="home-header">
-            <Header as="h1" className="home-title">
-            Welcome to Memini!
-            </Header>
-            <p className="home-description">
-            Memini is your ultimate calendar and event management app. Plan your week, add activities, track events, and stay organized effortlessly. Whether it's personal tasks or city events, Memini helps you keep everything in one place.
-            </p>
-            
-            <div className="flex gap-4 mx-4 justify-center mb-6">
-                <MeminiButton  onClick={() => {navigateToSignup()}}>
-                    Sign Up
-                </MeminiButton>   
-            </div>
+            {!userSession && 
+             <>
+                <Header as="h1" className="home-title">
+                Welcome to Memini!
+                </Header>
+                <p className="home-description">
+                Memini is your ultimate calendar and event management app. Plan your week, add activities, track events, and stay organized effortlessly. Whether it's personal tasks or city events, Memini helps you keep everything in one place.
+                </p>
+                
+                <div className="flex gap-4 mx-4 justify-center mb-6">
+                    <MeminiButton  onClick={() => {navigateToSignup()}}>
+                        Sign Up
+                    </MeminiButton>   
+                </div>
 
-            <div className="flex gap-4 mx-4 justify-center">
-                    <p>Already a member?  <a href="/login" className="text-blue-500 hover:underline">Login</a>
+                <div className="flex gap-4 mx-4 justify-center">
+                        <p>Already a member?  <a href="/login" className="text-blue-500 hover:underline">Login</a>
+                        </p>
+                </div>
+             </>
+             }
+
+             {userSession && 
+                <>
+                    <Header as="h1" className="home-title">
+                    Welcome,  {capitalizeFirstLetter(userSession.firstName)} {capitalizeFirstLetter(userSession.lastName)} !
+                    </Header>
+                    <p className="home-description">
+                    Memini is your ultimate calendar and event management app. Plan your week, add activities, track events, and stay organized effortlessly. Whether it's personal tasks or city events, Memini helps you keep everything in one place.
                     </p>
-            </div>
-
+                </> 
+             }
         </Container>
 
         <Container className="home-features">

@@ -6,118 +6,158 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { userTasksActions } from "../../../redux-memini-store.js";
-import {createRef, React,  useState} from "react";
+import React, {createRef,  useState, useEffect} from "react";
 import MuiDatePicker from "../../general-components/components/mui-date-picker.jsx";
+import { deleteUserTask, addUserTask, saveUserTask } from "../../../services/usertask-service.js";
 
-function addNewTask(userToken, title, description, year, month, day, startTime, endTime) {
-        const API_URL = "http://localhost:5000/";
-        const endpointURL = API_URL + "api/UserTask/AddNewTask";  
+const snap15 = (m) => Math.round(m / 15) * 15;
+  const defaultInterval = () => {
+  const now = new Date();
+  const start = snap15(now.getHours() * 60);
+  const end = snap15((now.getHours() + 1) * 60);
+  return [start, end];
+};
 
+const intervalFromTask = (task) => {
+  if (task) {    
+  return [task.StartTime, task.EndTime];
+  } else 
+  return defaultInterval();
+};
 
-        const newTaskInformation = {          
-          title : title,
-          description: description,
-          year: year,
-          month : month,
-          day  : day, 
-          startTime: startTime,
-          endTime: endTime
-        };
-        
-        fetch(endpointURL, {
-            method: "POST", 
-            headers: {
-                'Authorization': `Bearer ${userToken.userSession.token}`,
-                "Content-Type": "application/json", 
-            },
-            body: JSON.stringify(newTaskInformation),
-        })
-        .then(response => response.json())     
-        .catch(error => {
-            console.error("Error:", error); 
-        });
-}
-
-function ManageTaskTab({providedTask}) { 
+function ManageTaskTab() { 
+    const selectedTask      = useSelector((state) => state.userTasks.selectedTask);    
     const dispatch          = useDispatch(); 
-    const titleRef = createRef();
-    const descriptionRef = createRef();
+    const titleRef          = createRef();
+    const [title, setTitle] = useState(selectedTask?.Title || "");
+    const [description, setDescription] = useState(selectedTask?.Description || "");   
+    const [timeInterval, setTimeInterval] = useState(() => intervalFromTask(selectedTask));
+
+    const descriptionRef  = createRef();
     const timeIntervalRef = createRef(); 
-    const taskDateRef = createRef(); 
-    const userToken = useSelector((state) => state.meminiUser); 
+    const taskDateRef     = createRef(); 
 
-    const onSubmitForm = () => {
-        const title = titleRef.current.value;
-        const description = descriptionRef.current.value;
-        const timeInterval = timeIntervalRef.current.getValue();
-        const startTime = parseInt(timeInterval[0]);
-        const endTime = parseInt(timeInterval[1]);       
-        const taskDate = taskDateRef.current.getPickedDate();
-        
-        const type = "fun";  
-      //only dispatch if this is successful afterwards
-        addNewTask(userToken, title, description ,taskDate.year, taskDate.month, taskDate.day, startTime, endTime);
+    useEffect(() => {
+      setTitle(selectedTask?.Title || "");
+      setDescription(selectedTask?.Description || "");
+      setTimeInterval(intervalFromTask(selectedTask));
+    }, [selectedTask]); // runs whenever selectedTask changes    
 
-        dispatch(userTasksActions.addTask({ Title: title, Description: description, StartTime: startTime, EndTime:endTime, Type:type, Attached: true }));
+    const clearSelection = () => {
+      if(selectedTask === null) {
+        setTitle("");
+        setDescription("");
+        setTimeInterval(intervalFromTask(null));
+      } else 
+        dispatch(userTasksActions.clearSelectedTask());
     }
+
+    const onDeleteUserTask = (userTask) => {
+      if(userTask === null)
+        return;
+
+      deleteUserTask( userTask ).then(response => {
+        dispatch(userTasksActions.deleteTask( userTask ));
+      }).catch(err => console.error(err)).then(_ => {
+        clearSelection();
+      }); 
+    }
+
+    const onSaveTask = () => {
+        const UserTaskKey = selectedTask?.UserTaskKey ?? 0;
+        const Title = titleRef.current.value;
+        const Description = descriptionRef.current.value;
+        const timeInterval = timeIntervalRef.current.getValue();
+        const StartTime = parseInt(timeInterval[0]);
+        const EndTime = parseInt(timeInterval[1]);       
+        const taskDate = taskDateRef.current.getPickedDate();
+        const Year = taskDate.year;
+        const Month = taskDate.month;
+        const Day = taskDate.day;
+
+        const userTask = { 
+          UserTaskKey: UserTaskKey,                      
+          Year: Year,
+          Month: Month,
+          Day: Day,
+          Title: Title,
+          Description: Description,
+          StartTime: StartTime,
+          EndTime: EndTime
+        };  
+        
+        if(userTask.UserTaskKey === 0) {
+          addUserTask( userTask).then(response => {    
+            console.log(response.data.ResponseObject);       
+            dispatch(userTasksActions.addTask(response.data.ResponseObject));
+          }).catch(err => console.error(err));  
+        } else {
+          saveUserTask( userTask ) 
+          .then(_ => { //TODO: more correct would be to dispatch the returned userTask in response                          
+            dispatch(userTasksActions.updateTask(userTask));
+          }).catch(err => console.error(err));   
+        } 
+        
+        clearSelection();
+    }   
 
     return (
         <>
-<Box
-  component="form"
-  sx={{
-    '& .MuiTextField-root': { m: 2, flex: 1 },
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 2
-  }}
-  noValidate
-  autoComplete="off"
->
-  {/* Top row with inputs + buttons */}
-  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-    <TextField
-      inputRef={titleRef}
-      id="outlined-required"
-      label="Title"
-      multiline
-      maxRows={1}
-      placeholder="What are you planning to do?"
-      variant="standard"
-    />
-    <TextField
-      inputRef={descriptionRef}
-      id="filled-multiline-static"
-      label="Task description"
-      multiline
-      maxRows={4}
-      placeholder="Describe the activity..."
-      variant="standard"
-    />
-    <Stack direction="row" spacing={2} sx={{ ml: 2, mr:2 }}>
-      <Button variant="outlined" onClick={() => {onSubmitForm()}}>Save/Update</Button>
-      <Button variant="outlined" disabled>
-        Delete
-      </Button>
-    </Stack>
-  </Box>
+          <Box
+            component="form"
+            sx={{
+              '& .MuiTextField-root': { m: 2, flex: 1 },
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2
+            }}
+            noValidate
+            autoComplete="off"
+          >
+            {/* Top row with inputs + buttons */}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <TextField
+                inputRef={titleRef}
+                id="outlined-required"
+                label="Title"
+                multiline
+                maxRows={1}
+                placeholder="Whats the plan chief?"
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)}
+                variant="standard"
+              />
+              <TextField
+                inputRef={descriptionRef}
+                id="filled-multiline-static"
+                label="Task description"
+                multiline
+                maxRows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe the activity..."
+                variant="standard"
+              />
+              <Stack direction="row" spacing={2} sx={{ ml: 2, mr:2 }}>
+                <Button variant="outlined" onClick={() => {onSaveTask()}}>Save/Update</Button>
+                <Button variant="outlined" disabled={selectedTask === null} onClick={() => {onDeleteUserTask(selectedTask)}}>
+                  Delete
+                </Button>
+              </Stack>
+            </Box>
 
-     <div className="w-128 ml-4">
-      <MuiDatePicker ref={taskDateRef} />
-      
-    </div>
-
-
-
-  {/* Second row for the slider */}
-  <DiscreteDoubleTimeSlider ref={timeIntervalRef} />
-</Box>
+              <div className="w-128 ml-4">
+                <MuiDatePicker selectedTask={selectedTask} ref={taskDateRef}  />
+                
+              </div>
+            {/* Second row for the slider */}
+            <DiscreteDoubleTimeSlider  
+              ref={timeIntervalRef}
+              timeInterval={timeInterval}
+              onChange={setTimeInterval}  />
+          </Box>
         </>
-
     )
-
-
-
 }
 
 export default ManageTaskTab;

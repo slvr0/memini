@@ -1,67 +1,38 @@
-import React, { Component, Fragment, createRef, useState, useRef, useEffect} from "react";
-import { ScheduleGridContext } from "../store/schedule-grid-context.jsx";
-import { setupClockMarkers, estimateTaskStartIndex } from "../computation/computations.js";
-import HorizontalScheduleMarker from "./horizontal-schedule-marker.jsx";
-import CalendarSelectedDate from "../../calendar/components/calendar-selected-date.jsx";
-import {convertHourMinutesToDisplayTime, timestampDisplay} from "../../task/computations/time-display-formatting.js";
-
-
-import { meminiUserActions, userTasksActions } from "../../../redux-memini-store.js";
+import React, { Fragment, useEffect} from "react";
 import {useSelector, useDispatch} from 'react-redux';
 
+import { setupClockMarkers } from "../computation/computations.js";
+import { meminiUserActions, userTasksActions } from "../../../redux-memini-store.js";
 import Block from "./block.jsx";
+import { getUserTasks } from "../../../services/usertask-service.js";
 
+//TODO: global load, we dont want to initiate everytime ( use Effect instead? )
 const hoursPerScheduleGrid       = 24;
-let scheduleTimestamps         = setupClockMarkers(hoursPerScheduleGrid, false); //TODO: should be moved to redux 
-
-
-const fetchTasksForDate = async (userToken, year, month, day) => {
-  const API_URL = "http://localhost:5000/";
-  const endpointURL = API_URL + "api/UserTask/GetTasksForDate";  
-
-  const formData = { year, month, day };
-
-  try {
-    const response = await fetch(endpointURL, {
-      method: "POST", 
-      headers: {
-        'Authorization': `Bearer ${userToken}`,
-        "Content-Type": "application/json", 
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch tasks');
-    }
-    const data = await response.json();
-    return data.tasks.Tasks;
-
-  } catch (error) {
-    console.error("Error:", error); 
-    throw error;
-  }
-};
+let scheduleTimestamps         = setupClockMarkers(hoursPerScheduleGrid, false); //TODO: should be moved to redux, should be moved to useEffect
 
 const  ScheduleGridManager = () => {
 
     const dispatch  = useDispatch();
     const userTasks = useSelector((state) => state.userTasks.userTasks);
     const userToken = useSelector((state) => state.meminiUser); 
-    const selectedDate = useSelector((state) => state.calendarDate).selectedDate;    
+    const selectedDate = useSelector((state) => state.calendarDate.selectedDate);    
+    const activityGridSizeY          = 1200; // pixels
+
+    const hasFetchedRef = React.useRef(false);
 
     useEffect(() => {
-        if (!selectedDate) return;
-
-        const fetchTasks = async () => {
-            let updatedTasks = await fetchTasksForDate(userToken.userSession.token, selectedDate.year, selectedDate.month, selectedDate.day);
-
-            dispatch(userTasksActions.setTasks(updatedTasks));
-        };
-        fetchTasks();
-    }, [selectedDate]);
+    if (!selectedDate) return;
     
-    const activityGridSizeY          = 1200; // pixels
+    getUserTasks({ year: selectedDate.year, month: selectedDate.month, day: selectedDate.day })
+        .then(response => {              
+            dispatch(userTasksActions.setTasks(response.data.ResponseObject));
+        })
+        .catch(err => console.error(err));
+    }, [selectedDate, dispatch]);
+
+    const onClickTask = (task) => {       
+        dispatch(userTasksActions.setSelectedTask(task));
+    }
 
     return (
     <>      
@@ -98,6 +69,7 @@ const  ScheduleGridManager = () => {
                                     content={task} 
                                     className="attached-task"   
                                     applyActivityTypeBackground={false} //no effect.
+                                    onClick={() => onClickTask(task)}
                                 />
                             </Fragment>
                         ))}

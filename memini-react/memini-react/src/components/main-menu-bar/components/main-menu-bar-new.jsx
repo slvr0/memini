@@ -75,6 +75,7 @@ const UserProfileArea = (props) => {
   
   function logout() {
     dispatch(meminiUserActions.logout());
+    navigate('/home');
   }
 
   return (
@@ -105,16 +106,16 @@ const UserProfileArea = (props) => {
 }
 
 
-const MainMenu = () => {
+export default function MainMenu () {
     const navigate = useNavigate();
     const location = useLocation();
+    const userSession = useSelector((state) => state.meminiUser.userSession);
     
     const pathToMenuMap = {
         "/home": "Home",
         "/planning": "Planning",
         "/events": "Events",
-        "/profile": "My Profile",
-        "/ui-test": "UiTest",
+        "/profile": "My Profile",    
       };
 
     const selectedMenu = pathToMenuMap[location.pathname] || "Home";
@@ -143,13 +144,18 @@ const MainMenu = () => {
                       <CabinTwoToneIcon fontSize="large">
                       </CabinTwoToneIcon>
                     </MenuItemIcon>
-                    <MenuItemIcon 
-                      name="Planning" 
-                      selectedMenu={selectedMenu} 
-                      onClick={() => {handleMenuClick('/planning')}}
-                      tooltip="Planning">
-                      <EventNoteTwoToneIcon fontSize="large"></EventNoteTwoToneIcon>
-                    </MenuItemIcon>    
+
+                    {
+                      userSession && 
+                        <MenuItemIcon 
+                          name="Planning" 
+                          selectedMenu={selectedMenu} 
+                          onClick={() => {handleMenuClick('/planning')}}
+                          tooltip="Planning">
+                          <EventNoteTwoToneIcon fontSize="large"></EventNoteTwoToneIcon>
+                        </MenuItemIcon>
+                    }
+
                     <MenuItemIcon 
                       name="About" 
                       selectedMenu={selectedMenu} 
@@ -167,5 +173,3 @@ const MainMenu = () => {
       </>
     )
 }
-
-export default MainMenu;

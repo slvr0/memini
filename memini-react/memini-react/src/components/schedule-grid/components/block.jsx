@@ -19,11 +19,8 @@ const Block = (props) => {
         const yPosition  = hourPixel * startTime / 60;  
         return {height: height, yPosition: yPosition, cssName: ` attached-task` }
     } 
-        
 
-    let {height, yPosition, cssName} = configureAttachedTaskBlock(props.content.EndTime, props.content.StartTime);
-    
-    console.log(height)
+    let {height, yPosition, cssName} = configureAttachedTaskBlock(props.content.EndTime, props.content.StartTime);    
 
     //element sizing applies here
     const blockComputationStyling = {
@@ -36,6 +33,7 @@ const Block = (props) => {
             <div 
                 draggable 
                 ref={blockRef}
+                onClick={props.onClick}
                 className={`${cssName}`}
                 style={blockComputationStyling}>
                     {props.content ? (

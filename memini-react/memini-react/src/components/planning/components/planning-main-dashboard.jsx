@@ -3,7 +3,6 @@ import "../css/planning-main-dashboard.css"
 
 import ManageTaskTab from "./manage-task-tab";
 
-
 import Tooltip from '@mui/material/Tooltip';
 import DehazeRoundedIcon from '@mui/icons-material/DehazeRounded';
 import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
@@ -17,12 +16,17 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import Divider from '@mui/material/Divider';
+import { useSelector } from 'react-redux';
 
 
+const PlanningMainDashboard = (props) => {
 
-const PlanningMainDashboard = (props) => {  
   const headerText = props.headerText;
   const subHeaderTtext = props.subHeaderText; 
+
+  //TODO: Set active tab to Edit task // since it first re-renders when userTasks changes
+  //const userTasks = useSelector((state) => state.userTasks);
+  
 
   return (
       <div className="memini-container-section">
@@ -84,7 +88,7 @@ const PlanningMainDashboard = (props) => {
   </div>
 
   <div>
-    <ManageTaskTab></ManageTaskTab>
+    <ManageTaskTab ></ManageTaskTab>
 
   </div>
         

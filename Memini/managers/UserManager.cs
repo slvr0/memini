@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Memini.services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Memini.managers;
 public class UserManager
@@ -16,13 +17,16 @@ public class UserManager
         _authorisationService = authorisationService;
     }
 
-    public bool RegisterNewUser(dto.DtoUserRegistrationRequest userRegistrationRequest, MeminiDbContext context)
+    public DtoUserLoginResponse RegisterNewUser(dto.DtoUserRegistrationRequest userRegistrationRequest, MeminiDbContext context)
     {
         string hashedPassword = _authorisationService.PasswordHash(userRegistrationRequest.Password);
         string firstName = userRegistrationRequest.FirstName;
         string lastName = userRegistrationRequest.LastName; 
         string email = userRegistrationRequest.Email;
 
+        bool success = true;
+        string loginErrorDetails = string.Empty;
+        
         User user = new User()
         {
             FirstName = firstName,
@@ -37,13 +41,17 @@ public class UserManager
             context.SaveChanges();
         }
         catch (Exception ex) {
-            throw new Exception("Error saving new user.", ex);
-        }     
+            success = false;
+            loginErrorDetails = ex.Message;            
+        }
 
-        return true;
+        if(success)
+            return LoginUser(new DtoUserLoginRequest(user.Email, userRegistrationRequest.Password), context);
+        else 
+            return new DtoUserLoginResponse(success: false, details : loginErrorDetails);
     }
 
-    public dto.DtoUserLoginResponse LoginUser(dto.DtoUserLoginRequest userLoginRequest, MeminiDbContext context)
+    public DtoUserLoginResponse LoginUser(dto.DtoUserLoginRequest userLoginRequest, MeminiDbContext context)
     {       
         User? user = context.Users.FirstOrDefault(user => user.Email.ToLower() == userLoginRequest.Email.ToLower()); 
 
@@ -54,7 +62,6 @@ public class UserManager
 
         if(!validPassword)
             return new DtoUserLoginResponse() { Success = false, Details = "Invalid password" };
-
 
         //generate JWT token for user session
         string sessionToken = _authorisationService.GenerateJwtToken(user);
@@ -67,33 +74,5 @@ public class UserManager
             LastName = user.LastName,
             Email = user.Email,
         };
-
     }
-
-    public User? GetUserBasic(string userName, string userEmail, MeminiDbContext context)
-    {
-        //TBD
-        return new User();
-
-        //return context.Users.FirstOrDefault(u => u.Name == userName && u.Email == userEmail);
-    }
-
-    public void LoadUserActivities(User user) { 
-    
-    }
-
-    public void LoadUserActivitiesUnderCurrentMonth(User user)
-    {
-
-    }
-
-    public bool SessionTokenIsValid(DtoUser user)
-    {
-        return true;
-    }
-
-    
-
-
-
 }

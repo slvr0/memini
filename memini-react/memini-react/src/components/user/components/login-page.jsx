@@ -1,39 +1,29 @@
-import { meminiUserActions } from "../redux-memini-store";
-import GeneralForm from "./general-components/components/general-form"
+import { meminiUserActions } from "../../../redux-memini-store.js";
+import GeneralForm from "../../general-components/components/general-form.jsx"
 import { useDispatch, useSelector } from 'react-redux';
-
+import { loginUser } from "../../../services/login-service.js";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const dispatch = useDispatch();
-    //const authToken = useSelector(state => state.auth.token);    
+    const navigate = useNavigate();
+    const userSession = useSelector((state) => state.meminiUser.userSession);
 
     function processLoginRequest(formData) {
-        const API_URL = "http://localhost:5000/";
-        const endpointURL = API_URL + "api/User/LoginUser";
-        
         const loginRequestData = {
             email: formData.email,
             password: formData.password
-        };
+        };       
 
-        fetch(endpointURL, {
-            method: "POST", 
-            headers: {
-                "Content-Type": "application/json", 
-            },
-            body: JSON.stringify(loginRequestData),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.Success)
-                onLoginSuccess(data)
-            else
-                onLoginFail(data)
- 
-        })
-        .catch(error => {
-            console.error("Error:", error); 
-        });
+        loginUser(loginRequestData).then(response => {
+            if(response.data.Success) {
+                onLoginSuccess(response.data.ResponseObject);
+                navigate('/planning');
+            }
+            else {
+                onLoginFail(response.data.ResponseObject);
+            }
+        }).catch(e => console.log(e));
     }
     
     const onLoginFail = (userCredentials) => {
@@ -47,7 +37,7 @@ function LoginPage() {
             email: userCredentials.Email,
             token: userCredentials.SessionToken
         };           
-        dispatch(meminiUserActions.login({userSession:userSession}));  
+        dispatch(meminiUserActions.login({userSession:userSession}));   
     }
 
     const rows = [

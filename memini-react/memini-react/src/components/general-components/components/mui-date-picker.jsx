@@ -1,43 +1,57 @@
-import dayjs from 'dayjs';
-import { DatePicker } from '@mui/x-date-pickers';
-import React, { useState, forwardRef, useImperativeHandle, useEffect } from "react";
-import { useSelector } from 'react-redux';
+import React, { forwardRef, useState, useEffect, useImperativeHandle } from "react";
+import dayjs from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-const MuiDatePicker = forwardRef(function MuiDatePicker(providedTask, ref)  {
-  const calendarDateState = useSelector((state) => state.calendarDate);
 
+const MuiDatePicker = forwardRef(function MuiDatePicker({ selectedTask, onChange }, ref) {
+
+  // Convert selectedTask to dayjs or use today as default
   const toDayjsValue = () => {
-    return providedTask?.startDate
-      ? dayjs(providedTask.startDate)
-      : dayjs()
-          .set('year', calendarDateState.selectedDate.year)
-          .set('month', calendarDateState.selectedDate.month) // 0-based!
-          .set('date', calendarDateState.selectedDate.day);
+    if (selectedTask?.Year != null && selectedTask?.Month != null && selectedTask?.Day != null) {
+      return dayjs()
+        .set("year", selectedTask.Year)
+        .set("month", selectedTask.Month) 
+        .set("date", selectedTask.Day);
+    }
+    return dayjs();
   };
 
   const [value, setValue] = useState(toDayjsValue());
 
-  // Sync when Redux state changes
+  // Update value if selectedTask changes
   useEffect(() => {
     setValue(toDayjsValue());
-  }, [calendarDateState.selectedDate, providedTask?.startDate]);
+  }, [selectedTask?.Year, selectedTask?.Month, selectedTask?.Day]);
 
+  // Expose picked date via ref
   useImperativeHandle(ref, () => ({
-  getPickedDate: () => ({
-    year: value.year(),
-    month: value.month(), // 0-based, add +1 if you want 1-based
-    day: value.date()
-  })
-}));
+    getPickedDate: () => ({
+      year: value.year(),
+      month: value.month(),
+      day: value.date(),
+    }),
+  }));
+
+  const handleChange = (newValue) => {
+    setValue(newValue);
+    if (onChange) {
+      onChange({
+        year: newValue.year(),
+        month: newValue.month(),
+        day: newValue.date(),
+      });
+    }
+  };
 
   return (
     <DatePicker
       ref={ref}
       label="Task date"
       value={value}
-      onChange={(newValue) => setValue(newValue)}
+      onChange={handleChange}
     />
   );
 });
 
 export default MuiDatePicker;
+

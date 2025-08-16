@@ -25,6 +25,10 @@ const calendarDateState = {
 
 };
 
+const isSelectedDate = (year, month, day) => {
+    return year === calendarDateState.selectedDate.Year && month === calendarDateState.selectedDate.Month && day === calendarDateState.selectedDate.Day;
+}
+
 const calendarDateSlice = createSlice({
     name: 'calendarDate',
     initialState: calendarDateState,
@@ -71,16 +75,56 @@ const meminiUserSlice = createSlice( {
 const userTasksSlice = createSlice({
     name: 'userTasks',
     initialState: { //fetch user tasks, not an empty array
-        userTasks : []
+        userTasks : [],
+        selectedTask : null
     },
     reducers: {
-        addTask(state, action) { 
-            state.userTasks.push(action.payload);         
+        addTask(state, action) {           
+            if(isSelectedDate(action.payload.Year,action.payload.Month,action.payload.Day))
+                state.userTasks.push(action.payload);   
         },
 
         setTasks(state, action) {
             state.userTasks = action.payload;
-        }                 
+        },  
+
+        updateTask(state, action) {
+            const index = state.userTasks.findIndex(
+                (userTask) => userTask.UserTaskKey === action.payload.UserTaskKey
+            );
+             
+            if (index !== -1) { 
+                if(!isSelectedDate(action.payload.Year,action.payload.Month,action.payload.Day))
+                    state.userTasks.splice(index, 1);
+                else {
+                    state.userTasks[index] = {
+                    ...state.userTasks[index], 
+                    ...action.payload         
+                };
+                }
+            } else 
+                addTask(action.payload);
+        },
+
+        deleteTask(state, action) {
+             const index = state.userTasks.findIndex(
+                (userTask) => userTask.UserTaskKey === action.payload.UserTaskKey
+            );
+
+            if(index !== - 1)
+                state.userTasks.splice(index, 1);
+        },
+
+        setSelectedTask(state, action) {
+            if(action.payload.UserTaskKey === state.selectedTask?.UserTaskKey)
+                return;
+
+            state.selectedTask = action.payload;      
+        },
+
+        clearSelectedTask(state, action) {
+            state.selectedTask = null;
+        }
     }
 
 })

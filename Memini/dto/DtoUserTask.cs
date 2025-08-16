@@ -1,5 +1,6 @@
 ﻿
 using Memini.entities;
+
 namespace Memini.dto;
 
 public class DtoUserTask
@@ -42,6 +43,7 @@ public static class UserTaskExtensions
     {
         return new DtoUserTask
         {
+            UserTaskKey = userTask.UserTaskKey,
             Year = userTask.Year,
             Month = userTask.Month,
             Day = userTask.Day,

@@ -6,6 +6,7 @@ using System.Data;
 using Memini.dto;
 using Memini.managers;
 using Memini.services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Memini.Controllers;
 
@@ -21,32 +22,43 @@ public class UserController : ControllerBase
         _configuration = configuration;
         _authorisationService = authorisationService;
     }
-
+   
     [HttpPost]
     [Route("RegisterNewUser")]
-    public JsonResult RegisterNewUser(dto.DtoUserRegistrationRequest userRegistrationRequest)
+    public IActionResult RegisterNewUser(dto.DtoUserRegistrationRequest userRegistrationRequest)
     {
-        using (var context = new MeminiDbContext())
-        {
-            bool success = new UserManager(_authorisationService).RegisterNewUser(userRegistrationRequest, context);           
+        using var context = new MeminiDbContext();
 
-            return new JsonResult(new dto.DtoUserRegistrationResponse()
-            {
-                Success = success
-            });
-        }
+        DtoUserLoginResponse loginResponse = new UserManager(_authorisationService).RegisterNewUser(userRegistrationRequest, context);
+
+        if(loginResponse.Success)
+        {
+            return DtoResponse<DtoUserLoginResponse>.Ok(
+            loginResponse,
+            "Successfully registered new user and logged in"
+            ).ToOkResult();
+        } else        
+            return DtoResponse<DtoUserLoginResponse>.Fail(loginResponse.Details).ToBadRequestResult();
     }
 
     [HttpPost]
     [Route("LoginUser")]
-    public JsonResult LoginUser(dto.DtoUserLoginRequest userLoginRequest)
+    public IActionResult LoginUser(dto.DtoUserLoginRequest userLoginRequest)
     {
-        using (var context = new MeminiDbContext())
+        using var context = new MeminiDbContext();
+
+        DtoUserLoginResponse loginResponse = new UserManager(_authorisationService).LoginUser(userLoginRequest, context);
+
+        if (loginResponse.Success)
         {
-            dto.DtoUserLoginResponse loginResponse = new UserManager(_authorisationService).LoginUser(userLoginRequest, context);
-
-            return new JsonResult(loginResponse);
+            return DtoResponse<DtoUserLoginResponse>.Ok(
+            loginResponse,
+            "Successfully logged in"
+            ).ToOkResult();
         }
-    }
-
+        else
+        {
+            return DtoResponse<DtoUserLoginResponse>.Fail(loginResponse.Details).ToBadRequestResult();
+        }        
+    } 
 }

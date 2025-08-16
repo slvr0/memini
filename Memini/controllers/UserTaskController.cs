@@ -7,6 +7,7 @@ using Memini.dto;
 using Memini.managers;
 using Memini.services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace Memini.Controllers;
 
@@ -25,32 +26,29 @@ public class UserTaskController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    [Route("AddNewTask")]
-    public IActionResult AddNewTask(DtoUserTask userTaskRequest)
+    [Route("AddUserTask")]
+    public IActionResult AddUserTask(DtoUserTask userTask)
     {
-        var userKeyClaim = User.FindFirst("UserKey")?.Value;
-
-        if (userKeyClaim == null)        
-            return Unauthorized("Invalid user token: missing user info.");
-        int userKey = int.Parse(userKeyClaim);
+        if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
+            return Unauthorized("Invalid user token: missing or invalid user info.");
 
         using var context = new MeminiDbContext();
 
-        context.UserTasks.Add(new UserTask()
+        var createdUserTask = context.UserTasks.Add(new UserTask
         {
-            Year = userTaskRequest.Year,
-            Month = userTaskRequest.Month,
-            Day = userTaskRequest.Day,
-            StartTime = userTaskRequest.StartTime,
-            EndTime = userTaskRequest.EndTime,
-            Title = userTaskRequest.Title,
-            Description = userTaskRequest.Description,
+            Year = userTask.Year,
+            Month = userTask.Month,
+            Day = userTask.Day,
+            StartTime = userTask.StartTime,
+            EndTime = userTask.EndTime,
+            Title = userTask.Title,
+            Description = userTask.Description,
             UserKey = userKey
-        });
+        }).Entity;
 
-        context.SaveChanges();
+        context.SaveChanges();                
 
-        return Ok(new { message = "Task added successfully" });
+        return DtoResponse<DtoUserTask>.Ok(createdUserTask.ToDto(), "Task added successfully").ToOkResult();
     }
 
     [Authorize]
@@ -58,11 +56,8 @@ public class UserTaskController : ControllerBase
     [Route("GetTasksForDate")]
     public IActionResult GetTasksForDate(DtoUserTaskDateRequest userTaskDateRequest)
     {
-        var userKeyClaim = User.FindFirst("UserKey")?.Value;
-
-        if (userKeyClaim == null)
-            return Unauthorized("Invalid user token: missing user info.");
-        int userKey = int.Parse(userKeyClaim);
+        if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
+            return Unauthorized("Invalid user token: missing or invalid user info.");
 
         using var context = new MeminiDbContext();
 
@@ -70,12 +65,53 @@ public class UserTaskController : ControllerBase
             ut.UserKey == userKey).Where(ut => 
                 ut.Year == userTaskDateRequest.Year && ut.Month == userTaskDateRequest.Month && ut.Day == userTaskDateRequest.Day).Select(ut => ut.ToDto()).ToList();
 
-
-        DtoTaskListResponse TaskResponse = new DtoTaskListResponse() { Tasks = tasksForDate };
-
-        return Ok(new { message = "Loaded tasks", tasks = TaskResponse });
+        return DtoResponse<List<DtoUserTask>>.Ok(tasksForDate, "Loaded Tasks Success").ToOkResult();
     }
 
+    [Authorize]
+    [HttpPost]
+    [Route("SaveUserTask")]
+    public IActionResult SaveUserTask(DtoUserTask userTask)
+    {
+        if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
+            return Unauthorized("Invalid user token: missing or invalid user info.");
 
+        using var context = new MeminiDbContext();
+
+        var taskToUpdate = context.UserTasks
+            .FirstOrDefault(ut => ut.UserTaskKey == userTask.UserTaskKey);
+
+        if (taskToUpdate == null)
+            return DtoResponse<DtoUserTask>.Fail("Couldn't find the UserTask to update").ToNotFoundResult();          
+
+        // Map DtoUserTask to UserTask (properties must match)
+        context.Entry(taskToUpdate).CurrentValues.SetValues(userTask);
+
+        context.SaveChanges();
+
+        return DtoResponse<DtoUserTask>.Ok(taskToUpdate.ToDto(), "Updated Task successfully").ToOkResult();    
+    }
+
+    [Authorize]
+    [HttpPost]
+    [Route("DeleteUserTask")]
+    public IActionResult DeleteUserTask(DtoUserTask userTask)
+    {
+        if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
+            return Unauthorized("Invalid user token: missing or invalid user info.");
+
+        using var context = new MeminiDbContext();
+
+        var taskToDelete = context.UserTasks
+            .FirstOrDefault(ut => ut.UserTaskKey == userTask.UserTaskKey);
+
+        if (taskToDelete == null)
+            return NotFound("Couldn't find the UserTask to delete");
+
+        context.UserTasks.Remove(taskToDelete);
+        context.SaveChanges();
+
+        return Ok(new { Response = "Task successfully deleted", Success = true });
+    }
 }
 

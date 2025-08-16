@@ -1,35 +1,15 @@
 import QuoteSegment from "../../general-components/components/quote-segment.jsx";
-import { useDispatch} from 'react-redux';
-import { userTasksActions } from "../../../redux-memini-store.js";
 import PlanningMainDashboard from './planning-main-dashboard.jsx'
 
-function PlanningPage() {
+//TODO: Make the schedule manager and calendar into a portal component so we can propdrill into it.
+//Right now im forced to use redux to control connections to schedule selection
 
-    const dispatch          = useDispatch();  
 
-    const rows = [
-        {id:'title', type: 'input', label:'Title', placeholder:'Enter title of activity...'},
-        {id:'description', type: 'input', label:'Description', placeholder:'What are you planning to do?'},
-        {id:'startTime', type: 'discrete-time-slider', label:'Start time', placeholder:'Start time'},
-        {id:'endTime', type: 'discrete-time-slider', label:'End time', placeholder:'End time'},
-        
-    ]    
-
-    const onSubmitForm = (formData) => {
-        //yeah what to do.      
-        const title = formData.title;
-        const description = formData.description;
-        const startTime = parseInt(formData.startTime);
-        const endTime = parseInt(formData.endTime);
-        const type = "fun";
-        
-        dispatch(userTasksActions.addTask({ title: title, description: description, startTime: startTime, endTime:endTime, type:type, attached: true }));
-
-    } 
-    
+function PlanningPage() { 
     return <>  
         <div className="grid grid-cols-12 mt-2">  
-
+            
+            
             <div className="col-span-2">
                 <QuoteSegment></QuoteSegment>
             </div>

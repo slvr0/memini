@@ -23,6 +23,12 @@ public class DtoUserLoginRequest
 {
     public string Email { get; set; } = String.Empty;
     public string Password { get; set; } = String.Empty;
+
+    public DtoUserLoginRequest(string email, string password)
+    {
+        Email = email;
+        Password = password;
+    }
 }
 
 public class DtoUserRegistrationResponse
@@ -37,6 +43,13 @@ public class DtoUserLoginResponse
     public string FirstName { get; set; } = String.Empty;
     public string LastName { get; set; } = String.Empty;
     public string Email { get; set; } = String.Empty;
+
+    public DtoUserLoginResponse() { }
+    public DtoUserLoginResponse(bool success, string details)
+    {
+        Success = success;
+        Details = details;    
+    }
 }
 
 public class DtoUserSessionToken
