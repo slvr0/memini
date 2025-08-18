@@ -1,6 +1,6 @@
 import {getWeekDates, getFirstWeekInMonth} from "../computation/date-computations.js";
 import {useSelector, useDispatch} from 'react-redux';
-import { calendarDateActions } from "../../../redux-memini-store.js";
+import { calendarDateActions } from "../../../store/user-calendar-store";
 
 const CalendarMonthDisplay = () => {
   const dispatch          = useDispatch();

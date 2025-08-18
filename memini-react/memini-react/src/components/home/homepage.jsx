@@ -13,7 +13,6 @@ const HomePage = () => {
     const navigate = useNavigate();
     const userSession = useSelector(state => state.meminiUser.userSession);
 
-    console.log(userSession)
     const navigateToSignup = () => {
         navigate('/signup')
     }

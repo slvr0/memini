@@ -3,8 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../../../assets/images/icons8-vivlio-400.png";
 import MeminiButton from "../../general-components/components/memini-button";
 import { useDispatch, useSelector } from 'react-redux';
-import { meminiUserActions } from "../../../redux-memini-store";
-
+import { meminiUserActions } from "../../../store/user-calendar-store";
 import CabinTwoToneIcon from '@mui/icons-material/CabinTwoTone';
 import EventNoteTwoToneIcon from '@mui/icons-material/EventNoteTwoTone';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';

@@ -1,5 +1,5 @@
-import React, { createRef, Fragment } from "react";
-import Task from "../../task/components/task.jsx";
+import { createRef, Fragment } from "react";
+
 import TaskNew from "../../task/components/task-new.jsx";
 
 //more like a computational wrapper to a Task, controlling position size and connecting drag/drop events

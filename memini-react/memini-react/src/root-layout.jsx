@@ -2,9 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom
 
 import MainMenuBarNew from './components/main-menu-bar/components/main-menu-bar-new';
 import DateSelector from './components/calendar/components/date-selector';
-import ScheduleGridManager from "../src/components/schedule-grid/components/schedule-grid-manager";
 import CalendarMonthDisplay from './components/calendar/components/calendar-month-display';
 import ConsoleViewer from './components/general-components/components/console-display.jsx';
+import ScheduleGrid from "../src/components/schedule-grid/components/schedule-grid";
 import { useSelector } from 'react-redux';
 
 const RootLayout = () => {
@@ -41,7 +41,7 @@ const RootLayout = () => {
 
       <div className="col-span-3">
       <CalendarMonthDisplay />
-      <ScheduleGridManager />
+      <ScheduleGrid />
       </div>
     </>
   }

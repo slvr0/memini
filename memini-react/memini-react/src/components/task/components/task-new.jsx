@@ -1,23 +1,10 @@
-import React from 'react';
 import "../css/task-new.css";
 import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import Tooltip from '@mui/material/Tooltip';
 
-const taskTypeIcons = {
-  sport: 'basketball ball',
-  chore: 'shopping cart',
-  fun: 'bowling ball',
-};
-
 const TaskNew = (props) => {
   const { content } = props;
-
-  const getTaskIconClass = (taskType) => {
-    const taskTypeIcon = taskTypeIcons[taskType];
-    return 'ui icon memini-icon ' + taskTypeIcon;
-  };
-
   const isCompresedTask = (content.EndTime - content.StartTime) < 60;
   const containerType = !isCompresedTask ? 'task-container' : 'task-container-compressed';
   const tooltip = content.Title + " - " + content.Description + " , scheduled between " + (content.StartTime / 60).toString() + " and " +(content.EndTime / 60).toString();

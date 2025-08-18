@@ -5,10 +5,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useDispatch, useSelector } from 'react-redux';
-import { userTasksActions } from "../../../redux-memini-store.js";
-import React, {createRef,  useState, useEffect} from "react";
+import { userTasksActions } from "../../task/store/task-slice";
+import { useTaskManager } from "../../task/utils/task-manager";
+import {createRef,  useState, useEffect} from "react";
 import MuiDatePicker from "../../general-components/components/mui-date-picker.jsx";
-import { deleteUserTask, addUserTask, saveUserTask } from "../../../services/usertask-service.js";
 
 const snap15 = (m) => Math.round(m / 15) * 15;
   const defaultInterval = () => {
@@ -26,13 +26,13 @@ const intervalFromTask = (task) => {
 };
 
 function ManageTaskTab() { 
-    const selectedTask      = useSelector((state) => state.userTasks.selectedTask);    
+    const selectedTask      = useSelector((state ) => state.tasks.selectedTask);    
     const dispatch          = useDispatch(); 
     const titleRef          = createRef();
     const [title, setTitle] = useState(selectedTask?.Title || "");
     const [description, setDescription] = useState(selectedTask?.Description || "");   
     const [timeInterval, setTimeInterval] = useState(() => intervalFromTask(selectedTask));
-
+    const { fetchTasksForDateAndStore, getTasksFromSelector, areDisplayTasksLoaded, setSelectedTask, updateTask, deleteTask } = useTaskManager();    
     const descriptionRef  = createRef();
     const timeIntervalRef = createRef(); 
     const taskDateRef     = createRef(); 
@@ -56,11 +56,8 @@ function ManageTaskTab() {
       if(userTask === null)
         return;
 
-      deleteUserTask( userTask ).then(response => {
-        dispatch(userTasksActions.deleteTask( userTask ));
-      }).catch(err => console.error(err)).then(_ => {
-        clearSelection();
-      }); 
+      deleteTask(userTask);
+      clearSelection();
     }
 
     const onSaveTask = () => {
@@ -84,20 +81,9 @@ function ManageTaskTab() {
           Description: Description,
           StartTime: StartTime,
           EndTime: EndTime
-        };  
-        
-        if(userTask.UserTaskKey === 0) {
-          addUserTask( userTask).then(response => {    
-            console.log(response.data.ResponseObject);       
-            dispatch(userTasksActions.addTask(response.data.ResponseObject));
-          }).catch(err => console.error(err));  
-        } else {
-          saveUserTask( userTask ) 
-          .then(_ => { //TODO: more correct would be to dispatch the returned userTask in response                          
-            dispatch(userTasksActions.updateTask(userTask));
-          }).catch(err => console.error(err));   
-        } 
-        
+        };
+
+        updateTask(selectedTask, userTask);        
         clearSelection();
     }   
 

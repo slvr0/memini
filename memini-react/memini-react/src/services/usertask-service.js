@@ -1,5 +1,4 @@
 import api from "./api-client.js";
-
 const controllerSyntax = 'UserTask';
 
 export const getUserTasks = (data) => api.post(controllerSyntax + '/GetTasksForDate' , data);

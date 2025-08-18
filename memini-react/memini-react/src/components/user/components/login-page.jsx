@@ -1,4 +1,4 @@
-import { meminiUserActions } from "../../../redux-memini-store.js";
+import { meminiUserActions } from "../../../store/user-calendar-store";
 import GeneralForm from "../../general-components/components/general-form.jsx"
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from "../../../services/login-service.js";

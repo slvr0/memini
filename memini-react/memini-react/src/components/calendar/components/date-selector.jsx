@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import { calendarDateActions } from "../../../redux-memini-store.js";
+import { calendarDateActions } from "../../../store/user-calendar-store";
 import moment from 'moment';
 
 
