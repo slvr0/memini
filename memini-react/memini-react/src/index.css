@@ -48,9 +48,8 @@
 
 
 
-@import "components/calendar/css/calendar.css";
-@import "components/calendar/css/todays-date.css";
-@import "components/schedule-grid/css/schedule-grid.css";
-@import "components/schedule-grid/css/block.css";
-@import "components/main-menu-bar/css/main-menu-bar.css";
+@import "features/planning/css/calendar.css";
+@import "features/planning/css/schedule-grid.css";
+@import "features/tasks/css/block.css";
+@import "features/general/css/main-menu-bar.css"; 
 

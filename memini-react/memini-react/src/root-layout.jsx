@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 
-import MainMenuBarNew from './components/main-menu-bar/components/main-menu-bar-new';
-import DateSelector from './components/calendar/components/date-selector';
-import CalendarMonthDisplay from './components/calendar/components/calendar-month-display';
-import ConsoleViewer from './components/general-components/components/console-display.jsx';
-import ScheduleGrid from "../src/components/schedule-grid/components/schedule-grid";
+import MainMenuBarNew from './features/general/components/main-menu-bar-new';
+import DateSelector from './features/planning/components/date-selector';
+import CalendarMonthDisplay from './features/planning/components/calendar-month-display';
+import ConsoleViewer from './features/general/components/console-display.jsx';
+import ScheduleGrid from "./features/planning/components/schedule-grid";
 import { useSelector } from 'react-redux';
 
 const RootLayout = () => {

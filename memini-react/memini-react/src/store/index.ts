@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import tasksReducer from "../components/task/store/task-slice";
+import tasksReducer from "../features/tasks/store/task-slice";
 import { calendarSlices  } from "./user-calendar-store";
 
 // Add more reducers as you modularize
