@@ -12,13 +12,10 @@ import store from "../../../store/index";
 export const useTaskManager = () => {
   const dispatch: AppDispatch = useDispatch();
 
-  const areDisplayTasksLoaded = (year: number, month: number, day: number): boolean => {
-   
-    return isDateLoaded(toDateKey(year, month, day))(store.getState());
-  };
+  const areDisplayTasksLoaded = (year: number, month: number, day: number): boolean => 
+    isDateLoaded(toDateKey(year, month, day))(store.getState());
 
-  const fetchTasksForDateAndStore = async (year: number, month: number, day: number) => {
-    
+  const fetchTasksForDateAndStore = async (year: number, month: number, day: number) => {    
     const response = await fetchTasksForDate({ year, month, day });
  
     if(!response)
@@ -53,11 +50,15 @@ export const useTaskManager = () => {
     let updatedTask;
 
     if(task.UserTaskKey === 0) {
-      updatedTask = (await addTaskApi(task)).ResponseObject;
+      updatedTask = (await addTaskApi(task))?.ResponseObject ?? null;
+      if(updatedTask === null)
+        return;
       dispatch(userTasksActions.addTask(updatedTask)); 
     }      
     else  {
-      updatedTask = (await updateTaskApi(task)).ResponseObject; 
+      updatedTask = (await updateTaskApi(task))?.ResponseObject ?? null;
+      if(updatedTask === null)
+        return;
       dispatch(userTasksActions.removeTask(prev));    
       dispatch(userTasksActions.addTask(updatedTask));      
     } 

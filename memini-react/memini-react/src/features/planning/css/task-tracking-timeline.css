@@ -1,0 +1,68 @@
+/* Container */
+.timeline-container {
+  @apply relative w-full;
+}
+
+/* Spine */
+.timeline-line {
+  @apply absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-300 -translate-x-1/2 z-0;
+}
+
+/* Tasks container */
+.timeline-tasks {
+  @apply flex flex-col gap-16;
+}
+
+/* Each row for a task */
+.timeline-row {
+  @apply grid grid-cols-2 items-center relative;
+}
+
+/* Task card */
+.timeline-card {
+  @apply max-w-xs rounded-2xl shadow-lg p-2 border border-gray-200 transition-all;
+}
+
+.timeline-card-active {
+  @apply border-2 border-blue-500 bg-blue-50;
+}
+
+/* Center dot wrapper */
+.timeline-dot-wrapper {
+  @apply absolute left-1/2 -translate-x-1/2 z-10 flex flex-col items-center;
+}
+
+/* Timeline dot */
+.timeline-dot {
+  @apply w-8 h-8 rounded-full flex items-center justify-center shadow-md bg-white border border-gray-400 text-gray-600;
+}
+
+.timeline-dot-active {
+  @apply bg-blue-500 text-white ring-4 ring-blue-300 animate-pulse;
+}
+
+/* Start time labels */
+.timeline-time-left {
+  @apply absolute top-1/2 -translate-y-1/2 right-full mr-2 text-xs text-gray-500;
+}
+
+.timeline-time-right {
+  @apply absolute top-1/2 -translate-y-1/2 left-full ml-2 text-xs text-gray-500;
+}
+
+/* Current time marker */
+.timeline-marker {
+  @apply absolute left-0 right-0 flex items-center;
+}
+
+.timeline-marker-label {
+  @apply absolute left-0 pr-3 flex items-center z-10 text-xs text-red-500 font-medium bg-white px-2 py-0.5 rounded shadow-sm;
+}
+
+.timeline-marker-line {
+  @apply w-full border-t border-red-300 relative z-0;
+}
+
+.timeline-marker-dot {
+  @apply absolute left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-red-400 shadow-sm;
+}

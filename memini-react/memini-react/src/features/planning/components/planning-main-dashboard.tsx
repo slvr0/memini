@@ -2,7 +2,7 @@
 import "../css/planning-main-dashboard.css"
 
 import ManageTaskTab from "./manage-task-tab";
-
+import TrackingTasksTab from "./tracking-tasks-tab";
 import Tooltip from '@mui/material/Tooltip';
 import DehazeRoundedIcon from '@mui/icons-material/DehazeRounded';
 import QueryStatsRoundedIcon from '@mui/icons-material/QueryStatsRounded';
@@ -15,11 +15,22 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import Divider from '@mui/material/Divider';
 import React from "react";
 
+const ActiveTabEnum : Record<string, number> = {
+    ManageTasks: 0,
+    Tracking: 1,
+    WeekOverview: 2
+};
+
+
+
 const PlanningMainDashboard = (props: any) => {
 
   const headerText = props.headerText;
   const subHeaderTtext = props.subHeaderText; 
 
+  const [activeTab, setActiveTab] = React.useState<number>(0);  
+  const getActiveTab = () => ActiveTabEnum[activeTab];
+  console.log("active tab: ",activeTab);
   return (
   <div className="memini-container-section">
     {/* Header Row */}
@@ -72,15 +83,22 @@ const PlanningMainDashboard = (props: any) => {
     <Divider  flexItem />
   {/* Menu Row */}
   <div>
-        <Tabs value={0} onChange={() => {}} aria-label="icon tabs example">
+        <Tabs value={activeTab} onChange={(event, selectedTab) => { setActiveTab(selectedTab) }} 
+            aria-label="icon tabs example">
             <Tab icon={<ManageSearchRoundedIcon />} aria-label="phone" label="Manage tasks" />
             <Tab icon={<QueryStatsRoundedIcon />} aria-label="favorite" label="Tracking" />
             <Tab icon={<CalendarViewWeekRoundedIcon />} aria-label="person" label="Week overview" />       
         </Tabs>
   </div>
-
+                      
   <div>
-    <ManageTaskTab ></ManageTaskTab>
+    {activeTab === ActiveTabEnum.ManageTasks ? (
+        <ManageTaskTab ></ManageTaskTab>             
+      ) : activeTab === ActiveTabEnum.Tracking ? (
+          <TrackingTasksTab ></TrackingTasksTab>             
+      ) : null            
+    }
+
 
   </div>
         
