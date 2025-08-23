@@ -1,0 +1,22 @@
+import { SimpleDate } from "../../planning/interfaces/planning-types";
+import type { Task } from "../../tasks/interfaces/task-types";
+import { Moment } from "moment";
+
+export interface TimeSliderRef {
+    getValue: () => number[];
+    getValueAsTime: () => string[];
+}
+
+export interface DiscreteDoubleTimeSliderProps {
+    timeInterval: number[];
+    onChange?: (value: number[]) => void;
+}
+
+export interface MuiDatePickerRef {
+    getPickedDate: () => SimpleDate; 
+}
+
+export interface MuiDatePickerProps { 
+    defaultDate?: SimpleDate | null;
+    onChange?: (date: SimpleDate) => void;
+}

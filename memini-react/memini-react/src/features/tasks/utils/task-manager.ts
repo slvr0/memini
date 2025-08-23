@@ -45,7 +45,7 @@ export const useTaskManager = () => {
   //else we trigger a render cycle
 
   // prev is the task before update.
-  const updateTask = async (prev: Task | null, task: Task) : Promise<void> => {   
+  const updateTask = async (prev: Task | null, task: Task | Omit<Task, 'UserKey'>) : Promise<void> => {   
     //we dont have a task to update or we are comparing to a prev task state that has not changed. 
     if(task === null || (prev && (prev === task)))
       return;

@@ -12,15 +12,14 @@ export async function fetchTasksForRange(startKey: string, endKey: string): Prom
   return [];
 }
 
-export async function updateTaskApi(task: Task): Promise<ApiResponse<Task>> {
-  console.log("updateTaskApi",task);
+export async function updateTaskApi(task: Task | Omit<Task, 'UserKey'>): Promise<ApiResponse<Task>> { 
   return await saveUserTask(task).then(response => response.data).catch(e => console.log(e));
 }
 
-export async function addTaskApi(task: Task) : Promise<ApiResponse<Task>> {
+export async function addTaskApi(task: Task | Omit<Task, 'UserKey'>) : Promise<ApiResponse<Task>> {
   return await addUserTask(task).then(response => response.data).catch(e => console.log(e));
 }
 
-export async function deleteTaskApi(task: Task): Promise<ApiResponse<Task>> {
+export async function deleteTaskApi(task: Task | Omit<Task, 'UserKey'>): Promise<ApiResponse<Task>> {
   return await deleteUserTask(task).then(response => response.data).catch(e => console.log(e));
 }

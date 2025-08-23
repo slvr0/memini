@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 
-import MainMenuBarNew from './features/general/components/main-menu-bar-new';
+import MainMenuBar from './features/general/components/main-menu-bar';
 import DateSelector from './features/planning/components/date-selector';
 import CalendarMonthDisplay from './features/planning/components/calendar-month-display';
-import ConsoleViewer from './features/general/components/console-display.jsx';
+
 import ScheduleGrid from "./features/planning/components/schedule-grid";
 import { useSelector } from 'react-redux';
 
@@ -16,18 +16,18 @@ const RootLayout = () => {
       {userSession && 
         <>
           <div className="flex-[0_0_66.6667%]">
-          <MainMenuBarNew />
+          <MainMenuBar />
           </div>
           <div className="flex-[0_0_33.3333%] flex items-center justify-end">
           <DateSelector />
           </div>
         </>
-      }
+      }   
 
       {!userSession && 
         <>
           <div className="flex-[0_0_100%]">
-          <MainMenuBarNew />
+          <MainMenuBar />
           </div>
         </>
       }

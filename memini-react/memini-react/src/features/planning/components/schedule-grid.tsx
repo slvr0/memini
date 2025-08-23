@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { setupClockMarkers } from "../computes/schedule-grid-computations";
 import { useTaskManager } from "../../tasks/utils/task-manager";
 import { RootState } from "../../../store/index";
-import { toDateKey } from "../../tasks/utils/date-utils"
 import type { Task } from "../../tasks/interfaces/task-types";
 import Block  from "../../tasks/components/block";
 
