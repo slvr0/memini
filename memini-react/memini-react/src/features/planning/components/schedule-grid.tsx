@@ -1,10 +1,13 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, createRef,useState } from "react";
 import { useSelector } from "react-redux";
 import { setupClockMarkers } from "../computes/schedule-grid-computations";
 import { useTaskManager } from "../../tasks/utils/task-manager";
 import { RootState } from "../../../store/index";
 import type { Task } from "../../tasks/interfaces/task-types";
 import Block  from "../../tasks/components/block";
+import MuiModal from "../../general/components/mui-modal";
+import { MuiModalRef } from "../../general/interfaces/general-types";
+import EditTaskForm from "./edit-task-form";
 
 // Constants
 const HOURS_PER_SCHEDULE_GRID = 24;
@@ -22,9 +25,29 @@ const ScheduleGrid: React.FC = () => {
     }
   }, [selectedDate, areDisplayTasksLoaded]);
 
-  const onClickTask = (task: Task) => setSelectedTask(task);
+  const muiModalRef = createRef<MuiModalRef>(); 
+
+  const onClickTask = (task: Task) => {
+    console.log()
+    muiModalRef.current?.setIsOpen(true);
+    setSelectedTask(task);
+  }
 
   return (
+    <>
+
+     <MuiModal
+        ref={muiModalRef}         
+        onClose={() => {}}
+        onAction={() => {}}
+        modalTitle="Edit Task"
+        actionLabel="Save"
+        cancelLabel="Cancel"        
+        >
+        <EditTaskForm modalWrapper={muiModalRef as React.RefObject<MuiModalRef>}></EditTaskForm>
+      </MuiModal>
+
+
     <div className="calendar-container">
       <div className="fourteen wide column schedule-task-grid scrollable-div">
         <div
@@ -74,6 +97,7 @@ const ScheduleGrid: React.FC = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

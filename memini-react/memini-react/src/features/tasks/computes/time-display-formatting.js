@@ -32,7 +32,7 @@ export function timestampDisplay(time) {
     return hh.toLocaleString() + ':' + mmDigitFixed;
 }
 
-export function minutesToHHMM(mins) {
+export function minutesToHHMM(mins) {  
   const hours = Math.floor(mins / 60);
   const minutes = mins % 60;
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;

@@ -19,12 +19,6 @@ const DisplayTask : React.FC<DisplayTaskProps> = (props : any) => {
     <>   
         <Tooltip title={tooltip|| ''}arrow>
             <div className={`${containerType} `}>
-            <div className="icon-edit icon-container">
-                <EditNoteRoundedIcon></EditNoteRoundedIcon>        
-            </div>
-            <div className="icon-delete icon-container">
-                <DeleteForeverRoundedIcon></DeleteForeverRoundedIcon>
-            </div>
                 {isCompressed && (
                 <>
                     <div className="title-description-compressed">{content.Title} - {content.Description}</div>

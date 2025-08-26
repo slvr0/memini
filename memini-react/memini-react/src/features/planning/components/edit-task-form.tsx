@@ -13,6 +13,10 @@ import type { Task } from "../../tasks/interfaces/task-types";
 import { RootState } from "../../../store/index";
 import { MuiDatePickerRef } from "../../general/interfaces/general-types";
 import type {TimeSliderRef, DiscreteDoubleTimeSliderProps} from "../../general/interfaces/general-types";
+import { minutesToHHMM } from "../../tasks/computes/time-display-formatting";
+import { Typography } from "@mui/material";
+import MuiModal from "../../general/components/mui-modal";
+import { MuiModalRef } from "../../general/interfaces/general-types";
 
 const snap15 = (m: number) => Math.round(m / 15) * 15;
   const defaultInterval = () => {
@@ -29,9 +33,14 @@ const intervalFromTask = (task : Task | null) => {
   return defaultInterval();
 };
 
-function ManageTaskTab() { 
+type EditTaskFormProps = { 
+  modalWrapper: React.RefObject<MuiModalRef> | null;
+}
+
+function EditTaskForm( { modalWrapper } : EditTaskFormProps)  { 
     const { updateTask, deleteTask } = useTaskManager();  
     const selectedTask      = useSelector((state : RootState ) => state.tasks.selectedTask);    
+    console.log("Selected task in form:", selectedTask);
     const dispatch          = useDispatch(); 
     
     const [title, setTitle] = useState(selectedTask?.Title || "");
@@ -56,6 +65,10 @@ function ManageTaskTab() {
         setTimeInterval(intervalFromTask(null));
       } else 
         dispatch(userTasksActions.clearSelectedTask());
+
+      if(modalWrapper && modalWrapper.current) {
+        modalWrapper.current.setIsOpen(false);
+      }
     }
 
     const onDeleteUserTask = (userTask: Task) => {
@@ -63,7 +76,7 @@ function ManageTaskTab() {
         return;
 
       deleteTask(userTask);
-      clearSelection();
+      clearSelection();      
     }
 
     const onSaveTask = () => {
@@ -112,9 +125,8 @@ function ManageTaskTab() {
             noValidate
             autoComplete="off"
           >
-            {/* Top row with inputs + buttons */}
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <TextField
+
+            <TextField
                 inputRef={titleRef}
                 id="outlined-required"
                 label="Title"
@@ -136,42 +148,70 @@ function ManageTaskTab() {
                 placeholder="Describe the activity..."
                 variant="standard"
               />
-              <Stack direction="row" spacing={2} sx={{ ml: 2, mr:2 }}>
-                <Button variant="outlined" onClick={() => {onSaveTask()}}>Save/Update</Button>
-                <Button variant="outlined" disabled={selectedTask === null} onClick={() => {onDeleteUserTask(selectedTask)}}>
-                  Delete
-                </Button>
-              </Stack>
-            </Box>
 
-              <div className="w-128 ml-4">
-                {selectedTask && 
-                  <MuiDatePicker 
-                    defaultDate={{
-                      year: selectedTask.Year, 
-                      month: selectedTask.Month, 
-                      day: selectedTask.Day  
-                    }} 
-                    ref={taskDateRef} 
-                  />
-                }
-                {
-                  !selectedTask && 
-                  <MuiDatePicker 
-                    defaultDate={null} 
-                    ref={taskDateRef} 
-                  />
-                }                
-                
+            <div className="flex justify-center">
+              {selectedTask && 
+                <MuiDatePicker 
+                  defaultDate={{
+                    year: selectedTask.Year, 
+                    month: selectedTask.Month, 
+                    day: selectedTask.Day  
+                  }} 
+                  ref={taskDateRef} 
+                />
+              }
+              {
+                !selectedTask && 
+                <MuiDatePicker 
+                  defaultDate={null} 
+                  ref={taskDateRef} 
+                />
+              }   
               </div>
+               
+              <Typography className="text-gray-500 mt-0 ml-4 flex justify-center">             
+                {minutesToHHMM(timeInterval[0])} →{" "}
+                {minutesToHHMM(timeInterval[1])}             
+              </Typography>
             {/* Second row for the slider */}
             <DiscreteDoubleTimeSlider  
               ref={timeIntervalRef}
               timeInterval={timeInterval}
               onChange={setTimeInterval}  />
+              
+            <Stack 
+              direction="row" 
+              spacing={2} 
+              sx={{ ml: 2, mr: 2 }} 
+              justifyContent="flex-end"
+            >
+              <Button 
+                variant="outlined" 
+                onClick={() => { onSaveTask() }}
+              >
+                Cancel
+              </Button>
+
+              <Button 
+                variant="outlined" 
+                disabled={selectedTask === null} 
+                onClick={() => { onDeleteUserTask(selectedTask) }}
+              >
+                Delete
+              </Button>
+
+              <Button 
+                variant="contained" 
+                onClick={() => { onSaveTask() }}
+              >
+                Save/Update
+              </Button>
+            </Stack>
+
+
           </Box>
         </>
     )
 }
 
-export default ManageTaskTab;
+export default EditTaskForm;

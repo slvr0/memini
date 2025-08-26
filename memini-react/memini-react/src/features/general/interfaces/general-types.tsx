@@ -20,3 +20,8 @@ export interface MuiDatePickerProps {
     defaultDate?: SimpleDate | null;
     onChange?: (date: SimpleDate) => void;
 }
+
+export interface MuiModalRef {
+    setIsOpen: (value: boolean) => void;
+};
+

@@ -1,7 +1,7 @@
 
 import "../css/planning-main-dashboard.css"
 
-import ManageTaskTab from "./manage-task-tab";
+import EditTaskForm from "./edit-task-form";
 import TrackingTasksTab from "./tracking-tasks-tab";
 import Tooltip from '@mui/material/Tooltip';
 import DehazeRoundedIcon from '@mui/icons-material/DehazeRounded';
@@ -14,6 +14,8 @@ import Tab from '@mui/material/Tab';
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import Divider from '@mui/material/Divider';
 import React from "react";
+import ManageTasksTab from "./manage-tasks-tab";
+import { MuiModalRef } from "../../general/interfaces/general-types";
 
 const ActiveTabEnum : Record<string, number> = {
     ManageTasks: 0,
@@ -21,16 +23,14 @@ const ActiveTabEnum : Record<string, number> = {
     WeekOverview: 2
 };
 
-
-
 const PlanningMainDashboard = (props: any) => {
 
   const headerText = props.headerText;
   const subHeaderTtext = props.subHeaderText; 
+  const modifyTaskRef : React.RefObject<MuiModalRef> = props.modifyTaskRef;
 
   const [activeTab, setActiveTab] = React.useState<number>(0);  
-  const getActiveTab = () => ActiveTabEnum[activeTab];
-  console.log("active tab: ",activeTab);
+
   return (
   <div className="memini-container-section">
     {/* Header Row */}
@@ -93,7 +93,7 @@ const PlanningMainDashboard = (props: any) => {
                       
   <div>
     {activeTab === ActiveTabEnum.ManageTasks ? (
-        <ManageTaskTab ></ManageTaskTab>             
+            <ManageTasksTab modifyTaskRef={modifyTaskRef}></ManageTasksTab>      
       ) : activeTab === ActiveTabEnum.Tracking ? (
           <TrackingTasksTab ></TrackingTasksTab>             
       ) : null            

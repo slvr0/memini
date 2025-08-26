@@ -37,6 +37,10 @@ export const useTaskManager = () => {
     dispatch(userTasksActions.setSelectedTask(task as Task));
   };
 
+  const clearSelectedTask = () : void => {
+    dispatch(userTasksActions.clearSelectedTask());
+  }
+
   //inserts the task if not existing
   //TODO: in the future, we might want two inputs, task and updatedTask, and evaluate that the tasks on the affected dates are synced with db
   //else we trigger a render cycle
@@ -72,5 +76,5 @@ export const useTaskManager = () => {
     dispatch(userTasksActions.removeTask(task));
   }
 
-  return { areDisplayTasksLoaded, fetchTasksForDateAndStore, useTasksForDate, setSelectedTask, updateTask, deleteTask };
+  return { areDisplayTasksLoaded, fetchTasksForDateAndStore, useTasksForDate, setSelectedTask, clearSelectedTask, updateTask, deleteTask };
 };

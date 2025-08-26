@@ -67,11 +67,6 @@ const TrackingTasksTab = () => {
     (t: Task) => t.StartTime > currentMinutes
   )?.UserTaskKey;
 
-  const firstMinute = displayTasks[0]?.StartTime ?? 0;
-  const lastMinute = displayTasks[displayTasks.length - 1]?.EndTime ?? 24 * 60;
-  const currentPct =
-    ((currentMinutes - firstMinute) / (lastMinute - firstMinute)) * 100;
-
   return (
     <div className="timeline-container">
       {/* Spine */}
@@ -157,22 +152,7 @@ const TrackingTasksTab = () => {
               </div>
             </div>
           );
-        })}
-
-        {/* Current time marker */}
-        {currentMinutes >= firstMinute && currentMinutes <= lastMinute && (
-          <div
-            className="timeline-marker"
-            style={{ top: `${currentPct}%` }}
-          >
-            <div className="timeline-marker-label">
-              {minutesToHHMM(currentMinutes)}
-            </div>
-            <div className="timeline-marker-line">
-              <div className="timeline-marker-dot" />
-            </div>
-          </div>
-        )}
+        })}        
       </div>
     </div>
   );
