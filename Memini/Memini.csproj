@@ -1,33 +1,61 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>3ef5bcca-8b8e-4bfc-9420-0775561a3511</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.20" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.20" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.20">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="17.14.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.20" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.20" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.6.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="factories\" />
     <Folder Include="validators\" />
   </ItemGroup>
+  
+  
+<PropertyGroup>
+  <!-- Exclude React source from static assets -->
+  <DefaultItemExcludes>$(DefaultItemExcludes);../memini-react/**</DefaultItemExcludes>
+</PropertyGroup>
+
+<ItemGroup>
+  <!-- Exclude React source and build folder from static asset discovery -->
+  <StaticWebAsset Remove="../memini-react/**" />
+  <Content Remove="../memini-react/**" />
+</ItemGroup>
+
+<!-- Automatically build React and copy to wwwroot -->
+<Target Name="BuildReactApp" BeforeTargets="Build" Condition="!Exists('wwwroot/static')">
+  <Message Text="Building React app..." Importance="high" />
+  <Exec Command="npm run build" WorkingDirectory="../memini-react/memini-react" />
+  
+  <!-- Copy React build to wwwroot -->
+  <ItemGroup>
+    <ReactBuildFiles Include="../memini-react/memini-react/build/**/*.*" />
+  </ItemGroup>
+  <Copy SourceFiles="@(ReactBuildFiles)" DestinationFiles="@(ReactBuildFiles-&gt;'wwwroot/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+</Target>
+
 
 </Project>

@@ -43,14 +43,14 @@ public static class UserTaskExtensions
     {
         return new DtoUserTask
         {
-            UserTaskKey = userTask.UserTaskKey,
+            UserTaskKey = userTask.Usertaskkey,
             Year = userTask.Year,
             Month = userTask.Month,
             Day = userTask.Day,
             Title = userTask.Title,
             Description = userTask.Description,
-            StartTime = userTask.StartTime,
-            EndTime = userTask.EndTime
+            StartTime = userTask.Starttime,
+            EndTime = userTask.Endtime
         };
     }
 }

@@ -50,7 +50,7 @@ public class AuthorisationService
         new Claim("FirstName", user.FirstName),
         new Claim("LastName", user.LastName),
         new Claim(JwtRegisteredClaimNames.Email, user.Email),
-        new Claim("UserKey", user.UserKey.ToString())   // custom claim with key "UserKey"
+        new Claim("UserKey", user.Userkey.ToString())   // custom claim with key "UserKey"
         };
 
 

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Memini")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0b484c14bba199be5019dab956ee456bb0804bb4")]
 [assembly: System.Reflection.AssemblyProductAttribute("Memini")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Memini")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

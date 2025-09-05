@@ -70,7 +70,7 @@ public static class UserExtensions
 
         return new DtoUser
         {
-            UserKey = user.UserKey,
+            UserKey = user.Userkey,
             FirstName = user.FirstName,
             LastName = user.LastName, 
             Email = user.Email,

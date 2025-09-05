@@ -5,7 +5,7 @@ namespace Memini.entities;
 
 public partial class UserTask
 {
-    public int UserTaskKey { get; set; }
+    public int Usertaskkey { get; set; }
 
     public int Year { get; set; }
 
@@ -13,15 +13,15 @@ public partial class UserTask
 
     public int Day { get; set; }
 
-    public int StartTime { get; set; }
+    public int Starttime { get; set; }
 
-    public int EndTime { get; set; }
+    public int Endtime { get; set; }
 
     public string Title { get; set; } = null!;
 
     public string? Description { get; set; }
 
-    public int UserKey { get; set; }
+    public int? Userkey { get; set; }
 
-    public virtual User UserKeyNavigation { get; set; } = null!;
+    public virtual User? UserkeyNavigation { get; set; }
 }

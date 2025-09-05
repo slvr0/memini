@@ -4,3 +4,17 @@ memini-react/memini-react/node_modules/
 memini-react/node_modules/
 
 node_modules/
+
+appsettings.Development.json
+appsettings.Production.json
+*.user
+secrets.json
+
+.env
+.env.local
+.env.development
+.env.production
+
+Memini/bin/
+
+.vs/

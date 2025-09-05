@@ -39,11 +39,11 @@ public class UserTaskController : ControllerBase
             Year = userTask.Year,
             Month = userTask.Month,
             Day = userTask.Day,
-            StartTime = userTask.StartTime,
-            EndTime = userTask.EndTime,
+            Starttime = userTask.StartTime,
+            Endtime = userTask.EndTime,
             Title = userTask.Title,
             Description = userTask.Description,
-            UserKey = userKey
+            Userkey = userKey
         }).Entity;
 
         context.SaveChanges();                
@@ -62,7 +62,7 @@ public class UserTaskController : ControllerBase
         using var context = new MeminiDbContext();
 
         List<DtoUserTask> tasksForDate = context.UserTasks.Where(ut => 
-            ut.UserKey == userKey).Where(ut => 
+            ut.Userkey == userKey).Where(ut => 
                 ut.Year == userTaskDateRequest.Year && ut.Month == userTaskDateRequest.Month && ut.Day == userTaskDateRequest.Day).Select(ut => ut.ToDto()).ToList();
 
         return DtoResponse<List<DtoUserTask>>.Ok(tasksForDate, "Loaded Tasks Success").ToOkResult();
@@ -79,7 +79,7 @@ public class UserTaskController : ControllerBase
         using var context = new MeminiDbContext();
 
         var taskToUpdate = context.UserTasks
-            .FirstOrDefault(ut => ut.UserTaskKey == userTask.UserTaskKey);
+            .FirstOrDefault(ut => ut.Usertaskkey == userTask.UserTaskKey);
 
         if (taskToUpdate == null)
             return DtoResponse<DtoUserTask>.Fail("Couldn't find the UserTask to update").ToNotFoundResult();          
@@ -103,7 +103,7 @@ public class UserTaskController : ControllerBase
         using var context = new MeminiDbContext();
 
         var taskToDelete = context.UserTasks
-            .FirstOrDefault(ut => ut.UserTaskKey == userTask.UserTaskKey);
+            .FirstOrDefault(ut => ut.Usertaskkey == userTask.UserTaskKey);
 
         if (taskToDelete == null)
             return NotFound("Couldn't find the UserTask to delete");

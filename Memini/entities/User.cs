@@ -5,7 +5,7 @@ namespace Memini.entities;
 
 public partial class User
 {
-    public int UserKey { get; set; }
+    public int Userkey { get; set; }
 
     public string Email { get; set; } = null!;
 

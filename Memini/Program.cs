@@ -2,17 +2,20 @@ using Microsoft.AspNetCore.Builder;
 using Newtonsoft.Json.Serialization;
 using Memini.Controllers;
 using Memini.services;
-
+using Memini.entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
-
 var jwtKey = builder.Configuration["JwtSettings:SecretKey"];
-var keyBytes = Encoding.ASCII.GetBytes(jwtKey);
+var keyBytes = Encoding.ASCII.GetBytes(jwtKey ?? "");
 
-//Add security
+Console.WriteLine(jwtKey);
+
+// Add authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -20,7 +23,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.RequireHttpsMetadata = false; // set to true in production with HTTPS
+    options.RequireHttpsMetadata = false;
     options.SaveToken = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -31,58 +34,100 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "My API", Version = "v1" });
-});
-
-//JSON Serializer
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
-options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-).AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
-
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+});
 builder.Services.AddScoped<AuthorisationService>();
-
 builder.Services.AddControllers();
 
+builder.Services.AddDbContext<MeminiDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins("http://localhost:3000", "https://localhost:5001")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+    });
+
+    // Add Swagger for development
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+}
+else
+{
+    // Production - More restrictive CORS
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins(                    
+                    "https://memini-launch-hmawcxg8cwa7f8c2.swedencentral-01.azurewebsites.net"
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+    });
+}
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+    });
+    
 var app = builder.Build();
 
-app.UseCors(c => c.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-}
-app.UseStaticFiles();
+    Console.WriteLine("Development mode");
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
 
-app.UseSwagger();
-
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-});
-
-app.Use(async (context, next) =>
-{
-    if (context.Request.Path == "/")
+    app.UseSwaggerUI(c =>
     {
-        context.Response.Redirect("/swagger");
-        return;
-    }
-    await next();
-});
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Memini API V1");
+        c.RoutePrefix = string.Empty; // This makes Swagger UI available at root "/"
+    });
+}
+else
+{
+    Console.WriteLine("Not Development mode");
+    app.UseStaticFiles();
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
+
+app.UseCors(); // This uses the default policy
+
+app.UseHttpsRedirection();
+
+app.UseDefaultFiles(); 
 
 app.UseRouting();
-
-app.UseAuthentication();  // must come before UseAuthorization
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
-
 app.MapControllers();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.MapFallbackToFile("index.html"); // Keep this last
+}
 
 app.Run();

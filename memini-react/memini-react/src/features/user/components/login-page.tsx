@@ -19,6 +19,7 @@ function LoginPage() {
 
         loginUser(loginRequestData).then(response => {
             if(response.data.Success) {
+                console.log("asdf");
                 onLoginSuccess(response.data.ResponseObject);
                 navigate('/planning');
             }
@@ -39,6 +40,8 @@ function LoginPage() {
             email: userCredentials.Email,
             token: userCredentials.SessionToken
         };           
+
+        console.log('Login success', userSession);
         dispatch(meminiUserActions.login({userSession:userSession}));   
     }
 
