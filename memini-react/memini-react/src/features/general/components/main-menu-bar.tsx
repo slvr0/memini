@@ -1,6 +1,6 @@
 
 import { useNavigate, useLocation } from "react-router-dom";
-import logo from "../../../assets/images/icons8-vivlio-400.png";
+import logo from "../../../assets/images/memini-png.png";
 import MeminiButton from "./memini-button";
 import { useDispatch, useSelector } from 'react-redux';
 import { meminiUserActions } from "../../../store/user-calendar-store";
@@ -8,8 +8,25 @@ import CabinTwoToneIcon from '@mui/icons-material/CabinTwoTone';
 import EventNoteTwoToneIcon from '@mui/icons-material/EventNoteTwoTone';
 import InfoTwoToneIcon from '@mui/icons-material/InfoTwoTone';
 import SupervisedUserCircleRoundedIcon from '@mui/icons-material/SupervisedUserCircleRounded';
+import LocationDisplay from "../../../features/user/components/localization"
+import UserProfileCircle from "../../../features/user/components/user-profile-circle"
 import Tooltip from '@mui/material/Tooltip';
 import { RootState } from "../../../store";
+
+import { Hub } from '@mui/icons-material';
+import { Link } from '@mui/icons-material';
+
+import MUI_StyledButton from "../../../mui/mui-button-wrapper";
+import MUI_StyledSegment from "../../../mui/mui-segment-wrapper"
+import LucidIconButton from "../../../lucid/lucid-button-icon"
+
+import { Typography, Box } from "@mui/material";
+import { ConnectWithoutContact } from '@mui/icons-material';
+
+
+import SettingsInputCompositeIcon from '@mui/icons-material/SettingsInputComposite';
+import { Plug, ChevronUp, ChevronDown, Slash, ChevronsUpDown, Globe, Globe2, Boxes, Combine } from 'lucide-react';
+import { Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText } from "lucide-react";
 
 //name, selectedMenu, onClick
 const MenuItem = (props:any) => {
@@ -69,7 +86,6 @@ const UserNameArea = (props: any) => {
   </>
 }
 
-
 const UserProfileArea = (props: any) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -108,6 +124,26 @@ const UserProfileArea = (props: any) => {
   );
 }
 
+const StatusDot = ({ 
+  color = '#22c55e', // Green color
+  size = 8, 
+  style = {} 
+}) => {
+  return (
+    <div
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        borderRadius: '50%',
+        backgroundColor: color,
+        flexShrink: 0, // Prevents dot from shrinking
+        marginRight: 5,
+     
+        ...style
+      }}
+    />
+  );
+};
 
 export default function MainMenu () {
     const navigate = useNavigate();
@@ -127,52 +163,132 @@ export default function MainMenu () {
         navigate(path);
     };  
 
+
     return (
       <>  
-        <div className="grid grid-cols-8 menu-bar-row h-full items-center"> 
-            <div className="col-span-2 pl-2 mr-2 ml-2">              
-                <SupervisedUserCircleRoundedIcon className="text-red-400" fontSize="large">                  
-                </SupervisedUserCircleRoundedIcon>  
-                <span className="ml-2">
-                  Memini 
-                </span>    
-            </div>
-            <div className="col-span-4">            
-                <div className="ui menu secondary centered-menu justify-center">  
-                    <MenuItemIcon 
-                      name="Home" 
-                      selectedMenu={selectedMenu} 
-                      onClick={() => {handleMenuClick('/home')}}
-                      tooltip="Home">
-                      <CabinTwoToneIcon fontSize="large">
-                      </CabinTwoToneIcon>
-                    </MenuItemIcon>
+        
 
-                    {
-                      userSession && 
-                        <MenuItemIcon 
-                          name="Planning" 
-                          selectedMenu={selectedMenu} 
-                          onClick={() => {handleMenuClick('/planning')}}
-                          tooltip="Planning">
-                          <EventNoteTwoToneIcon fontSize="large"></EventNoteTwoToneIcon>
-                        </MenuItemIcon>
-                    }
+        <div className="h-16 border border-gray-200 flex items-center gap-x-4"> 
 
-                    <MenuItemIcon 
-                      name="About" 
-                      selectedMenu={selectedMenu} 
-                      onClick={() => {handleMenuClick('/about')}}
-                      tooltip="About Memini">
-                      <InfoTwoToneIcon fontSize="large"></InfoTwoToneIcon>
-                    </MenuItemIcon>
-                </div>
-            </div>   
-            <UserProfileArea></UserProfileArea>                        
+          <Box
+          component="img"
+          src={logo}
+          alt="App Icon"
+            sx={{
+              width: 32,
+              height: 32,
+              ml:'0.5rem'          
+            }}
+          />
+          
+          <div>
+            <Typography variant="subtitle1"> Memini </Typography>
+            <Typography variant="subtitle2"> Version 1.0.1, alpha </Typography>
+          </div>
+
+         
+          <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
+          
+          <Boxes size={14} style={{opacity:0.5}} />
+
+          <Typography variant="subtitle1">          
+            Dan Johansson
+          </Typography>
+
+          <MUI_StyledButton themeColor = 'light' buttonSize = 'xs' buttonVariant = 'main' borderType = 'rounded' opacity={.85}> 
+            <Typography variant="subtitle2"> Free </Typography>
+          </MUI_StyledButton>
+
+          <ChevronsUpDown size={14} style={{opacity:0.5 }} />
+
+          <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
+          
+          <LocationDisplay></LocationDisplay>
+
+          <Globe size={14}  style={{color:"#6ce699", opacity:0.75}} />
+          <Combine size={14} style={{opacity:0.75}}/>
+         
+          <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
+
+          <MUI_StyledButton themeColor = 'light' buttonSize = 'sm' buttonVariant = 'main' borderType = 'rounded' 
+              opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={false}>
+              <Plug size={14} style={{ marginRight: '.25rem', transform: 'rotate(90deg)', opacity:0.75 }}/>
+              <Typography variant="subtitle2"> Connect with people </Typography>
+          </MUI_StyledButton>
+            
+    
+          <span className="ml-auto flex items-center gap-2" style={{marginRight: '0.5rem'}}>
+
+            <MUI_StyledSegment spacing="segmentMedium" borderProfile="rounded">     
+
+             
+              
+                <LucidIconButton
+                icon={MessageSquareText}
+                size={16}
+                opacity={.75}
+                palette="main"
+                borderProfile="rounded"
+                highlightBackgroundOnHover={true}
+                highlightBorderOnHover={true}
+                displayBorder={false}
+                tooltip="View Messages"
+                onClick={() => console.log("Clicked Home")}
+                />
+            
+              
+              <LucidIconButton
+                icon={Bell}
+                size={16}
+                opacity={.75}
+                palette="main"
+                borderProfile="rounded"
+                highlightBackgroundOnHover={true}
+                highlightBorderOnHover={true}
+                displayBorder={false}
+                tooltip="Notifications"
+                onClick={() => console.log("Clicked Home")}
+              />
+              <LucidIconButton
+                icon={Settings}
+                size={16}
+                opacity={.75}
+                palette="main"
+                borderProfile="rounded"
+                highlightBackgroundOnHover={true}
+                highlightBorderOnHover={true}
+                displayBorder={false}
+                tooltip="Settings/Preferences"
+                onClick={() => console.log("Clicked Home")}
+              />
+              <LucidIconButton
+                icon={HelpCircle}
+                size={ 16 }
+                opacity={.75}
+                palette="main"
+                borderProfile="rounded"
+                highlightBackgroundOnHover={true}
+                highlightBorderOnHover={true}
+                displayBorder={false}
+                tooltip="About Memini"
+                onClick={() => console.log("Clicked Home")}
+              />
+            
+                        
+            </MUI_StyledSegment>
+
+             <MUI_StyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.95} highlightBorderOnHover={false} highlightBackgroundOnHover={true}>                
+                <Typography variant="subtitle2" color={'black'}> Feedback </Typography>
+              </MUI_StyledButton>
+            <UserProfileCircle user={{name:'Dan Johansson', email:'johansson_dan@hotmail.com', avatar:null }}></UserProfileCircle>          
+
+
+           
+          </span>
+
+
+
         </div>
-   
-
-
       </>
     )
 }

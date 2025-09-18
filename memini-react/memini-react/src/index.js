@@ -8,13 +8,15 @@ import store from './store/index.ts';
 import { BrowserRouter } from "react-router-dom";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { StrictMode } from 'react';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') 
 );
 
 root.render(
- 
+
+  <StrictMode>
     <BrowserRouter>
       <Provider store={store}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -22,6 +24,7 @@ root.render(
         </LocalizationProvider>      
       </Provider>
     </BrowserRouter>
+  </StrictMode>
 
 );
 

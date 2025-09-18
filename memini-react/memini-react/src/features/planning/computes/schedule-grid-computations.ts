@@ -13,4 +13,9 @@ export function setupClockMarkers (hours = 12, isLate = false) {
     return clockMarkers;
 }
 
+export function  getCurrentTimePosition (): number {
+const now = new Date();
+const minutes = now.getHours() * 60 + now.getMinutes();
+return (minutes / (24 * 60)) * 100;
+};
 
