@@ -41,7 +41,8 @@ const MuiDatePicker = forwardRef<MuiDatePickerRef, MuiDatePickerProps>(function 
 
   return (
     <DatePicker
-      label="Task date"
+      className=""
+      label=""
       value={value}
       onChange={handleChange}
     />

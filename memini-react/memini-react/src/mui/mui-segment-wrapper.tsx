@@ -1,27 +1,36 @@
-import MaterialUITheme1Profile from '../styling/mui_theme_1/theme-profile';
+import MaterialUITheme1Profile from '@/styling/mui_theme_1/theme-profile';
 import {Box} from "@mui/material";
 
 interface MUI_StyledSegmentProps {
   borderProfile?: keyof typeof MaterialUITheme1Profile.borderProfiles;
   palette?: keyof typeof MaterialUITheme1Profile.paletteProfiles;
   spacing?: keyof typeof MaterialUITheme1Profile.spacingProfiles;
+  borderCoverage?: Array<number>;
   highlightBackgroundOnHover?: boolean;
   highlightBorderOnHover?: boolean;
+  className?: string;
   children?: React.ReactNode;
+  onHover?: Function;
+  onHoverOut?: Function;
 }
 
 const MUI_StyledSegment: React.FC<MUI_StyledSegmentProps> = (props) => {
   const palette = MaterialUITheme1Profile.paletteProfiles[props.palette ?? 'main'];
   const spacing = MaterialUITheme1Profile.spacingProfiles[props.spacing  ?? 'segmentMedium'];
   const border  = MaterialUITheme1Profile.borderProfiles[props.borderProfile ?? 'square'];
-  console.log(spacing);
+  const borderCoverage = props.borderCoverage ?? [1.0, 1.0, 1.0, 1.0]
+  const borderWidthNumber = parseFloat(border.borderWidth);
+
   return (
    <Box
+        className={props.className}
+        onMouseEnter={() => props.onHover && props.onHover()}
+        onMouseLeave={() => props.onHoverOut && props.onHoverOut()}    
         sx={{
             borderRadius: border.borderRadius,
-            borderWidth: border.borderWidth,
-            borderColor: palette.light.border,
-            border: `${border.borderWidth} solid ${palette.light.border}`,
+            borderWidth: `${borderCoverage[0] * borderWidthNumber}px ${borderCoverage[1] * borderWidthNumber}px ${borderCoverage[2] * borderWidthNumber}px ${borderCoverage[3] * borderWidthNumber}px`,
+            borderColor: 'bg-gray-200',
+            border: `${border.borderWidth} solid bg-gray-200`,
             boxShadow: border.shadow,    
 
             display: 'flex',

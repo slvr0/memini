@@ -16,7 +16,8 @@ interface LucidIconButtonProps {
   highlightBorderOnHover?: boolean;
   displayBorder?: boolean;
   tooltip?: string;
-  onClick?: () => void;
+  className?: string;
+  onClick?: (e: any) => void;
 }
 
 const LucidIconButton = React.forwardRef<SVGSVGElement, LucidIconButtonProps>(
@@ -31,6 +32,7 @@ const LucidIconButton = React.forwardRef<SVGSVGElement, LucidIconButtonProps>(
       highlightBorderOnHover = true,
       displayBorder = false,
       tooltip = '',
+      className = '',
       onClick,      
     },
     ref
@@ -41,6 +43,7 @@ const LucidIconButton = React.forwardRef<SVGSVGElement, LucidIconButtonProps>(
     return (
          <Tooltip title={tooltip} arrow>
             <Box
+                className={className}
                 component="button"
                 onClick={onClick}
                 ref={ref as React.Ref<HTMLButtonElement>}
@@ -52,7 +55,7 @@ const LucidIconButton = React.forwardRef<SVGSVGElement, LucidIconButtonProps>(
                 cursor: "pointer",
                 color: palette.light.text,
                 transition: "all 0.2s ease",
-                opacity: opacity,
+                opacity: opacity,              
                 "&:hover": {
                     backgroundColor: highlightBackgroundOnHover ? palette.light.hover : undefined,
                     borderColor: highlightBorderOnHover ? palette.light.borderHover : undefined,

@@ -87,7 +87,7 @@ const UserProfileCircle: React.FC<UserProfileCircleProps> = ({
     sx={{
       width: 32,      
       height: 32,       
-      bgcolor: 'darkcyan',
+      bgcolor: '#4DC19D',
       fontSize: '0.75rem',
       opacity:0.75,
     }}

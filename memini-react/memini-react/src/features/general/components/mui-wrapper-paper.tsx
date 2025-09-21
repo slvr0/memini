@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-  Paper,
-  useTheme,
+  Paper, 
   SxProps,
   Theme
 } from '@mui/material';
@@ -29,8 +28,6 @@ const MuiWrapperPaper: React.FC<MuiWrapperPaperProps> = ({
   elevation,
   ...otherProps 
 }) => {
-  const theme = useTheme();
-
   return (
     <Paper
       elevation={elevation }
@@ -39,12 +36,7 @@ const MuiWrapperPaper: React.FC<MuiWrapperPaperProps> = ({
         minHeight,
         height,
         position,
-        overflow,        
-
-        // borderRadius: theme.customComponents.timeline.paper.borderRadius,
-        // boxShadow: theme.customComponents.timeline.paper.shadow,
-        // border: theme.customComponents.timeline.paper.border,
-
+        overflow,  
         ...sx,
       }}
       {...otherProps}

@@ -4,34 +4,31 @@ const theme = createTheme({
 
   typography: {
       fontFamily: `'Plus Jakarta Sans', 'Geiko', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`,
-       h1: {
-        fontSize: '3rem',  
-        fontWeight: 700,
-      },
+      //  h1: {
+      //   fontSize: '3rem',  
+      //   fontWeight: 700,
+      // },
       
-      h2: {
-        fontSize: '2.5rem', 
-        fontWeight: 600,
-      },
+      // h2: {
+      //   fontSize: '2.5rem', 
+      //   fontWeight: 600,
+      // },
       
-      h3: {
-        fontSize: '2rem', 
-        fontWeight: 600,
-      },
+      // h3: {
+      //   fontSize: '2rem', 
+      //   fontWeight: 600,
+      // },
       
-      h4: {
-        fontSize: '1.5rem', 
-        fontWeight: 600,
-      },
+      // h4: {
+      //   fontSize: '1.5rem', 
+      //   fontWeight: 600,
+      // },
       
-      h5: {
-        fontSize: '1.25rem', 
-        fontWeight: 600,
-      },
+ 
       
       h6: {
         fontSize: '10px',
-        fontWeight: 400,
+        fontWeight: 500,
       },
       
       body1: {
@@ -65,7 +62,7 @@ const theme = createTheme({
       },
       
       overline: {
-        fontSize: '0.625rem',
+        fontSize: '10px',
         fontWeight: 600,
       },
     },

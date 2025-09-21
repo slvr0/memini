@@ -104,8 +104,7 @@ const UserProfileArea = (props: any) => {
           isLoggedIn && <>
             <UserNameArea firstName={authorisationToken.userSession.firstName} lastName={authorisationToken.userSession.lastName}>
               
-            </UserNameArea>
-            
+            </UserNameArea>            
 
             <MeminiButton type="negative" size="small" onClick={() => {logout()}}>
             Logout
@@ -124,26 +123,7 @@ const UserProfileArea = (props: any) => {
   );
 }
 
-const StatusDot = ({ 
-  color = '#22c55e', // Green color
-  size = 8, 
-  style = {} 
-}) => {
-  return (
-    <div
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: '50%',
-        backgroundColor: color,
-        flexShrink: 0, // Prevents dot from shrinking
-        marginRight: 5,
-     
-        ...style
-      }}
-    />
-  );
-};
+
 
 export default function MainMenu () {
     const navigate = useNavigate();
@@ -161,15 +141,11 @@ export default function MainMenu () {
 
     const handleMenuClick = (path: string) => {
         navigate(path);
-    };  
-
+    }; 
 
     return (
       <>  
-        
-
-        <div className="h-16 border border-gray-200 flex items-center gap-x-4"> 
-
+        <div className="h-16 border border-gray-200 bg-white flex items-center gap-x-4 z-9999"> 
           <Box
           component="img"
           src={logo}
@@ -177,7 +153,8 @@ export default function MainMenu () {
             sx={{
               width: 32,
               height: 32,
-              ml:'0.5rem'          
+              ml:'0.5rem',          
+              zIndex: 9999          
             }}
           />
           
@@ -185,8 +162,7 @@ export default function MainMenu () {
             <Typography variant="subtitle1"> Memini </Typography>
             <Typography variant="subtitle2"> Version 1.0.1, alpha </Typography>
           </div>
-
-         
+          
           <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
           
           <Boxes size={14} style={{opacity:0.5}} />
@@ -218,11 +194,7 @@ export default function MainMenu () {
             
     
           <span className="ml-auto flex items-center gap-2" style={{marginRight: '0.5rem'}}>
-
-            <MUI_StyledSegment spacing="segmentMedium" borderProfile="rounded">     
-
-             
-              
+            <MUI_StyledSegment spacing="segmentMini" borderProfile="rounded">     
                 <LucidIconButton
                 icon={MessageSquareText}
                 size={16}
@@ -234,9 +206,7 @@ export default function MainMenu () {
                 displayBorder={false}
                 tooltip="View Messages"
                 onClick={() => console.log("Clicked Home")}
-                />
-            
-              
+                />              
               <LucidIconButton
                 icon={Bell}
                 size={16}
@@ -272,12 +242,9 @@ export default function MainMenu () {
                 displayBorder={false}
                 tooltip="About Memini"
                 onClick={() => console.log("Clicked Home")}
-              />
-            
-                        
+              />        
             </MUI_StyledSegment>
-
-             <MUI_StyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.95} highlightBorderOnHover={false} highlightBackgroundOnHover={true}>                
+              <MUI_StyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.95} highlightBorderOnHover={false} highlightBackgroundOnHover={true}>                
                 <Typography variant="subtitle2" color={'black'}> Feedback </Typography>
               </MUI_StyledButton>
             <UserProfileCircle user={{name:'Dan Johansson', email:'johansson_dan@hotmail.com', avatar:null }}></UserProfileCircle>          
