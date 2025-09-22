@@ -15,14 +15,14 @@ const getHeightCategory = (height: number) => {
     return 'medium'; //create a large layout too?
 }
 
-const getTaskLayout = (height: number, props: TaskLayoutProps): JSX.Element => {
+const getTaskLayout = (height: number, slotCount: number, props: TaskLayoutProps): JSX.Element => {
   const category = getHeightCategory(height);
   
   switch(category) {
     case 'ultra-compact':
-      return <TaskLayoutCompact {...props} />;
+      return <TaskLayoutCompact displayOptions={slotCount === 1} {...props} />;
     case 'compact':
-      return <TaskLayoutMini {...props} />;
+      return <TaskLayoutMini displayOptions={slotCount === 1} {...props} />;
     case 'medium':
       return <TaskLayoutMedium {...props} />;
     default:
@@ -43,7 +43,7 @@ const DisplayTask : React.FC<DisplayTaskProps> = (props) => {
     const leftPercent = slotIndex * widthPercent;
 
     return (
-        <div className="absolute overflow-hidden border rounded-md accent-transparent transition-all duration-300 h-full min-w-0" 
+        <div className="absolute overflow-hidden border border-dashed rounded-md accent-transparent transition-all duration-300 h-full min-w-0" 
             style={{                
                 borderColor: '#9ccec4',
                 borderWidth: '1.5px',              
@@ -53,7 +53,8 @@ const DisplayTask : React.FC<DisplayTaskProps> = (props) => {
                 width: `${widthPercent}%`,
                 backdropFilter: 'blur(2px)', 
             }}>
-            {getTaskLayout(height, { 
+            {getTaskLayout(
+                height, slotCount, { 
                 taskTitle: props.taskTitle, 
                 taskDescription: props.taskDescription, 
                 status: props.status 

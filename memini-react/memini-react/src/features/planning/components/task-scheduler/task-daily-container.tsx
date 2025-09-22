@@ -1,24 +1,23 @@
 import type { ITask } from "../../../tasks/interfaces/task-interface";
 import DisplayTask from "../../../tasks/components/display-task"
 
-interface TaskDailyContainerProps {
+interface TaskDailyContainerProps { 
     containerHeight: number;
-    containerIndex: number;
     displayTasks?: Array<ITask>;    
     simulatedSlotSpan? : number;
 }
 
 /* This guy should handle positional calculations */
 const TaskDailyContainer: React.FC<TaskDailyContainerProps> = ({
-    containerHeight,
-    containerIndex,
+    containerHeight, 
     displayTasks = [],
     simulatedSlotSpan = 1
 }) => {
     return (        
-        <div className="relative flex flex-col h-full w-full border-r border-r-gray-200" key={containerIndex}>            {
+        <div className="relative flex flex-col h-full w-full border-r border-r-gray-200" >            {
                 displayTasks.map((task: ITask, index: number) => {
-                    return (<DisplayTask 
+                    return (<DisplayTask
+                        key={index} 
                         hourPixel={containerHeight / 24} 
                         startTime={task.StartTime} 
                         endTime={task.EndTime} 

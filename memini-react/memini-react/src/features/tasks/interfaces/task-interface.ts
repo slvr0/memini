@@ -38,6 +38,7 @@ export interface TaskLayoutProps {
     taskTitle: string;
     taskDescription?: string;
     status?: StatusType; 
+    displayOptions?: boolean;
 }
 
 export interface TaskLayoutOptionPanelProps {

@@ -57,21 +57,21 @@ const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainer
 
                     { /* Loop the weekdays, daysweek */
                     Array.from({length: 1}, (_, i) => {
-                        return (<TaskDailyContainer containerIndex={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
+                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
                             displayTasks={createdTasks.slice(i * amountOfTasksPerDayTest, (i * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
                     })
                     } 
                    
                     { /* Loop the weekdays, daysweek */
                     Array.from({length: 1}, (_, i ) => {
-                        return (<TaskDailyContainer containerIndex={i} containerHeight={schedulerHeight}  simulatedSlotSpan={2} 
+                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight}  simulatedSlotSpan={2} 
                             displayTasks={createdTasks.slice((i + 1) * amountOfTasksPerDayTest, ((i + 1) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
                     })
                     }
 
                     { /* Loop the weekdays, daysweek */
                     Array.from({length: 1}, (_, i ) => {
-                        return (<TaskDailyContainer containerIndex={i} containerHeight={schedulerHeight}  simulatedSlotSpan={1} 
+                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight}  simulatedSlotSpan={1} 
                             displayTasks={createdTasks.slice((i + 2) * amountOfTasksPerDayTest, ((i + 2) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
                     })
                     }

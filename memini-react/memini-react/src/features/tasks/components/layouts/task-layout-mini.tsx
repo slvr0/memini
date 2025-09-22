@@ -4,7 +4,12 @@ import TaskLayoutOptionPanel from '../../components/layouts/task-layout-option-p
 import Tooltip from '@mui/material/Tooltip';
 import { Typography} from "@mui/material";
 
-const TaskLayoutMini : React.FC<TaskLayoutProps> = (props) => {    
+const TaskLayoutMini : React.FC<TaskLayoutProps> = (
+    {
+        displayOptions = true,
+        ...props
+    }
+) => {    
     return (
         <Tooltip title={props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )} arrow>
             <div className="flex flex-row p-1 overflow-hidden items-center justify-between w-full">
@@ -21,14 +26,16 @@ const TaskLayoutMini : React.FC<TaskLayoutProps> = (props) => {
                     'MINI' - { props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' ) }
                 </Typography>
                 
+                {
+                displayOptions && 
                 <div className="flex flex-row gap-0.5 ml-1 flex-shrink-0">
                     <TaskLayoutOptionPanel                                                  
                         borderProfile="rounded"
-                        iconSize={12}  
-                        iconOpacity={.8}                  
-                    />
-           
+                        iconSize={10}  
+                        iconOpacity={.6}                  
+                    />           
                 </div>
+            }
             </div>
         </Tooltip>
     )
