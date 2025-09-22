@@ -1,7 +1,5 @@
 import React, { Fragment, useEffect, createRef,useState, useRef } from "react";
 import QuoteSegment from "../../general/components/quote-segment";
-import PlanningMainDashboard from './planning-main-dashboard'
-import TrackingTasksTab from "./tracking-tasks-tab";
 import TaskSchedulerContainer from "./task-scheduler/task-scheduler-container";
 
 import MuiModal from "../../general/components/mui-modal";
@@ -76,18 +74,13 @@ function PlanningPage() {
                         </div>
                         
                         <div ref={schedulerParentRef}>
-                            <TaskSchedulerContainer
+                            <TaskSchedulerContainer             
                                 displayAsWeek={true}
                                 schedulerHeight={SCHEDULER_CONTAINER_STATIC_HEIGHT}
                                 timeslotHeight={TIME_SLOT_STATIC_HEIGHT}
-                                ref={schedulerParentRef}>  
-                            </TaskSchedulerContainer>                    
+                                ref={schedulerParentRef}/>
                         </div>
-                    </div>
-
-                    
-
-                   
+                    </div>                   
                 </div> 
             </div>
         </div>

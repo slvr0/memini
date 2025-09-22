@@ -1,43 +1,58 @@
-import "../css/task.css";
-import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
-import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
-import Tooltip from '@mui/material/Tooltip';
-import type { Task } from "../interfaces/task-types";  
-import React from "react";                      
 
-interface DisplayTaskProps {
-    task: Task;
+import {TaskLayoutProps, DisplayTaskProps} from '../../../features/tasks/interfaces/task-interface'
+
+import TaskLayoutCompact from './layouts/task-layout-compact'
+import TaskLayoutMini from './layouts/task-layout-mini'
+import TaskLayoutMedium from './layouts/task-layout-medium'
+
+//stackedProfile , can be in columns i guess if multiple are at same time.
+//status icon , coming soon, passed, or future. coming soon , orange, passed gray ish , coming soon blue.
+
+const getHeightCategory = (height: number) => {
+    if (height < 20) return 'ultra-compact';
+    if (height < 40) return 'compact';
+    if (height < 80) return 'medium';
+    return 'medium'; //create a large layout too?
 }
 
-const DisplayTask : React.FC<DisplayTaskProps> = (props : any) => {
-  const content = props.task;
-  const isCompressed = (content.EndTime - content.StartTime) < 60;
-  const containerType = !isCompressed ? 'task-container' : 'task-container-compressed';
-  const tooltip = content.Title + " - " + content.Description + " , scheduled between " + (content.StartTime / 60).toString() + " and " +(content.EndTime / 60).toString();
-
-  return (
-    <>   
-        <Tooltip title={tooltip|| ''}arrow>
-            <div className={`${containerType} `}>
-                {isCompressed && (
-                <>
-                    <div className="title-description-compressed">{content.Title} - {content.Description}</div>
-                </>
-                )}
-
-                {!isCompressed && (
-                <>
-                    <div className="title">{content.Title}</div>
-                    <div className="description">{content.Description}</div>
-                </>
-                )}
-            
-            </div>
-        </Tooltip>
-    </>
-    
-  );
+const getTaskLayout = (height: number, props: TaskLayoutProps): JSX.Element => {
+  const category = getHeightCategory(height);
+  
+  switch(category) {
+    case 'ultra-compact':
+      return <TaskLayoutCompact {...props} />;
+    case 'compact':
+      return <TaskLayoutMini {...props} />;
+    case 'medium':
+      return <TaskLayoutMedium {...props} />;
+    default:
+      return <TaskLayoutMedium {...props} />;
+  }
 };
 
-export default DisplayTask;
+//Add parameter to shut off height / top calculation for use in lists etc.
+const DisplayTask : React.FC<DisplayTaskProps> = (props) => {
 
+    var yPos = (props.startTime / 60) * props.hourPixel;
+    var height = ((props.endTime - props.startTime) / 60) * props.hourPixel;
+
+    return (
+        <div className="border rounded-md accent-transparent transition-all duration-300" 
+            style={{                
+                borderColor: '#9ccec4',
+                borderWidth: '1.5px',
+                position: 'relative',
+                top: yPos,
+                height: height,
+                backdropFilter: 'blur(2px)', 
+            }}>
+            {getTaskLayout(height, { 
+                taskTitle: props.taskTitle, 
+                taskDescription: props.taskDescription, 
+                status: props.status 
+            })}
+        </div>    
+    ) 
+}
+
+export default DisplayTask;

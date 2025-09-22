@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../../store";
 import { userTasksActions } from "../../../features/tasks/store/task-slice";
 import { toDateKey } from "./date-utils";
-import type { DateKey, Task } from "../interfaces/task-types";
+import type { DateKey, ITask } from "../interfaces/task-interface";
 import { deleteTaskApi, fetchTasksForDate, updateTaskApi, addTaskApi } from "../../../features/tasks/store/task-api";
 import { makeSelectTasksByDate, isDateLoaded } from "../../../features/tasks/store/task-selector";
 
@@ -22,19 +22,19 @@ export const useTaskManager = () => {
       return;
 
     const dateKey: DateKey = toDateKey(year, month, day);
-    dispatch(userTasksActions.upsertTasks(response.ResponseObject as Task[]));
+    dispatch(userTasksActions.upsertTasks(response.ResponseObject as ITask[]));
     dispatch(userTasksActions.markDateLoaded(dateKey));
   };
 
-  const useTasksForDate = (year: number, month: number, day: number): Task[] => {
+  const useTasksForDate = (year: number, month: number, day: number): ITask[] => {
     const dateKey: DateKey = toDateKey(year, month, day);
     return useSelector(makeSelectTasksByDate(dateKey));
   };
 
-  const setSelectedTask = (task: Task | null) : void => {
+  const setSelectedTask = (task: ITask | null) : void => {
     if(task === null) 
       return;
-    dispatch(userTasksActions.setSelectedTask(task as Task));
+    dispatch(userTasksActions.setSelectedTask(task as ITask));
   };
 
   const clearSelectedTask = () : void => {
@@ -46,7 +46,7 @@ export const useTaskManager = () => {
   //else we trigger a render cycle
 
   // prev is the task before update.
-  const updateTask = async (prev: Task | null, task: Task | Omit<Task, 'UserKey'>) : Promise<void> => {   
+  const updateTask = async (prev: ITask | null, task: ITask | Omit<ITask, 'UserKey'>) : Promise<void> => {   
     //we dont have a task to update or we are comparing to a prev task state that has not changed. 
     if(task === null || (prev && (prev === task)))
       return;
@@ -68,7 +68,7 @@ export const useTaskManager = () => {
     } 
   }
 
-  const deleteTask = async (task: Task) : Promise<void> => {
+  const deleteTask = async (task: ITask) : Promise<void> => {
     if(task === null)
       return;
 

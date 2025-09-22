@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
-import type { DateKey, Task } from "../interfaces/task-types";
+import type { DateKey, ITask } from "../interfaces/task-interface";
 
 export const toDateKey = (y: number, m: number, d: number): DateKey =>
   dayjs().year(y).month(m - 1).date(d).format("YYYY-MM-DD");
 
-export const taskDateKey = (t: Task): DateKey =>
+export const taskDateKey = (t: ITask): DateKey =>
   toDateKey(t.Year, t.Month, t.Day);
 
 export const enumerateDateKeys = (start: Date, end: Date): DateKey[] => {

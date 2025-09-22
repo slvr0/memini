@@ -1,4 +1,4 @@
-import StatusColorPalette, { PaletteProfileType } from '@/styling/mui_theme_1/palette-profile';
+import PaletteColorProfile , {PaletteProfileType} from "../styling/mui_theme_1/palette-profile";
 
 const StatusColorProfileMap : Record<string, PaletteProfileType> = {
   PASSED: 'main',
@@ -9,7 +9,7 @@ const StatusColorProfileMap : Record<string, PaletteProfileType> = {
 type StatusType = keyof typeof StatusColorProfileMap;
 
 interface StatusDotProps {
-  status?: string;
+
   color?: string; // fallback for custom colors
   size?: number;
   theme?: 'light' | 'dark';
@@ -18,7 +18,7 @@ interface StatusDotProps {
 }
 
 const MUI_StyledStatusCircle = ({
-  status: StatusType,
+
   color,
   size = 8,
   theme = 'light',
@@ -29,12 +29,12 @@ const MUI_StyledStatusCircle = ({
     let backgroundColor = color;
     let borderColor = 'transparent';
 
-    if (status) {
-      const statusColorProfile = StatusColorProfileMap[status];
-      const colorConfig = StatusColorPalette.getColorConfig(statusColorProfile, theme);
+  
+      //const statusColorProfile = StatusColorProfileMap[statusType];
+      const colorConfig = PaletteColorProfile.getColorConfig('main', theme);
       backgroundColor = colorConfig.backgroundColor;
       borderColor = showBorder ? colorConfig.borderColor || 'transparent' : 'transparent';
-    }
+    
 
     return {
       width: `${size}px`,

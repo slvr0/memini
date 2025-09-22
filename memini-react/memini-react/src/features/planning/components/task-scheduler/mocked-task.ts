@@ -1,4 +1,4 @@
-import { ITask } from '@/features/tasks/interfaces/task-types';
+import { ITask } from '../../../tasks/interfaces/task-interface';
 
 const tasks: ITask[] = [
   // Day 1 - September 22, 2025

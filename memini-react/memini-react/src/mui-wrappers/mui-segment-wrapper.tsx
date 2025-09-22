@@ -1,4 +1,5 @@
-import MaterialUITheme1Profile from '@/styling/mui_theme_1/theme-profile';
+import MaterialUITheme1Profile from "../styling/mui_theme_1/theme-profile";
+
 import {Box} from "@mui/material";
 
 interface MUI_StyledSegmentProps {

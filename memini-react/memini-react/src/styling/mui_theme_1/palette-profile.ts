@@ -1,4 +1,4 @@
-import MaterialUITheme1Profile from '@/styling/mui_theme_1/theme-profile';
+import MaterialUITheme1Profile from "./theme-profile";
 
 interface ThemeColors {
   main: string;

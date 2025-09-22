@@ -9,7 +9,7 @@ import { userTasksActions } from "../../tasks/store/task-slice";
 import { useTaskManager } from "../../tasks/utils/task-manager";
 import {createRef,  useState, useEffect} from "react";
 import MuiDatePicker from "../../general/components/mui-date-picker";
-import type { Task } from "../../tasks/interfaces/task-types";
+import type { ITask } from "../../tasks/interfaces/task-interface";
 import { RootState } from "../../../store/index";
 import { MuiDatePickerRef } from "../../general/interfaces/general-types";
 import type {TimeSliderRef, DiscreteDoubleTimeSliderProps} from "../../general/interfaces/general-types";
@@ -26,7 +26,7 @@ const snap15 = (m: number) => Math.round(m / 15) * 15;
   return [start, end];
 };
 
-const intervalFromTask = (task : Task | null) => {
+const intervalFromTask = (task : ITask | null) => {
   if (task) {    
   return [task.StartTime, task.EndTime];
   } else 
@@ -71,7 +71,7 @@ function EditTaskForm( { modalWrapper } : EditTaskFormProps)  {
       }
     }
 
-    const onDeleteUserTask = (userTask: Task) => {
+    const onDeleteUserTask = (userTask: ITask) => {
       if(userTask === null)
         return;
 
@@ -97,7 +97,7 @@ function EditTaskForm( { modalWrapper } : EditTaskFormProps)  {
         const Month = taskDate.month;
         const Day = taskDate.day;
 
-        const userTask : Omit<Task, 'UserKey'> = { 
+        const userTask : Omit<ITask, 'UserKey'> = { 
           UserTaskKey: UserTaskKey,                      
           Year: Year,
           Month: Month,

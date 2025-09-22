@@ -1,8 +1,5 @@
-
 import { useState } from "react";
-
 import { useNavigate, useLocation } from "react-router-dom";
-
 import { House, Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText, CalendarSync, CakeSlice, Contact, MessageSquare, NotebookPen } from "lucide-react";
 import SideMenuOption from "./side-menu-option"
 

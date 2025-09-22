@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import type { RootState } from "../../../store";
-import type { DateKey } from "../interfaces/task-types";
+import type { DateKey } from "../interfaces/task-interface";
 import { tasksAdapter } from "./task-slice";
 
 /* entity adaptor CRUD selectors we give access to.

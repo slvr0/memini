@@ -16,8 +16,8 @@ import { RootState } from "../../../store";
 import { Hub } from '@mui/icons-material';
 import { Link } from '@mui/icons-material';
 
-import MUI_StyledButton from "../../../mui/mui-button-wrapper";
-import MUI_StyledSegment from "../../../mui/mui-segment-wrapper"
+import MUI_StyledButton from "../../../mui-wrappers/mui-button-wrapper";
+import MUI_StyledSegment from "../../../mui-wrappers/mui-segment-wrapper"
 import LucidIconButton from "../../../lucid/lucid-button-icon"
 
 import { Typography, Box } from "@mui/material";

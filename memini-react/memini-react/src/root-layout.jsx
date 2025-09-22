@@ -4,7 +4,7 @@ import MainMenuBar from './features/general/components/main-menu-bar';
 import DateSelector from './features/planning/components/date-selector';
 import CalendarMonthDisplay from './features/planning/components/calendar-month-display';
 
-import ScheduleGrid from "./features/planning/components/schedule-grid";
+
 // import DailyTaskTimeline from './features/planning/components/improved-task-scheduler-bar';
 
 import { useSelector } from 'react-redux';

@@ -12,11 +12,11 @@
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"],
-      "@/components/*": ["components/*"],
-      "@/styling/*": ["styling/*"],
-      "@/lucid/*": ["lucid/*"],
-      "@/utils/*": ["utils/*"]
+      "@components/*": ["components/*"],
+      "@styling/*": ["styling/*"],
+      "@lucid/*": ["lucid/*"],
+      "@utils/*": ["utils/*"]
     }
   },
-  
+  "include": ["src"]
 }

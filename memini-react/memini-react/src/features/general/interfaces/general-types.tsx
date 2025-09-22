@@ -1,6 +1,4 @@
 import { SimpleDate } from "../../planning/interfaces/planning-types";
-import type { Task } from "../../tasks/interfaces/task-types";
-import { Moment } from "moment";
 
 export interface TimeSliderRef {
     getValue: () => number[];

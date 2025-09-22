@@ -1,8 +1,8 @@
 import { createSlice, createEntityAdapter, PayloadAction } from "@reduxjs/toolkit";
-import type { Task, DateKey, TaskId, UpdateTaskPayloadAction } from "../interfaces/task-types";
+import type { ITask, DateKey, TaskId, UpdateTaskPayloadAction } from "../interfaces/task-interface";
 import { toDateKey } from "../utils/date-utils";
 
-export const tasksAdapter = createEntityAdapter<Task, number>({
+export const tasksAdapter = createEntityAdapter<ITask, number>({
   selectId: (task) => task.UserTaskKey,
 });
 
@@ -17,14 +17,14 @@ const initialState: TasksState = tasksAdapter.getInitialState({
   byDate: {},
   loadedDates: {},
   loading: false,
-  selectedTask: null as Task | null
+  selectedTask: null as ITask | null
 });
 
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    upsertTasks(state, action: PayloadAction<Task[]>) { 
+    upsertTasks(state, action: PayloadAction<ITask[]>) { 
       tasksAdapter.upsertMany(state, action.payload);
       for (const task of action.payload) {
         const key = toDateKey(task.Year, task.Month, task.Day);
@@ -34,8 +34,8 @@ const tasksSlice = createSlice({
         }
       }
     },
-    setSelectedTask(state, action: PayloadAction<Task>) {
-      state.selectedTask = action.payload as Task;
+    setSelectedTask(state, action: PayloadAction<ITask>) {
+      state.selectedTask = action.payload as ITask;
     },
     clearSelectedTask(state, action: PayloadAction<void>) {
       state.selectedTask = null;
