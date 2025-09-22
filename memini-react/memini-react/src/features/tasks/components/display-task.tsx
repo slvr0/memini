@@ -36,14 +36,21 @@ const DisplayTask : React.FC<DisplayTaskProps> = (props) => {
     var yPos = (props.startTime / 60) * props.hourPixel;
     var height = ((props.endTime - props.startTime) / 60) * props.hourPixel;
 
+    const slotIndex = props.slotIndex ?? 0;
+    const slotCount = props.slotCount ?? 1;
+
+    const widthPercent = 100 / slotCount;
+    const leftPercent = slotIndex * widthPercent;
+
     return (
-        <div className="border rounded-md accent-transparent transition-all duration-300" 
+        <div className="absolute overflow-hidden border rounded-md accent-transparent transition-all duration-300 h-full min-w-0" 
             style={{                
                 borderColor: '#9ccec4',
-                borderWidth: '1.5px',
-                position: 'relative',
+                borderWidth: '1.5px',              
                 top: yPos,
                 height: height,
+                left: `${leftPercent}%`,
+                width: `${widthPercent}%`,
                 backdropFilter: 'blur(2px)', 
             }}>
             {getTaskLayout(height, { 

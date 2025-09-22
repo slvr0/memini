@@ -1,7 +1,6 @@
 import MUI_StyledStatusCircle , { StatusType } from "../../../mui-wrappers/mui-status-circle-wrapper"
 import MaterialUITheme1Profile from '../../../styling/mui_theme_1/theme-profile';
 
-//remove old interface 
 export interface ITask {
   UserTaskKey: TaskId;
   UserKey: number;
@@ -23,13 +22,16 @@ export interface UpdateTaskPayloadAction {
   newTask: ITask;
 }
 
+//this should extend ITask?
 export interface DisplayTaskProps {
     hourPixel:number;
     startTime: number;
     endTime: number;   
     taskTitle: string;
     taskDescription?: string;
-    status?: StatusType; 
+    status?: StatusType;
+    slotIndex?: number; // horizontal alignment
+    slotCount?: number; // horizontal alignment
 }
 
 export interface TaskLayoutProps {

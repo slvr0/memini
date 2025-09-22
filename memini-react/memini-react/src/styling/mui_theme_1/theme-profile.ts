@@ -52,7 +52,7 @@ const MaterialUITheme1Profile = {
     medium: { px: 1.5, py: 0.65, mx: 0 , my: 0 },
     roomy: { px: 2, py: 0.75, mx: 4 , my: 4 },
     segmentNoSpacing : {px: 0.0, py: 0.0, mx: 0 , my: 0},
-    segmentMini : {px: 1.0, py: 0.15, mx: 0 , my: 0},
+    segmentMini : {px: 0.05, py: 0.05, mx: 0 , my: 0},
     segmentSmall : {px: 1.0, py: 0.15, mx: 0 , my: 0},
     segmentMedium : {px: 1.0, py: 0.65, mx: 0 , my: 0},
     segmentLarge : {px: 1.0, py: 0.15, mx: 0 , my: 0},

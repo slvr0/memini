@@ -6,36 +6,52 @@ import MUI_StyledSegment from "../../../../mui-wrappers/mui-segment-wrapper"
 import Tooltip from '@mui/material/Tooltip';
 import { Typography} from "@mui/material";
 
-const TaskLayoutMedium : React.FC<TaskLayoutProps> = (props) => {
-    return (
-        <Tooltip title={props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )} arrow>
-            <div className="grid grid-rows-[20%_30%_50%] h-full items-center mx-2 my-2">
-                <div className="flex flex-row gap-2 m-2 justify-between items-center">
-                        <MUI_StyledStatusCircle color="blue" size={8} ></MUI_StyledStatusCircle>
-                        <div className="flex flex-row gap-2">
-                             <MUI_StyledSegment spacing="segmentMini" borderProfile="rounded">  
-                                <TaskLayoutOptionPanel                                 
-                                    iconSize={14}  
-                                    iconOpacity={.6}                  
-                                />
-                   
-                            </MUI_StyledSegment>   
-                        </div>
-                                                   
-                </div>  
-                <div className="flex flex-row gap-2 m-2 justify-start">
-                    <Typography variant="overline" className="font-semibold opacity-95 m-2 overflow-hidden" style={{color:''}}> 'Size MD' {props.taskTitle}</Typography>
-                </div>  
-                <div className="flex flex-row gap-2 m-2 justify-start truncate overflow-hidden whitespace-nowrap">
-                    <Typography 
-                        variant="caption" 
-                        className="font-semibold opacity-95 m-2 overflow-ellipsis wrap-break-word break-all"
-                        > 
-                        {props.taskTitle + (props.taskDescription ? ' - ' + props.taskDescription : '')}
-                    </Typography> 
-                </div> 
-            </div>
-    </Tooltip>)
-}
+const TaskLayoutMedium: React.FC<TaskLayoutProps> = (props) => {
+  return (
+    <Tooltip
+      title={
+        props.taskTitle +
+        (props.taskDescription ? " - " + props.taskDescription : "")
+      }
+      arrow
+    >
+    <div className="grid grid-rows-[20%_30%_50%] h-full w-full overflow-hidden"> 
+
+        <div className="flex flex-row px-1 overflow-hidden w-full items-start">            
+              <TaskLayoutOptionPanel iconSize={12} iconOpacity={0.6} />    
+        </div>
+
+        <div className="flex flex-row px-1 overflow-hidden w-full">
+            <Typography
+            variant="overline"
+            className="text-left w-full min-w-0 break-words"
+            style={{ 
+            fontSize: '10px', 
+            opacity: 0.95, 
+            lineHeight: '.75rem',       
+            }}
+            >
+            {props.taskTitle + (props.taskDescription ? " - " + props.taskDescription : "")}
+            </Typography>
+        </div>
+
+        <div className="flex flex-row px-1 overflow-hidden w-full">
+            <Typography
+            variant="subtitle2"
+            className="text-left w-full min-w-0 break-words"
+            style={{ 
+            fontSize: '10px', 
+            opacity: 0.8, 
+            lineHeight: '.75rem',       
+            }}
+            >
+            {props.taskTitle + (props.taskDescription ? " - " + props.taskDescription : "")}
+            </Typography>
+        </div>
+
+    </div>
+    </Tooltip>
+  );
+};
 
 export default TaskLayoutMedium;

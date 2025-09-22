@@ -7,7 +7,7 @@ import { Typography} from "@mui/material";
 const TaskLayoutMini : React.FC<TaskLayoutProps> = (props) => {    
     return (
         <Tooltip title={props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )} arrow>
-            <div className="h-full w-full p-1 overflow-hidden flex items-center justify-between min-h-0">
+            <div className="flex flex-row p-1 overflow-hidden items-center justify-between w-full">
                 <Typography 
                     variant="caption" 
                     className="opacity-85 flex-1 truncate text-ellipsis whitespace-nowrap" 
@@ -15,10 +15,10 @@ const TaskLayoutMini : React.FC<TaskLayoutProps> = (props) => {
                         color: 'black', 
                         fontSize: '11px',
                         letterSpacing: '.025rem',
-                        minWidth: 0
+                        minWidth: 0,
                     }}
                 > 
-                    { props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' ) }
+                    'MINI' - { props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' ) }
                 </Typography>
                 
                 <div className="flex flex-row gap-0.5 ml-1 flex-shrink-0">

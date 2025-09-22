@@ -17,7 +17,7 @@ const TaskLayoutCompact : React.FC<TaskLayoutProps> = (props) =>{
                         minWidth: 0
                     }}
                 > 
-                    {props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )}
+                  'COMPACT'  {props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )}
                 </Typography>
                 
                 <div className="flex flex-row gap-0.5 ml-1 flex-shrink-0">
