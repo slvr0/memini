@@ -1,6 +1,6 @@
 import {TaskLayoutProps} from '../../interfaces/task-interface'
 import TaskLayoutOptionPanel from '../../components/layouts/task-layout-option-panel'
-
+import MUI_StyledStatusCircle , {  } from "../../../../mui-wrappers/mui-status-circle-wrapper"
 import Tooltip from '@mui/material/Tooltip';
 import { Typography} from "@mui/material";
 
@@ -12,21 +12,23 @@ const TaskLayoutMini : React.FC<TaskLayoutProps> = (
 ) => {    
     return (
         <Tooltip title={props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )} arrow>
-            <div className="flex flex-row p-1 overflow-hidden items-center justify-between w-full">
+            <div className="h-full w-full p-1 overflow-hidden flex items-center justify-between min-h-0">
+                <MUI_StyledStatusCircle status={props.status} style={{marginRight: '0.25rem'}}/>     
+
                 <Typography 
-                    variant="caption" 
-                    className="opacity-85 flex-1 truncate text-ellipsis whitespace-nowrap" 
+                    variant="subtitle2" 
+                    className="font-semibold opacity-95 flex-1 truncate text-ellipsis whitespace-nowrap" 
                     style={{
                         color: 'black', 
-                        fontSize: '11px',
+                        fontSize: '10px',
                         letterSpacing: '.025rem',
-                        minWidth: 0,
+                        minWidth: 0
                     }}
                 > 
-                    'MINI' - { props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' ) }
+                {props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )}
                 </Typography>
-                
-                {
+
+                 {
                 displayOptions && 
                 <div className="flex flex-row gap-0.5 ml-1 flex-shrink-0">
                     <TaskLayoutOptionPanel                                                  
@@ -35,7 +37,7 @@ const TaskLayoutMini : React.FC<TaskLayoutProps> = (
                         iconOpacity={.6}                  
                     />           
                 </div>
-            }
+                }
             </div>
         </Tooltip>
     )

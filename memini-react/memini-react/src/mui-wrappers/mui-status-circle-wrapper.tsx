@@ -1,16 +1,22 @@
 import PaletteColorProfile , {PaletteProfileType} from "../styling/mui_theme_1/palette-profile";
+import MaterialUITheme1Profile from "../styling/mui_theme_1/theme-profile";
+  
+export enum TaskStatus {
+  PASSED = 'PASSED',
+  UPCOMING = 'UPCOMING',
+  FUTURE = 'FUTURE'
+}
 
-const StatusColorProfileMap : Record<string, PaletteProfileType> = {
-  PASSED: 'main',
-  UPCOMING: 'warning',
-  FUTURE: 'harmonicBlue'
+const StatusColorProfileMap: Record<TaskStatus, PaletteProfileType> = {
+  [TaskStatus.PASSED]: 'main',
+  [TaskStatus.UPCOMING]: 'warning',
+  [TaskStatus.FUTURE]: 'harmonicBlue'
 } as const;
 
-type StatusType = keyof typeof StatusColorProfileMap;
+type StatusType = TaskStatus;
 
 interface StatusDotProps {
-
-  color?: string; // fallback for custom colors
+  status: TaskStatus, 
   size?: number;
   theme?: 'light' | 'dark';
   showBorder?: boolean;
@@ -18,39 +24,34 @@ interface StatusDotProps {
 }
 
 const MUI_StyledStatusCircle = ({
-
-  color,
+  status,
   size = 8,
   theme = 'light',
   showBorder = false,
   style = {}
 }: StatusDotProps) => {
-  const getStyles = (): React.CSSProperties => {
-    let backgroundColor = color;
+  const getStyles = (): React.CSSProperties => {       
+    const paletteProfileType = StatusColorProfileMap[status];
+    const colorConfig = PaletteColorProfile.getColorConfig(paletteProfileType, theme);
+    const backgroundColor = colorConfig.backgroundColor;
     let borderColor = 'transparent';
-
-  
-      //const statusColorProfile = StatusColorProfileMap[statusType];
-      const colorConfig = PaletteColorProfile.getColorConfig('main', theme);
-      backgroundColor = colorConfig.backgroundColor;
-      borderColor = showBorder ? colorConfig.borderColor || 'transparent' : 'transparent';
+    borderColor = showBorder ? colorConfig.borderColor || 'transparent' : 'transparent';    
     
-
     return {
       width: `${size}px`,
       height: `${size}px`,
       borderRadius: '50%',
-      backgroundColor: backgroundColor || '#22c55e',
+      backgroundColor: `${backgroundColor}`,
       border: showBorder ? `1px solid ${borderColor}` : 'none',
       flexShrink: 0,
-      marginRight: 5,
+      alignContent:'center',
+      verticalAlign: 'middle',
       ...style
     };
   };
 
   return <div style={getStyles()} />;
 };
-
 
 export { StatusColorProfileMap };
 export type { StatusType };

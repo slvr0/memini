@@ -4,17 +4,6 @@ export const mockedTasks: ITask[] = [
   // Day 1 - September 22, 2025 (Monday)
 
 
-  {
-    UserTaskKey: 699,
-    UserKey: 101,
-    Title: "Emails and Communication",
-    Description: "Review code submissions and provide feedback to team members. Handle urgent communications and respond to client inquiries.",
-    Year: 2025,
-    Month: 9,
-    Day: 22,
-    StartTime: 200, // 1:00 PM
-    EndTime: 1240   // 2:00 PM
-  },
 
   {
     UserTaskKey: 1,
@@ -75,17 +64,7 @@ export const mockedTasks: ITask[] = [
     StartTime: 540, // 9:00 AM
     EndTime: 555   // 9:15 AM
   },
-  {
-    UserTaskKey: 7,
-    UserKey: 101,
-    Title: "Team Meeting",
-    Description: "Weekly sync with the team to discuss progress and blockers.",
-    Year: 2025,
-    Month: 9,
-    Day: 23,
-    StartTime: 600, // 10:00 AM
-    EndTime: 720   // 12:00 PM
-  },
+
   {
     UserTaskKey: 8,
     UserKey: 101,
@@ -135,7 +114,7 @@ export const mockedTasks: ITask[] = [
   {
     UserTaskKey: 12,
     UserKey: 101,
-    Title: "Client Call",
+    Title: "Client CallsSSS",
     Description: "Discuss project requirements and feedback with the client.",
     Year: 2025,
     Month: 9,

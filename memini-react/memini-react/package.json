@@ -17,6 +17,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.11.0",
     "dayjs": "^1.11.13",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.544.0",
     "moment": "^2.30.1",
     "postcss-cli": "^11.0.0",
@@ -55,6 +56,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.20",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@typescript-eslint/eslint-plugin": "^8.44.0",

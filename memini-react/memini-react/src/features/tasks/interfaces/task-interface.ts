@@ -1,6 +1,7 @@
 import MUI_StyledStatusCircle , { StatusType } from "../../../mui-wrappers/mui-status-circle-wrapper"
 import MaterialUITheme1Profile from '../../../styling/mui_theme_1/theme-profile';
 
+
 export interface ITask {
   UserTaskKey: TaskId;
   UserKey: number;
@@ -22,22 +23,10 @@ export interface UpdateTaskPayloadAction {
   newTask: ITask;
 }
 
-//this should extend ITask?
-export interface DisplayTaskProps {
-    hourPixel:number;
-    startTime: number;
-    endTime: number;   
-    taskTitle: string;
-    taskDescription?: string;
-    status?: StatusType;
-    slotIndex?: number; // horizontal alignment
-    slotCount?: number; // horizontal alignment
-}
-
 export interface TaskLayoutProps {
     taskTitle: string;
     taskDescription?: string;
-    status?: StatusType; 
+    status: StatusType;
     displayOptions?: boolean;
 }
 
@@ -53,6 +42,16 @@ export interface TaskLayoutOptionPanelProps {
   onDeleteClick?: (e: any) => void;
   onStarClick?: (e: any) => void;
   onShareClick?: (e: any) => void;
+}
+
+//Interface Task for Display with calculated metrix and slot information.
+export interface IDisplayTask extends Omit<ITask, 'UserKey' | 'Year' | 'Month' | 'Day'> {
+    status: StatusType;
+    height:number;
+    yPosition:number;
+    slotIndex: number; // horizontal alignment
+    slotSpan?: number  // can take up multiple index space
+    slotCount: number; // horizontal alignment
 }
 
 

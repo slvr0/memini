@@ -1,4 +1,4 @@
-import {TaskLayoutProps, DisplayTaskProps} from '../../interfaces/task-interface'
+import {TaskLayoutProps} from '../../interfaces/task-interface'
 import TaskLayoutOptionPanel from '../../components/layouts/task-layout-option-panel'
 import Tooltip from '@mui/material/Tooltip';
 import { Typography } from "@mui/material";
@@ -23,7 +23,7 @@ const TaskLayoutCompact : React.FC<TaskLayoutProps> = (
                         minWidth: 0
                     }}
                 > 
-                  'COMPACT'  {props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )}
+                {props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )}
                 </Typography>
 
                  {

@@ -1,8 +1,6 @@
 import {TaskLayoutProps} from '../../interfaces/task-interface'
 import TaskLayoutOptionPanel from '../../components/layouts/task-layout-option-panel'
 import MUI_StyledStatusCircle , {  } from "../../../../mui-wrappers/mui-status-circle-wrapper"
-import MUI_StyledSegment from "../../../../mui-wrappers/mui-segment-wrapper"
-
 import Tooltip from '@mui/material/Tooltip';
 import { Typography} from "@mui/material";
 
@@ -17,11 +15,15 @@ const TaskLayoutMedium: React.FC<TaskLayoutProps> = (props) => {
     >
     <div className="grid grid-rows-[20%_30%_50%] h-full w-full overflow-hidden"> 
 
-        <div className="flex flex-row px-1 overflow-hidden w-full items-start">            
-              <TaskLayoutOptionPanel iconSize={12} iconOpacity={0.6} />    
+        <div className="flex flex-row px-1 overflow-hidden w-full items-center align-middle">
+            <MUI_StyledStatusCircle status={props.status} style={{marginRight: '0.25rem'}}/>            
+            <TaskLayoutOptionPanel 
+                borderProfile="rounded"
+                iconSize={10}  
+                iconOpacity={.6}  />    
         </div>
 
-        <div className="flex flex-row px-1 overflow-hidden w-full">
+        <div className="flex flex-row px-1 overflow-hidden w-full my-0.5">
             <Typography
             variant="overline"
             className="text-left w-full min-w-0 break-words"
@@ -32,10 +34,10 @@ const TaskLayoutMedium: React.FC<TaskLayoutProps> = (props) => {
             }}
             >
             {props.taskTitle + (props.taskDescription ? " - " + props.taskDescription : "")}
-            </Typography>
+            </Typography>            
         </div>
 
-        <div className="flex flex-row px-1 overflow-hidden w-full">
+        <div className="flex flex-row px-1 overflow-hidden w-full my-0.5">
             <Typography
             variant="subtitle2"
             className="text-left w-full min-w-0 break-words"

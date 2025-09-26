@@ -35,7 +35,8 @@ const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainer
 
     const createdTasks = mockedTasks;
     const amountOfTasksPerDay = createdTasks.length / 5;
-    const amountOfTasksPerDayTest = 6;
+    const amountOfTasksPerDayTest = amountOfTasksPerDay;
+   
     return (       
             <div className={`grid grid-cols-[5%_19%_19%_19%_19%_19%] bg-white z-5 items-center text-center border-b border-b-gray-100 ${needsScroll ? '' : ''}`}                  
                     style={{ 
@@ -48,12 +49,6 @@ const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainer
                         typographyVariant='subtitle2'
                     />
 
-                    {  /* Loop the weekdays, daysweek */
-                     /*Array.from({length: 5}, (_, i) => {
-                        return (<TaskDailyContainer containerIndex={i} containerHeight={schedulerHeight} 
-                            displayTasks={createdTasks.slice(i * amountOfTasksPerDay, (i * amountOfTasksPerDay) + amountOfTasksPerDay)}/>);
-                    })*/
-                    } 
 
                     { /* Loop the weekdays, daysweek */
                     Array.from({length: 1}, (_, i) => {
@@ -61,27 +56,42 @@ const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainer
                             displayTasks={createdTasks.slice(i * amountOfTasksPerDayTest, (i * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
                     })
                     } 
-                   
-                    { /* Loop the weekdays, daysweek */
-                    Array.from({length: 1}, (_, i ) => {
-                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight}  simulatedSlotSpan={2} 
-                            displayTasks={createdTasks.slice((i + 1) * amountOfTasksPerDayTest, ((i + 1) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
-                    })
-                    }
 
                     { /* Loop the weekdays, daysweek */
-                    Array.from({length: 1}, (_, i ) => {
-                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight}  simulatedSlotSpan={1} 
+                    Array.from({length: 1}, (_, i) => {
+                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
+                            displayTasks={createdTasks.slice((i + 1) * amountOfTasksPerDayTest, ((i + 1) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
+                    })
+                    } 
+
+                    { /* Loop the weekdays, daysweek */
+                    Array.from({length: 1}, (_, i) => {
+                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
                             displayTasks={createdTasks.slice((i + 2) * amountOfTasksPerDayTest, ((i + 2) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
                     })
-                    }
+                    } 
+
+                    { /* Loop the weekdays, daysweek */
+                    Array.from({length: 1}, (_, i) => {
+                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
+                            displayTasks={createdTasks.slice((i + 3) * amountOfTasksPerDayTest, ((i + 3) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
+                    })
+                    } 
+
+                    { /* Loop the weekdays, daysweek */
+                    Array.from({length: 1}, (_, i) => {
+                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
+                            displayTasks={createdTasks.slice((i + 4) * amountOfTasksPerDayTest, ((i + 4) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
+                    })
+                    } 
+                   
+                   
 
 
                 </div>
     ) 
 });
 
-// Add display name for debugging ???
-TaskSchedulerContainer.displayName = 'TaskSchedulerContainer';
+
 
 export default TaskSchedulerContainer;
