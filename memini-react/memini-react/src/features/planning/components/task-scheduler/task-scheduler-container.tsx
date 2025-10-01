@@ -1,94 +1,71 @@
 import TaskSchedulerTimemarkerDisplay from "./task-scheduler-timemarker-display"
-import TaskDailyContainer from "./task-daily-container"
-import DisplayTask from "../../../tasks/components/display-task"
-import { Fragment, useState, useEffect, useRef, forwardRef } from "react";
-import { mockedTasks } from "./mocked-task"
+import TaskSchedulerDailyContainer from "./task-scheduler-daily-container"
+import TaskSchedulerHeader from "./task-scheduler-header"
+import TaskSchedulerContentContainer from "./task-scheduler-content-container"
+import TaskSchedulerContainerLoading from "./task-scheduler-container-loading"
 
+import { useState, useEffect, useRef, forwardRef, Fragment } from "react";
 
+import { useTaskManager } from "../../../tasks/utils/task-manager"
+import { getWeekDates } from "../../computes/task-scheduler-computations"
 
-interface TaskSchedulerContainerProps {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-    displayAsWeek?: boolean;
+import { IDisplayTask, ITask } from "../../../tasks/interfaces/task-interface";
+
+interface TaskSchedulerContainerProps { 
     schedulerHeight: number;
     timeslotHeight: number;
 }
 
 //add a screen zoom listener to adjust overflow if user zooms in too much.
 const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainerProps>((props, ref) => {
-    const schedulerHeight = props.schedulerHeight;
-    const timeslotHeight = props.timeslotHeight;   
-    
-    const [needsScroll, setNeedsScroll] = useState(false);
+    //managed dispatch / endpoint / redux and updating of tasks 
+    const { areDisplayTasksLoaded, fetchTasksForDateAndStore, useTasksForDate, setSelectedTask, clearSelectedTask, updateTask, deleteTask } = useTaskManager();
+    const isValidSchedulerParentRef = (ref: React.RefObject<HTMLDivElement | null> ) =>  ref && typeof ref === 'object' && ref.current;  
+    const currentWeek = 39; //react on schedulerHeader inputs
+    const weekdays : ICalendarDate[] = getWeekDates(2025, currentWeek);
+   
+    /* Load tasks */    
+    const [weeklyTasks, setWeeklyTasks] = useState<Array<ITask[]>>([]);    
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const isValidSchedulerParentRef = (ref: React.RefObject<HTMLDivElement | null> ) =>  ref && typeof ref === 'object' && ref.current;
-    const getRefBoundingRect = (ref: React.RefObject<HTMLDivElement | null>) => isValidSchedulerParentRef(ref) ? ref?.current?.getBoundingClientRect() : null;  
-    const updateSchedulerScrollVisibility = () => {            
-            setNeedsScroll(schedulerHeight >= getRefBoundingRect(ref as React.RefObject<HTMLDivElement>)?.height!);
+    useEffect(()  => {
+        /* Fetches weekly tasks, dispatches them to update the store whilst setting the useState for weekly tasks */
+        const fetchWeeklyTasksAndUpdateStore = async () => {           
+            
+            //replace this with a task manager effect that fetches a range of tasks and we get a response from that...
+            const responseSuccess: Array<boolean> = await Promise.all(
+                weekdays.map((weekday: ICalendarDate) => fetchTasksForDateAndStore(weekday.year, weekday.month + 1, weekday.day).then(response => response?.Success || false))
+            );
+
+            setIsLoading(responseSuccess.some((responseStatus: boolean) => responseStatus === false));
         };
-
-    useEffect(() => {
-        if(!isValidSchedulerParentRef(ref as React.RefObject<HTMLDivElement>)) return;        
-
-        updateSchedulerScrollVisibility();        
-        window.addEventListener('resize', updateSchedulerScrollVisibility); 
-        return () => window.removeEventListener('resize', updateSchedulerScrollVisibility);
+        fetchWeeklyTasksAndUpdateStore();
     }, []);
 
-    const createdTasks = mockedTasks;
-    const amountOfTasksPerDay = createdTasks.length / 5;
-    const amountOfTasksPerDayTest = amountOfTasksPerDay;
-   
-    return (       
-            <div className={`grid grid-cols-[5%_19%_19%_19%_19%_19%] bg-white z-5 items-center text-center border-b border-b-gray-100 ${needsScroll ? '' : ''}`}                  
-                    style={{ 
-                        height: schedulerHeight,
-                        maxHeight: needsScroll ? '80vh' : '100vh',       
-                     }}>
+    const handleDateSelectionChange = (selectedWeek: number) => {   
+        console.log("handleDateSelectionChange");
+    }
+ 
 
-                    <TaskSchedulerTimemarkerDisplay 
-                        timeslotHeight={timeslotHeight}
-                        typographyVariant='subtitle2'
-                    />
-
-
-                    { /* Loop the weekdays, daysweek */
-                    Array.from({length: 1}, (_, i) => {
-                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
-                            displayTasks={createdTasks.slice(i * amountOfTasksPerDayTest, (i * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
-                    })
-                    } 
-
-                    { /* Loop the weekdays, daysweek */
-                    Array.from({length: 1}, (_, i) => {
-                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
-                            displayTasks={createdTasks.slice((i + 1) * amountOfTasksPerDayTest, ((i + 1) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
-                    })
-                    } 
-
-                    { /* Loop the weekdays, daysweek */
-                    Array.from({length: 1}, (_, i) => {
-                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
-                            displayTasks={createdTasks.slice((i + 2) * amountOfTasksPerDayTest, ((i + 2) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
-                    })
-                    } 
-
-                    { /* Loop the weekdays, daysweek */
-                    Array.from({length: 1}, (_, i) => {
-                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
-                            displayTasks={createdTasks.slice((i + 3) * amountOfTasksPerDayTest, ((i + 3) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
-                    })
-                    } 
-
-                    { /* Loop the weekdays, daysweek */
-                    Array.from({length: 1}, (_, i) => {
-                        return (<TaskDailyContainer key={i} containerHeight={schedulerHeight} simulatedSlotSpan={3} 
-                            displayTasks={createdTasks.slice((i + 4) * amountOfTasksPerDayTest, ((i + 4) * amountOfTasksPerDayTest) + amountOfTasksPerDayTest)}/>);
-                    })
-                    } 
-                   
-                   
-
-
-                </div>
+    return ( 
+        <Fragment>
+            {/* Should probably remove the content header and scaffold from container, it doesnt need re-render when tasks update.*/}
+            <TaskSchedulerHeader 
+                defaultValue={currentWeek} 
+                onChange={(selectedWeek: number) => {handleDateSelectionChange(selectedWeek)}}
+            />
+            {isLoading ? (
+                <TaskSchedulerContainerLoading />
+            ) : (
+                <TaskSchedulerContentContainer 
+                    schedulerHeight={props.schedulerHeight} 
+                    timeslotHeight={props.timeslotHeight} 
+                    tasks={weeklyTasks} 
+                    week={currentWeek}
+                    weekdays={weekdays}        
+                />
+            )}
+        </Fragment>
     ) 
 });
 

@@ -16,7 +16,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
 
-  <StrictMode>
+
     <BrowserRouter>
       <Provider store={store}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -24,7 +24,7 @@ root.render(
         </LocalizationProvider>      
       </Provider>
     </BrowserRouter>
-  </StrictMode>
+
 
 );
 

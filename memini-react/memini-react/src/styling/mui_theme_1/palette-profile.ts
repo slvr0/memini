@@ -15,7 +15,9 @@ interface PaletteProfile {
 
 interface StatusColorConfig {
   backgroundColor: string;
+  hoverColor?: string;
   borderColor?: string;
+  borderhoverColor?: string;
   textColor?: string;
 }
 
@@ -29,7 +31,9 @@ class PaletteColorProfile {
     
     return {
       backgroundColor: themeColors.main,
+      hoverColor: themeColors.hover,
       borderColor: themeColors.border,
+      borderhoverColor: themeColors.border,
       textColor: themeColors.text,
     };
   }
@@ -42,12 +46,28 @@ class PaletteColorProfile {
     return palette[theme].main;
   }
 
+    static getHoverColor(
+    colorProfile: keyof typeof MaterialUITheme1Profile.paletteProfiles, 
+    theme: 'light' | 'dark' = 'light'
+  ): string {
+    const palette = MaterialUITheme1Profile.paletteProfiles[colorProfile] as PaletteProfile;
+    return palette[theme].hover;
+  }
+
   static getBorderColor(
     colorProfile: keyof typeof MaterialUITheme1Profile.paletteProfiles, 
     theme: 'light' | 'dark' = 'light'
   ): string {
     const palette = MaterialUITheme1Profile.paletteProfiles[colorProfile] as PaletteProfile;
     return palette[theme].border;
+  }
+
+    static getBorderHoverColor(
+    colorProfile: keyof typeof MaterialUITheme1Profile.paletteProfiles, 
+    theme: 'light' | 'dark' = 'light'
+  ): string {
+    const palette = MaterialUITheme1Profile.paletteProfiles[colorProfile] as PaletteProfile;
+    return palette[theme].borderHover;
   }
 
   static getAllPaletteProfiles(): (keyof typeof MaterialUITheme1Profile.paletteProfiles)[] {

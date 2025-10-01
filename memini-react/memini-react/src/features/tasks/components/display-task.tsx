@@ -1,12 +1,15 @@
 
-import {TaskLayoutProps,  IDisplayTask} from '../../../features/tasks/interfaces/task-interface'
+import {TaskLayoutProps,  IDisplayTask, ITask} from '../../../features/tasks/interfaces/task-interface'
 
 import TaskLayoutCompact from './layouts/task-layout-compact'
 import TaskLayoutMini from './layouts/task-layout-mini'
 import TaskLayoutMedium from './layouts/task-layout-medium'
 
-//stackedProfile , can be in columns i guess if multiple are at same time.
-//status icon , coming soon, passed, or future. coming soon , orange, passed gray ish , coming soon blue.
+import { useDrag } from 'react-dnd';
+import { useRef, useState } from 'react';
+import Tooltip from '@mui/material/Tooltip';
+
+import { minutesToHHMM } from "../../tasks/computes/time-display-formatting";
 
 const getHeightCategory = (height: number) => {
     if (height < 20) return 'compact';
@@ -15,7 +18,11 @@ const getHeightCategory = (height: number) => {
     return 'medium'; //create a large layout too?
 }
 
-const getTaskLayout = (height: number, slotCount: number, props: TaskLayoutProps): JSX.Element => {
+export const DragItemType = {
+  TASK: 'displaytask'
+} as const;
+
+const getTaskLayout = (height: number, slotCount: number, onSelect: (displayTask: IDisplayTask) => void, props: TaskLayoutProps): JSX.Element => {
   const category = getHeightCategory(height);
   
   switch(category) {
@@ -30,32 +37,74 @@ const getTaskLayout = (height: number, slotCount: number, props: TaskLayoutProps
   }
 };
 
+interface IDisplayTaskCompositionProps {
+  displayTask: IDisplayTask;
+  onSelect: (displayTask: IDisplayTask) => void;
+  onEdit?: (displayTask: IDisplayTask) => void;
+  onDelete?: (taskId: string) => void;
+  className?: string;
+}
+
 //Add parameter to shut off height / top calculation for use in lists etc.
-const DisplayTask : React.FC<IDisplayTask> = (props) => {
-    // const widthPercent = 100 / props.slotCount;
-    // const leftPercent = props.slotIndex * widthPercent;
+const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {  
+    const ref = useRef<HTMLDivElement>(null);
 
-    const taskWidth = `${(props.slotSpan || 1) / props.slotCount * 100}`;
-    const taskLeft = `${props.slotIndex / props.slotCount * 100}`;
+    const [tooltipOpen, setTooltipOpen] = useState(false);
 
+    const taskWidth = `${(props.displayTask.slotSpan || 1) / props.displayTask.slotCount * 100}`;
+    const taskLeft = `${props.displayTask.slotIndex / props.displayTask.slotCount * 100}`;  
+   
+    const [{ isDragging }, drag] = useDrag(() => ({
+      type: DragItemType.TASK,
+      item: () => {
+          setTooltipOpen(false);
+          return { displayTask: props.displayTask };
+      },
+      collect: (monitor) => ({
+          isDragging: monitor.isDragging(),          
+      }),
+    }), [props.displayTask]);
+
+    drag(ref);
+
+    const startTimeDisplayFormat = minutesToHHMM(props.displayTask.StartTime);
+    const endTimeDisplayFormat = minutesToHHMM(props.displayTask.EndTime);
     return (
-        <div className="absolute h-full min-w-0 overflow-hidden border-solid rounded-md accent-transparent transition-all duration-300 " 
+          <Tooltip
+              title={
+                `${startTimeDisplayFormat} - ${endTimeDisplayFormat} | ${props.displayTask.Title}` +
+                (props.displayTask.Description ? " - " + props.displayTask.Description : "")
+              }
+              arrow
+              open={tooltipOpen}
+              onOpen={() => setTooltipOpen(true)}
+              onClose={() => setTooltipOpen(false)}
+              disableHoverListener={isDragging}              
+            >
+        <div className="absolute h-full min-w-0 overflow-hidden border-solid rounded-md transition-all duration-800 ease-in-out  bg-miTask border-miTaskHBR
+            hover:border-dashed !hover:border-2 hover:animate-pulse hover:shadow-lg hover:bg-miTaskHL" 
+            ref={ref}
             style={{                
-                borderColor: '#9ccec4',
-                borderWidth: '1.5px',              
-                top: props.yPosition,
-                height: props.height,
+           
+                borderWidth: 1.5,      
+                top: props.displayTask.yPosition,
+                height: props.displayTask.height,
                 left: `${taskLeft}%`,
                 width: `${taskWidth}%`,
-                backdropFilter: 'blur(2px)', 
             }}>
-            {getTaskLayout(
-                props.height, props.slotCount, { 
-                taskTitle: props.Title, 
-                taskDescription: props.Description, 
-                status: props.status
-            })}
-        </div>    
+
+              {getTaskLayout(
+                  props.displayTask.height, 
+                  props.displayTask.slotCount, 
+                  props.onSelect,
+                  { 
+                  taskTitle: props.displayTask.Title, 
+                  taskDescription: props.displayTask.Description, 
+                  status: props.displayTask.status                
+              })}
+          
+        </div> 
+          </Tooltip>   
     ) 
 }
 

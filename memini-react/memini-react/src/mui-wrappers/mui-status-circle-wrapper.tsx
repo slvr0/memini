@@ -1,6 +1,5 @@
 import PaletteColorProfile , {PaletteProfileType} from "../styling/mui_theme_1/palette-profile";
-import MaterialUITheme1Profile from "../styling/mui_theme_1/theme-profile";
-  
+ 
 export enum TaskStatus {
   PASSED = 'PASSED',
   UPCOMING = 'UPCOMING',
@@ -21,13 +20,15 @@ interface StatusDotProps {
   theme?: 'light' | 'dark';
   showBorder?: boolean;
   style?: React.CSSProperties;
+  animate?: boolean;
 }
 
-const MUI_StyledStatusCircle = ({
+const MuiStyledStatusCircle = ({
   status,
   size = 8,
   theme = 'light',
   showBorder = false,
+  animate = true,
   style = {}
 }: StatusDotProps) => {
   const getStyles = (): React.CSSProperties => {       
@@ -50,9 +51,9 @@ const MUI_StyledStatusCircle = ({
     };
   };
 
-  return <div style={getStyles()} />;
+  return <div className="" style={getStyles()} />;
 };
 
 export { StatusColorProfileMap };
 export type { StatusType };
-export default MUI_StyledStatusCircle;
+export default MuiStyledStatusCircle;

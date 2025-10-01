@@ -1,6 +1,6 @@
 import {TaskLayoutProps} from '../../interfaces/task-interface'
 import TaskLayoutOptionPanel from '../../components/layouts/task-layout-option-panel'
-import MUI_StyledStatusCircle , {  } from "../../../../mui-wrappers/mui-status-circle-wrapper"
+import MuiStyledStatusCircle , {  } from "../../../../mui-wrappers/mui-status-circle-wrapper"
 import Tooltip from '@mui/material/Tooltip';
 import { Typography} from "@mui/material";
 
@@ -11,9 +11,9 @@ const TaskLayoutMini : React.FC<TaskLayoutProps> = (
     }
 ) => {    
     return (
-        <Tooltip title={props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )} arrow>
+    
             <div className="h-full w-full p-1 overflow-hidden flex items-center justify-between min-h-0">
-                <MUI_StyledStatusCircle status={props.status} style={{marginRight: '0.25rem'}}/>     
+                <MuiStyledStatusCircle status={props.status} style={{marginRight: '0.25rem'}}/>     
 
                 <Typography 
                     variant="subtitle2" 
@@ -39,7 +39,7 @@ const TaskLayoutMini : React.FC<TaskLayoutProps> = (
                 </div>
                 }
             </div>
-        </Tooltip>
+   
     )
 }
 

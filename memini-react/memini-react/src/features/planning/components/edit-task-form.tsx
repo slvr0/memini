@@ -40,7 +40,7 @@ type EditTaskFormProps = {
 function EditTaskForm( { modalWrapper } : EditTaskFormProps)  { 
     const { updateTask, deleteTask } = useTaskManager();  
     const selectedTask      = useSelector((state : RootState ) => state.tasks.selectedTask);    
-    console.log("Selected task in form:", selectedTask);
+
     const dispatch          = useDispatch(); 
     
     const [title, setTitle] = useState(selectedTask?.Title || "");
@@ -108,7 +108,7 @@ function EditTaskForm( { modalWrapper } : EditTaskFormProps)  {
           EndTime: EndTime
         };
 
-        updateTask(selectedTask, userTask);        
+        updateTask(selectedTask);        
         clearSelection();
     }   
 

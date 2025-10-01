@@ -101,15 +101,15 @@ const MonthsEnum = [
     'December'
   ];
 
-  const WeekDaysEnum = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
+const WeekDaysEnum = [
+  'Monday',
+  'Tuesday', 
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+] as const;
 
 export { getWeeksInMonth, getWeekDates, getFirstWeekInMonth, 
   generateHalfHourIntervals, MonthsEnum, WeekDaysEnum, GetMonthsOptions, GetYearsOptions };

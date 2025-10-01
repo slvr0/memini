@@ -2,43 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-    /* Base Button */
-    .memini-button {
-      @apply rounded-xl transition font-semibold shadow-md hover:shadow-lg;
-    }
-  
-    /* SIZES */
-    .memini-button-small {
-      @apply text-sm px-3 py-2;
-    }
-  
-    .memini-button-medium {
-      @apply text-base px-5 py-3;
-    }
-  
-    .memini-button-large {
-      @apply text-lg px-7 py-4;
-    }
-  
-    /* THEMES */
-    .memini-button-positive {
-      @apply bg-miPositive hover:bg-miPositive/80 text-white;
-    }
-  
-    .memini-button-negative {
-      @apply bg-miNegative hover:bg-miNegative/80 text-white;
-    }
-  
-    .memini-button-neutral {
-      @apply bg-miMedium hover:bg-miMedium/80 text-white;
-    }
-  
-    /* INFO BUTTON */
-    .memini-button-info {
-      @apply bg-miInfo hover:bg-miInfo/80 text-gray-700;
-    }
-  }
+
   
   
 

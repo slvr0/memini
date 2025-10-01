@@ -1,10 +1,8 @@
 
-import { HourglassEmpty } from '@mui/icons-material';
-import moment from "moment";
+import moment, { weekdays } from "moment";
 import {ITask, IDisplayTask} from '../../../features/tasks/interfaces/task-interface'
-import { StatusColorProfileMap, StatusType, TaskStatus } from "../../../mui-wrappers/mui-status-circle-wrapper";
+import { StatusType, TaskStatus } from "../../../mui-wrappers/mui-status-circle-wrapper";
 import _ from 'lodash';
-import { sortBy, chain, flatMap } from 'lodash';
     
 /*Calculates the Task status on an ITask relative to the current time, returns the color profile map (maps to the palette) as status is presented with a colored circle. */
 export const calculateTaskStatus = (task: ITask, timeNow: moment.Moment =  moment()) : StatusType  => { 
@@ -42,11 +40,14 @@ export const calculateTaskDisplayMetricsSimple = (tasks: Array<ITask>, pixelsPer
         while (usedSlots.has(slotIndex)) slotIndex++;
         
         acc.push({
-            UserTaskKey: currentTask.UserTaskKey,
+            UserTaskKey: currentTask.UserTaskKey,            
             Title: currentTask.Title,
             Description: currentTask.Description,
             StartTime: currentTask.StartTime,
             EndTime: currentTask.EndTime,
+            Year: currentTask.Year,
+            Month: currentTask.Month,
+            Day: currentTask.Day,
             status: calculateTaskStatus(currentTask),
             yPosition: (currentTask.StartTime / 60) * pixelsPerHour,
             height: ((currentTask.EndTime - currentTask.StartTime) / 60) * pixelsPerHour,
@@ -70,3 +71,38 @@ export const calculateTaskDisplayMetricsSimple = (tasks: Array<ITask>, pixelsPer
     
     return result;
 };
+
+//gets the weekdays of a selected week 
+export const getWeekDates = (year: number, weekNum: number): ICalendarDate[] => {
+  const startOfYear = new Date(year, 0, 1);
+  const startOfWeek = new Date(startOfYear.getTime() + (weekNum - 1) * 7 * 24 * 60 * 60 * 1000);
+  
+  // Adjust to Monday as start of week
+  const dayOfWeek = startOfWeek.getDay();
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const monday = new Date(startOfWeek.getTime() + mondayOffset * 24 * 60 * 60 * 1000);
+  
+  const weekDates: ICalendarDate[] = [];
+  
+  // Generate 7 days starting from Monday
+  for (let i = 0; i < 7; i++) {
+    const currentDate = new Date(monday.getTime() + i * 24 * 60 * 60 * 1000);
+    
+    weekDates.push({
+      year: currentDate.getFullYear(),
+      month: currentDate.getMonth(), // 0-based
+      day: currentDate.getDate(),
+      week: weekNum,
+      weekDay: currentDate.getDay() // 0 = Sunday, 1 = Monday, etc.      
+    });
+  }
+  
+  return weekDates;
+};
+
+export const calculateTaskPixelTime = (pixel:number, maxPixel:number) : number => Math.round( pixel * 24 * 60 / maxPixel ) ;
+
+
+
+
+

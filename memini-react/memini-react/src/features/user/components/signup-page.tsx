@@ -37,33 +37,11 @@ export default function SignupPage() {
                 console.log(response.data.Message);
             }
         }).catch(e => console.log(e));        
-    }
-
-    const rows = [
-        {id:'firstName', type: 'input', label:'First name', placeholder:'Enter first name...'},
-        {id:'lastName', type: 'input', label:'Last name', placeholder:'Enter last name...'},
-        {id:'email', type: 'input', label:'Email', placeholder:'Enter email...'},
-        {id:'password', type: 'input', label:'Password', placeholder:'Enter password...'},
-        {id:'age', type: 'input', label:'Age', placeholder:'Enter Age...'},
-    ]
+    }  
     
     return <>    
-        <div className="grid grid-cols-4">                
-            <div className="col-span-1">
-            </div>
-
-            <div className="col-span-2">                    
-                <GeneralForm 
-                    onSubmit={(formData: any) => {onClickSubmitRegisterNewUser(formData)}} 
-                    rows={rows}
-                    headerText={'Signup to Memini'}
-                    headerSubText={'Please fill in your personal information. Choose a safe password.'}
-                    submitButtonName="Register"
-                />
-            </div>
-
-            <div className="col-span-1">
-            </div>
-        </div>
+        <>
+        </>
+       
     </>
 }

@@ -1,10 +1,10 @@
-import MUI_StyledStatusCircle , { StatusType } from "../../../mui-wrappers/mui-status-circle-wrapper"
+import MuiStyledStatusCircle , { StatusType } from "../../../mui-wrappers/mui-status-circle-wrapper"
 import MaterialUITheme1Profile from '../../../styling/mui_theme_1/theme-profile';
 
 
 export interface ITask {
   UserTaskKey: TaskId;
-  UserKey: number;
+
   Title: string;
   Description?: string;
   Year: number;
@@ -45,7 +45,7 @@ export interface TaskLayoutOptionPanelProps {
 }
 
 //Interface Task for Display with calculated metrix and slot information.
-export interface IDisplayTask extends Omit<ITask, 'UserKey' | 'Year' | 'Month' | 'Day'> {
+export interface IDisplayTask extends Omit<ITask, 'UserKey'> {
     status: StatusType;
     height:number;
     yPosition:number;

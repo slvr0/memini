@@ -3,11 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../../store";
 import { userTasksActions } from "../../../features/tasks/store/task-slice";
 import { toDateKey } from "./date-utils";
-import type { DateKey, ITask } from "../interfaces/task-interface";
+import type { DateKey, IDisplayTask, ITask } from "../interfaces/task-interface";
 import { deleteTaskApi, fetchTasksForDate, updateTaskApi, addTaskApi } from "../../../features/tasks/store/task-api";
 import { makeSelectTasksByDate, isDateLoaded } from "../../../features/tasks/store/task-selector";
+import {  calculateTaskPixelTime } from "../../planning/computes/task-scheduler-computations"
 
 import store from "../../../store/index";
+import { ApiResponse } from "@/interfaces/api-response";
 
 export const useTaskManager = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -15,15 +17,17 @@ export const useTaskManager = () => {
   const areDisplayTasksLoaded = (year: number, month: number, day: number): boolean => 
     isDateLoaded(toDateKey(year, month, day))(store.getState());
 
-  const fetchTasksForDateAndStore = async (year: number, month: number, day: number) => {    
+  const fetchTasksForDateAndStore = async (year: number, month: number, day: number) : Promise<ApiResponse<ITask[]>> =>  {      
     const response = await fetchTasksForDate({ year, month, day });
- 
+    
     if(!response)
-      return;
+      return response;
 
     const dateKey: DateKey = toDateKey(year, month, day);
     dispatch(userTasksActions.upsertTasks(response.ResponseObject as ITask[]));
     dispatch(userTasksActions.markDateLoaded(dateKey));
+
+    return response;
   };
 
   const useTasksForDate = (year: number, month: number, day: number): ITask[] => {
@@ -31,10 +35,10 @@ export const useTaskManager = () => {
     return useSelector(makeSelectTasksByDate(dateKey));
   };
 
-  const setSelectedTask = (task: ITask | null) : void => {
+  const setSelectedTask = (task: ITask) : void => {
     if(task === null) 
       return;
-    dispatch(userTasksActions.setSelectedTask(task as ITask));
+    dispatch(userTasksActions.setSelectedTask(task));
   };
 
   const clearSelectedTask = () : void => {
@@ -45,29 +49,32 @@ export const useTaskManager = () => {
   //TODO: in the future, we might want two inputs, task and updatedTask, and evaluate that the tasks on the affected dates are synced with db
   //else we trigger a render cycle
 
-  // prev is the task before update.
-  const updateTask = async (prev: ITask | null, task: ITask | Omit<ITask, 'UserKey'>) : Promise<void> => {   
-    //we dont have a task to update or we are comparing to a prev task state that has not changed. 
-    if(task === null || (prev && (prev === task)))
-      return;
+  //update existing data on task , returns the object in case server made changes
+  const updateTask = async (task: Omit<ITask, 'UserKey'>) : Promise<ApiResponse<ITask>> =>  {
+    const response = await updateTaskApi(task);
 
-    let updatedTask;
+    if(response.Success) {
+      dispatch(userTasksActions.updateTask(task));      
+    }
 
-    if(task.UserTaskKey === 0) {
-      updatedTask = (await addTaskApi(task))?.ResponseObject ?? null;
-      if(updatedTask === null)
-        return;
-      dispatch(userTasksActions.addTask(updatedTask)); 
-    }      
-    else  {
-      updatedTask = (await updateTaskApi(task))?.ResponseObject ?? null;
-      if(updatedTask === null)
-        return;
-      dispatch(userTasksActions.removeTask(prev));    
-      dispatch(userTasksActions.addTask(updatedTask));      
-    } 
+    return response;    
   }
 
+  const updateTaskFromDragEvent = (movedTask: IDisplayTask, dropDate: ICalendarDate, dropPosition: number, dropContainerHeight: number) => {
+    const newStartTime = calculateTaskPixelTime(dropPosition, dropContainerHeight);
+
+    const updatedTask : ITask = {...movedTask};
+    updatedTask.Year = dropDate.year;
+    updatedTask.Month = dropDate.month + 1; //TODO: FIX FOR GOD SAKE :D
+    updatedTask.Day = dropDate.day;
+
+    const l = updatedTask.EndTime - updatedTask.StartTime;
+    updatedTask.StartTime = newStartTime;
+    updatedTask.EndTime = updatedTask.StartTime + l;
+
+    updateTask(updatedTask);      
+  }
+  
   const deleteTask = async (task: ITask) : Promise<void> => {
     if(task === null)
       return;
@@ -76,5 +83,5 @@ export const useTaskManager = () => {
     dispatch(userTasksActions.removeTask(task));
   }
 
-  return { areDisplayTasksLoaded, fetchTasksForDateAndStore, useTasksForDate, setSelectedTask, clearSelectedTask, updateTask, deleteTask };
+  return { areDisplayTasksLoaded, fetchTasksForDateAndStore, useTasksForDate, setSelectedTask, clearSelectedTask, updateTask, updateTaskFromDragEvent, deleteTask };
 };

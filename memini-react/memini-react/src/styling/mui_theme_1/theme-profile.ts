@@ -11,15 +11,15 @@ const MaterialUITheme1Profile = {
       dark: { main: '#ffb74d', hover: '#ff9800', text: '#000', border:'#E1E7EB', borderHover:'#C1C8CD' },
     },
     harmonicGreen: {
-      light: { main: '#79c7ac', hover: '#D1EBE7', text: '#000', border: '#9CCEC4', borderHover: '#7BC4B8' },
+      light: { main: '#3fc050', hover: '#79c7ac', text: '#000', border: '#9CCEC4', borderHover: '#7BC4B8' },
       dark: { main: '#9CCEC4', hover: '#7BC4B8', text: '#000', border: '#E1E7EB', borderHover: '#C1C8CD' },
     },
     harmonicBlue: {
-      light: { main: '#95c3d1', hover: '#D1E5EB', text: '#000', border: '#9CC4CE', borderHover: '#7BB8C4' },
+      light: { main: '#a1dbf8', hover: '#95c3d1', text: '#000', border: '#9CC4CE', borderHover: '#7BB8C4' },
       dark: { main: '#9CC4CE', hover: '#7BB8C4', text: '#000', border: '#E1E7EB', borderHover: '#C1C8CD' },
     },
     harmonicRed: {
-      light: { main: '#d49c9c', hover: '#EBD1D1', text: '#000', border: '#CE9C9C', borderHover: '#C47B7B' },
+      light: { main: '#EBD1D1', hover: '#d49c9c', text: '#000', border: '#CE9C9C', borderHover: '#C47B7B' },
       dark: { main: '#CE9C9C', hover: '#C47B7B', text: '#000', border: '#E1E7EB', borderHover: '#C1C8CD' },
     },
   },
@@ -32,6 +32,11 @@ const MaterialUITheme1Profile = {
     straight: { 
       borderRadius: '.375rem', 
       shadow: '0 1px 3px rgba(0,0,0,0.05)',  
+      borderWidth: '1px',    
+    },
+    semiStraight: { 
+      borderRadius: '1.25rem', 
+      shadow: '0 1px 0px rgba(0,0,0,0.05)',  
       borderWidth: '1px',    
     },
     none: {

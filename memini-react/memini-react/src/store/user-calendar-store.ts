@@ -5,27 +5,13 @@ import moment from 'moment';
 // -------------------
 // Types
 // -------------------
-interface CalendarDate {
-  year: number;
-  month: number; // 0-based (Jan = 0)
-  day: number;
-  week: number;
-  weekDay: number;
-}
 
-interface CalendarDateState {
-  selectedDate: CalendarDate;
-  todaysDate: CalendarDate;
-}
 
-interface UserSessionState {
-  userSession: any | null; // replace 'any' with your session type
-}
 
 // -------------------
 // Utilities
 // -------------------
-const momentToObject = (date: moment.Moment): CalendarDate => ({
+const momentToObject = (date: moment.Moment): ICalendarDate => ({
   year: date.year(),
   month: date.month(),
   day: date.date(),
@@ -38,13 +24,13 @@ const momentToObject = (date: moment.Moment): CalendarDate => ({
 // -------------------
 const today = moment();
 
-const calendarDateState: CalendarDateState = {
+const calendarDateState: ICalendarDateState = {
   selectedDate: momentToObject(today),
   todaysDate: momentToObject(today),
 };
 
 const storedSession = localStorage.getItem('authToken');
-const meminiUserState: UserSessionState = {
+const meminiUserState: IUserSessionState = {
   userSession: storedSession ? JSON.parse(storedSession) : null,
 };
 
@@ -55,7 +41,7 @@ export const calendarDateSlice = createSlice({
   name: 'calendarDate',
   initialState: calendarDateState,
   reducers: {
-    setSelectedDate(state, action: PayloadAction<{ newDate: CalendarDate }>) {
+    setSelectedDate(state, action: PayloadAction<{ newDate: ICalendarDate }>) {
       state.selectedDate = action.payload.newDate;
     },
     setSelectedYearMonth(state, action: PayloadAction<{ year: number; month: number }>) {

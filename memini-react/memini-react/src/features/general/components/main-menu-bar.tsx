@@ -16,7 +16,7 @@ import { RootState } from "../../../store";
 import { Hub } from '@mui/icons-material';
 import { Link } from '@mui/icons-material';
 
-import MUI_StyledButton from "../../../mui-wrappers/mui-button-wrapper";
+import MuiStyledButton from "../../../mui-wrappers/mui-button-wrapper";
 import MUI_StyledSegment from "../../../mui-wrappers/mui-segment-wrapper"
 import LucidIconButton from "../../../lucid/lucid-button-icon"
 
@@ -171,9 +171,9 @@ export default function MainMenu () {
             Dan Johansson
           </Typography>
 
-          <MUI_StyledButton themeColor = 'light' buttonSize = 'xs' buttonVariant = 'main' borderType = 'rounded' opacity={.85}> 
+          <MuiStyledButton themeColor = 'light' buttonSize = 'xs' buttonVariant = 'main' borderType = 'rounded' opacity={.85}> 
             <Typography variant="subtitle2"> Free </Typography>
-          </MUI_StyledButton>
+          </MuiStyledButton>
 
           <ChevronsUpDown size={14} style={{opacity:0.5 }} />
 
@@ -186,15 +186,15 @@ export default function MainMenu () {
          
           <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
 
-          <MUI_StyledButton themeColor = 'light' buttonSize = 'sm' buttonVariant = 'main' borderType = 'rounded' 
+          <MuiStyledButton themeColor = 'light' buttonSize = 'sm' buttonVariant = 'main' borderType = 'rounded' 
               opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={false}>
               <Plug size={14} style={{ marginRight: '.25rem', transform: 'rotate(90deg)', opacity:0.75 }}/>
               <Typography variant="subtitle2"> Connect with people </Typography>
-          </MUI_StyledButton>
+          </MuiStyledButton>
             
     
           <span className="ml-auto flex items-center gap-2" style={{marginRight: '0.5rem'}}>
-            <MUI_StyledSegment spacing="segmentMini" borderProfile="rounded">     
+            <MUI_StyledSegment spacing="segmentMedium" borderProfile="rounded">     
                 <LucidIconButton
                 icon={MessageSquareText}
                 size={16}
@@ -226,7 +226,7 @@ export default function MainMenu () {
                 palette="main"
                 borderProfile="rounded"
                 highlightBackgroundOnHover={true}
-                highlightBorderOnHover={true}
+                highlightBorderOnHover={true} 
                 displayBorder={false}
                 tooltip="Settings/Preferences"
                 onClick={() => console.log("Clicked Home")}
@@ -244,11 +244,11 @@ export default function MainMenu () {
                 onClick={() => console.log("Clicked Home")}
               />        
             </MUI_StyledSegment>
-              <MUI_StyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.95} highlightBorderOnHover={false} highlightBackgroundOnHover={true}>                
+              <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.95} highlightBorderOnHover={false} highlightBackgroundOnHover={true}>                
                 <Typography variant="subtitle2" color={'black'}> Feedback </Typography>
-              </MUI_StyledButton>
-            <UserProfileCircle user={{name:'Dan Johansson', email:'johansson_dan@hotmail.com', avatar:null }}></UserProfileCircle>          
-
+              </MuiStyledButton>
+               
+            <UserProfileArea></UserProfileArea>
 
            
           </span>

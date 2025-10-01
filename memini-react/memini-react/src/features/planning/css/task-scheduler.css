@@ -1,0 +1,9 @@
+.hour-grid-dashed {
+    background-image: repeating-linear-gradient(
+        0deg,
+        transparent 0,
+        transparent calc(100% / 24 - 1px),
+        #e5e7eb calc(100% / 24 - 1px),
+        #e5e7eb calc(100% / 24)
+    );
+}

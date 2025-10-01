@@ -1,6 +1,7 @@
 import { createSlice, createEntityAdapter, PayloadAction } from "@reduxjs/toolkit";
-import type { ITask, DateKey, TaskId, UpdateTaskPayloadAction } from "../interfaces/task-interface";
+import type { ITask, IDisplayTask, DateKey, TaskId, UpdateTaskPayloadAction } from "../interfaces/task-interface";
 import { toDateKey } from "../utils/date-utils";
+import { endsWith } from "lodash";
 
 export const tasksAdapter = createEntityAdapter<ITask, number>({
   selectId: (task) => task.UserTaskKey,
@@ -48,6 +49,31 @@ const tasksSlice = createSlice({
         state.byDate[key] = state.byDate[key].filter((tid) => tid !== id);
       }
     },
+
+    updateTask(state, action) {
+      const oldTask = state.entities[action.payload.UserTaskKey];
+      const newTask = action.payload;
+      tasksAdapter.upsertOne(state, newTask);
+
+      //update the byDate
+      const oldDateKey = toDateKey(oldTask.Year, oldTask.Month, oldTask.Day);
+      const newDateKey = toDateKey(newTask.Year, newTask.Month, newTask.Day);
+
+      if(newDateKey === oldDateKey)
+        return;
+
+      //update dateKeys, old one
+      const idsOldDate = state.byDate[oldDateKey] ?? []
+      state.byDate[oldDateKey] = idsOldDate.filter(id => id !== oldTask.UserTaskKey);
+
+      //update dateKeys, new one
+  
+      if (!state.byDate[newDateKey]) state.byDate[newDateKey] = [];
+      if (!state.byDate[newDateKey].includes(newTask.UserTaskKey)) {
+        state.byDate[newDateKey].push(newTask.UserTaskKey);
+      }
+    },
+
     addTask(state, action) {
       const task = action.payload;
       const dateKey = toDateKey(task.Year, task.Month, task.Day);

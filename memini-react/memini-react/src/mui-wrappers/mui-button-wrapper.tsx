@@ -6,7 +6,7 @@ import MaterialUITheme1Profile from '../styling/mui_theme_1/theme-profile';
 interface MUI_StyledButtonProps extends ButtonProps {
   themeColor?: 'light' | 'dark';
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg';
-  buttonVariant?: 'main' | 'warning';
+  buttonVariant?: keyof typeof MaterialUITheme1Profile.paletteProfiles;
   borderType?: 'rounded' | 'straight';
   opacity?: number;
   highlightBackgroundOnHover?: boolean,
@@ -23,7 +23,7 @@ interface ButtonPreset {
 function getButtonPresets (
   themeColor?: 'light' | 'dark', // we dont apply it yet TODO
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg',
-  buttonVariant?: 'main' | 'warning',
+  buttonVariant?: keyof typeof MaterialUITheme1Profile.paletteProfiles,
   borderType?: 'rounded' | 'straight'  
 
 ) : ButtonPreset{
@@ -62,7 +62,7 @@ function getButtonPresets (
   }
 }
 
-const MUI_StyledButton = styled(Button, {
+const MuiStyledButton = styled(Button, {
   shouldForwardProp: (prop) => ![
     'themeColor',
     'buttonSize', 
@@ -96,11 +96,7 @@ const MUI_StyledButton = styled(Button, {
     paddingLeft: `${buttonPresets.spacing.px * 8}px`,   
     paddingRight: `${buttonPresets.spacing.px * 8}px`,
     paddingTop: `${buttonPresets.spacing.py * 8}px`,    
-    paddingBottom: `${buttonPresets.spacing.py * 8}px`,
-    marginLeft: `${buttonPresets.spacing.mx * 8}px`,    
-    marginRight: `${buttonPresets.spacing.mx * 8}px`,
-    marginTop: `${buttonPresets.spacing.my * 8}px`,     
-    marginBottom: `${buttonPresets.spacing.my * 8}px`,    
+    paddingBottom: `${buttonPresets.spacing.py * 8}px`, 
     
     minWidth: 'auto', 
     width: 'fit-content',
@@ -119,4 +115,4 @@ const MUI_StyledButton = styled(Button, {
   };
 });
 
-export default MUI_StyledButton;
+export default MuiStyledButton;

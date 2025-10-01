@@ -11,7 +11,7 @@ const TaskLayoutCompact : React.FC<TaskLayoutProps> = (
 
 ) =>{    
     return (
-        <Tooltip title={props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )} arrow>
+ 
             <div className="h-full w-full p-1 overflow-hidden flex items-center justify-between min-h-0">
                 <Typography 
                     variant="subtitle2" 
@@ -26,7 +26,7 @@ const TaskLayoutCompact : React.FC<TaskLayoutProps> = (
                 {props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )}
                 </Typography>
 
-                 {
+                {
                 displayOptions && 
                 <div className="flex flex-row gap-0.5 ml-1 flex-shrink-0">
                     <TaskLayoutOptionPanel                                                  
@@ -37,7 +37,7 @@ const TaskLayoutCompact : React.FC<TaskLayoutProps> = (
                 </div>
                 }
             </div>
-        </Tooltip>
+     
     )
 }
 

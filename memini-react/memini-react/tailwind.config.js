@@ -8,13 +8,9 @@ export default {
     extend: {
 
       colors: {      
-        miLight: '#97bdc3',
-        miMedium: '#5d98a2',
-        miComplLight: '#c4a99e',
-        miComplMedium: '#9e7261',     
-        miNegative: '#ec9b89',
-        miPositive: '#6855f3',
-        miInfo: '#e5e4e4'      
+        miTask: '#f8fcfe',    
+        miTaskHL: '#dff3fc',
+        miTaskHBR: '#a1dbf8'      
       },
 
       fontFamily: {
@@ -29,7 +25,7 @@ export default {
     },
   },
   plugins: [
-   
+   require('@tailwindcss/line-clamp')
 
   ],
 }
