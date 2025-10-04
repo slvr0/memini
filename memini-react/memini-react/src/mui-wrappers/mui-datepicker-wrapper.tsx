@@ -79,6 +79,7 @@ function ButtonDateField(props: ButtonDateFieldProps) {
 
   const labelVariant = buttonSize === 'lg' ?  'body1' : 'caption';
   const labelPixelSize = buttonSize === 'lg' ? '12px' : '12px';
+
   return (
     <MuiStyledButton
       {...restForwardedProps}
@@ -114,11 +115,7 @@ function ButtonDateField(props: ButtonDateFieldProps) {
                   onClick={() => console.log("Clicked Home")}
           /> 
       </div>
-      
-
-      
-
-      
+            
     </MuiStyledButton>
   );
 }

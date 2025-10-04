@@ -12,20 +12,30 @@ const TaskLayoutMini : React.FC<TaskLayoutProps> = (
 ) => {    
     return (
     
-            <div className="h-full w-full p-1 overflow-hidden flex items-center justify-between min-h-0">
-                <MuiStyledStatusCircle status={props.status} style={{marginRight: '0.25rem'}}/>     
+            <div className="h-full w-full p-1 overflow-hidden flex items-start min-h-0">
+                             
+                <Typography
+                variant="caption"
+                className="text-left w-full min-w-0 break-words"
+                color="text.secondary"
+                style={{ 
+                fontSize: '9px',             
+                lineHeight: '.75rem',       
+                }}
+                >
+                {props.displayTime} 
+                </Typography>  
 
-                <Typography 
-                    variant="subtitle2" 
-                    className="font-semibold opacity-95 flex-1 truncate text-ellipsis whitespace-nowrap" 
-                    style={{
-                        color: 'black', 
-                        fontSize: '10px',
-                        letterSpacing: '.025rem',
-                        minWidth: 0
+                <Typography
+                    variant="body2"
+                    fontWeight='medium'
+                    className="text-left w-full min-w-0 break-words"
+                    style={{ 
+                    fontSize: '9px',  
+                    lineHeight: '.7rem',       
                     }}
-                > 
-                {props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )}
+                    >
+                    {props.taskTitle}
                 </Typography>
 
                  {
@@ -33,8 +43,8 @@ const TaskLayoutMini : React.FC<TaskLayoutProps> = (
                 <div className="flex flex-row gap-0.5 ml-1 flex-shrink-0">
                     <TaskLayoutOptionPanel                                                  
                         borderProfile="rounded"
-                        iconSize={10}  
-                        iconOpacity={.6}                  
+                        iconSize={11}  
+                        iconOpacity={.8}                  
                     />           
                 </div>
                 }

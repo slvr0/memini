@@ -83,7 +83,10 @@ export const useTaskManager = () => {
     updatedTask.StartTime = newStartTime;
     updatedTask.EndTime = updatedTask.StartTime + l;
 
-    updateTask(updatedTask);      
+    if(updatedTask.UserTaskKey === 0)
+      addTask(updatedTask)
+    else 
+      updateTask(updatedTask);      
   }
   
   const deleteTask = async (task: ITask) : Promise<void> => {

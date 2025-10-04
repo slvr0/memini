@@ -9,13 +9,13 @@ const TaskLayoutCompact : React.FC<TaskLayoutProps> = (
         ...props
     }
 
-) =>{    
+) => {    
     return (
  
             <div className="h-full w-full p-1 overflow-hidden flex items-center justify-between min-h-0">
                 <Typography 
                     variant="subtitle2" 
-                    className="font-semibold opacity-95 flex-1 truncate text-ellipsis whitespace-nowrap" 
+                    className="font-semibold opacity-1 flex-1 truncate text-ellipsis whitespace-nowrap" 
                     style={{
                         color: 'black', 
                         fontSize: '10px',
@@ -32,7 +32,7 @@ const TaskLayoutCompact : React.FC<TaskLayoutProps> = (
                     <TaskLayoutOptionPanel                                                  
                         borderProfile="rounded"
                         iconSize={10}  
-                        iconOpacity={.6}                  
+                        iconOpacity={.8}                  
                     />           
                 </div>
                 }

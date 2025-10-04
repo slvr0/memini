@@ -28,6 +28,7 @@ export interface TaskLayoutProps {
     taskDescription?: string;
     status: StatusType;
     displayOptions?: boolean;
+    displayTime? : string;
 }
 
 export interface TaskLayoutOptionPanelProps {
@@ -46,9 +47,9 @@ export interface TaskLayoutOptionPanelProps {
 
 //Interface Task for Display with calculated metrix and slot information.
 export interface IDisplayTask extends Omit<ITask, 'UserKey'> {
-    status: StatusType;
-    height:number;
-    yPosition:number;
+    status?: StatusType;
+    height?:number;
+    yPosition?:number;
     slotIndex: number; // horizontal alignment
     slotSpan?: number  // can take up multiple index space
     slotCount: number; // horizontal alignment

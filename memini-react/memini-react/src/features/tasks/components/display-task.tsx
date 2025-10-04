@@ -9,7 +9,9 @@ import { useDrag } from 'react-dnd';
 import { useRef, useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { useTaskManager } from "../../tasks/utils/task-manager"
-import { minutesToHHMM } from "../../tasks/computes/time-display-formatting";
+import { minutesToHHMM,mninutesToHHMM_APM  } from "../../tasks/computes/time-display-formatting";
+import { TaskStatus } from '../../../mui-wrappers/mui-status-circle-wrapper';
+
 
 const getHeightCategory = (height: number) => {
     if (height < 20) return 'compact';
@@ -44,12 +46,11 @@ interface IDisplayTaskCompositionProps {
 
 //Add parameter to shut off height / top calculation for use in lists etc.
 const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {  
+    const {setSelectedTask, deleteTask} = useTaskManager();
     const ref = useRef<HTMLDivElement>(null);
     const [tooltipOpen, setTooltipOpen] = useState(false);
     const taskWidth = `${(props.displayTask.slotSpan || 1) / props.displayTask.slotCount * 100}`;
-    const taskLeft = `${props.displayTask.slotIndex / props.displayTask.slotCount * 100}`;  
-
-    const {setSelectedTask, deleteTask} = useTaskManager();
+    const taskLeft = `${props.displayTask.slotIndex / props.displayTask.slotCount * 100}`; 
     
     const onEditTask = () => {
       setSelectedTask(props.displayTask as ITask);
@@ -70,6 +71,7 @@ const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {
 
     const startTimeDisplayFormat = minutesToHHMM(props.displayTask.StartTime);
     const endTimeDisplayFormat = minutesToHHMM(props.displayTask.EndTime);
+  
     return (
           <Tooltip
               title={
@@ -82,7 +84,7 @@ const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {
               onClose={() => setTooltipOpen(false)}
               disableHoverListener={isDragging}              
             >
-        <div className="absolute h-full min-w-0 overflow-hidden border-dashed rounded-md transition-all duration-800 ease-in-out  bg-miTask border-miTaskHBR
+        <div className="absolute h-full min-w-0 overflow-hidden border-dashed rounded-md transition-all duration-800 ease-in-out  bg-white border-miTaskHBR
             hover:border-solid !hover:border-2 hover:animate-pulse hover:shadow-lg hover:bg-miTaskHL" 
             
             onClick={() => onEditTask()}
@@ -96,12 +98,13 @@ const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {
             }}>
 
               {getTaskLayout(
-                  props.displayTask.height, 
+                  props.displayTask.height ?? 0, 
                   props.displayTask.slotCount,                          
                   { 
                   taskTitle: props.displayTask.Title, 
                   taskDescription: props.displayTask.Description, 
-                  status: props.displayTask.status,                              
+                  status: props.displayTask.status ?? TaskStatus.PASSED,  
+                  displayTime: mninutesToHHMM_APM(props.displayTask.StartTime)                            
               })}
           
         </div> 

@@ -21,8 +21,8 @@ import { PackagePlus} from "lucide-react";
 import MuiStyledDatePicker from "../../../mui-wrappers/mui-datepicker-wrapper";
 import MuiStyledDateRangePicker from "../../../mui-wrappers/mui-date-range-picker";
 import MaterialDateRangePicker, { MaterialDateRangePickerRef } from '../../../mui-wrappers/mui-date-range-picker';
-import { ITask } from "../../tasks/interfaces/task-interface";
-import { useEffect } from 'react';
+import { IDisplayTask, ITask } from "../../tasks/interfaces/task-interface";
+import { useEffect, useRef } from 'react';
 import {DragIndicator} from "../../../lucid/lucid-anim-demo-2";
 import {LoadingSpinner, SparklingIcon, BouncingArrow} from "../../../lucid/lucid-animated-button-icon";
 import LucidIconButton from "../../../lucid/lucid-button-icon"
@@ -33,6 +33,8 @@ import { RootState } from "../../../store/index";
 import { userTasksActions } from "../../tasks/store/task-slice";
 import { ISimpleDate } from '@/interfaces/common-interfaces';
 import { AddTask } from '@mui/icons-material';
+import { useDrag } from 'react-dnd';
+import { DragItemType } from '../../tasks/components/display-task';
 
 //now + 1 hour
 const defaultInterval = () : number[] => {
@@ -53,33 +55,18 @@ const dateFromTaskorNull = (task: ITask | null) : ISimpleDate | null => task ? {
 
 const EditTaskForm = () => {
 
-  const { updateTask, deleteTask, addTask } = useTaskManager();  
-  const selectedTask      = useSelector((state : RootState ) => state.tasks.selectedTask);    
-  const dispatch          = useDispatch(); 
-
-  const [taskTitle, setTaskTitle] = useState<string> ("");
-  const [taskDescription, setTaskDescription] = useState<string> ("");
-  const [taskTimeInterval, setTaskTimeInterval] = useState<number[]> ([0, 0]);
-  const [isEditing, setIsEditing] = useState<boolean> (false);
-
-  const timeIntervalRef = createRef<TimeSliderRef>(); 
-  const taskDateRef     = createRef<MuiDatePickerRef>(); 
-  const dateRangeRef    = createRef<MaterialDateRangePickerRef>();
-
-  useEffect(() => {
-    setTaskTitle(selectedTask?.Title || "");
-    setTaskDescription(selectedTask?.Description || "");
-    setTaskTimeInterval(intervalFromTask(selectedTask));
-  }, [selectedTask]);
-
-  const editTaskExist = () => selectedTask && selectedTask.UserTaskKey !== 0;
-
-  const onSaveTask = () => {  
+  const createTaskFromFormData = (
+      timeIntervalRef: React.RefObject<TimeSliderRef | null>,
+      taskDateRef : any,
+      taskTitle: string,
+      taskDescription:string,
+    ) : Omit<ITask, 'UserKey'> | void => {
     const timeIntervalIntegers : number[] = timeIntervalRef.current?.getValue() ?? [];
     const StartTime : number = timeIntervalIntegers[0] ? timeIntervalIntegers[0]: 0;
     const EndTime   : number = timeIntervalIntegers[1] ? timeIntervalIntegers[1]: 0;
-    const taskDate = taskDateRef.current?.getPickedDate();
-
+    const taskDate           = taskDateRef.current?.getPickedDate();  
+    
+    console.log(taskTitle,taskDescription,taskDateRef);
     if(!taskDate) {
       alert("Please select a valid date for the task.");
       return;
@@ -96,15 +83,44 @@ const EditTaskForm = () => {
       EndTime: EndTime
     };
 
+    return userTask;
+  }
+
+  const dragTaskRef        = useRef<HTMLDivElement>(null);
+  const { updateTask, deleteTask, addTask } = useTaskManager();  
+  const selectedTask      = useSelector((state : RootState ) => state.tasks.selectedTask);    
+  const dispatch          = useDispatch(); 
+
+  const [taskTitle, setTaskTitle] = useState<string> ("");
+  const [taskDescription, setTaskDescription] = useState<string> ("");
+  const [taskTimeInterval, setTaskTimeInterval] = useState<number[]> ([0, 0]);
+  const [isEditing, setIsEditing] = useState<boolean> (false);
+
+  const timeIntervalRef = createRef<TimeSliderRef>(); 
+  const taskDateRef     = createRef<MuiDatePickerRef>();   
+  
+  useEffect(() => {
+    setTaskTitle(selectedTask?.Title || "");
+    setTaskDescription(selectedTask?.Description || "");
+    setTaskTimeInterval(intervalFromTask(selectedTask));
+    if(selectedTask)
+      setIsEditing(true);
+  }, [selectedTask]);
+
+  const editTaskExist = () => selectedTask && selectedTask.UserTaskKey !== 0;
+
+  const onSaveTask = () => {  
+    const userTask : ITask | void = createTaskFromFormData(timeIntervalRef, taskDateRef, taskTitle, taskDescription);
+    if(!userTask)
+      return;
+
     if(userTask.UserTaskKey === 0) {
       addTask(userTask);
     } else {
       updateTask(userTask);  
-    }
-          
+    }          
     cancelEditing();
   } 
-
 
   const cancelEditing = () => {
     clearSelection();
@@ -125,10 +141,32 @@ const EditTaskForm = () => {
       return;
 
     deleteTask(userTask);
-    clearSelection();      
-  }
+    cancelEditing();      
+  }  
 
-  console.log(selectedTask);
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: DragItemType.TASK,
+    item: () => {
+      const userTask = createTaskFromFormData(timeIntervalRef, taskDateRef, taskTitle, taskDescription);
+      if (!userTask)
+        return null;      
+      return { displayTask: userTask as IDisplayTask };
+    },
+    canDrag: () => {   
+      const userTask = createTaskFromFormData(timeIntervalRef, taskDateRef, taskTitle, taskDescription);
+      return !!userTask;  // Fixed the logic
+    },
+    collect: (monitor) => ({
+        isDragging: monitor.isDragging(),          
+    }),
+    end: (item, monitor) => {
+      if (monitor.didDrop()) {   
+        cancelEditing();
+      }  
+    },
+    }), [taskTitle, taskDescription, timeIntervalRef, taskDateRef]);
+
+  drag(dragTaskRef);
 
   return (<>
     <div className="grid grid-cols-6 transition-all duration-300 ease-in-out">
@@ -185,7 +223,6 @@ const EditTaskForm = () => {
 
         <div className="col-span-6 border-t border-t-gray-200 w-3/4 mt-2">
         </div>
-
         
          { isEditing && 
             <>
@@ -267,7 +304,7 @@ const EditTaskForm = () => {
 
               {
                 taskTitle.length > 0 &&
-                  <div className="col-span-6 flex items-center justify-center mt-2 gap-2">
+                  <div ref={dragTaskRef} className="col-span-6 flex items-center justify-center mt-2 gap-2">
                     <MuiStyledButton themeColor = 'light' buttonSize = 'lg' buttonVariant = 'main' borderType = 'rounded' opacity={.85}> 
                       <Typography variant="subtitle2"> Drop in shedule </Typography>
                       <DragIndicator direction="right" animationStyle="chevrons" size={24} color="#2196F3" className="ml-4 mr-4"/>

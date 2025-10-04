@@ -37,3 +37,13 @@ export function minutesToHHMM(mins) {
   const minutes = mins % 60;
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
 }
+
+export const mninutesToHHMM_APM= (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12; 
+    
+    return `${displayHours}:${mins.toString().padStart(2, '0')} ${period}`;
+}

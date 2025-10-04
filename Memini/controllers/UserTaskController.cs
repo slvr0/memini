@@ -18,10 +18,12 @@ public class UserTaskController : ControllerBase
 {
     private IConfiguration _configuration;
     private AuthorisationService _authorisationService;
-    public UserTaskController(IConfiguration configuration, AuthorisationService authorisationService)
+    private readonly MeminiDbContext _context;
+    public UserTaskController(IConfiguration configuration, AuthorisationService authorisationService, MeminiDbContext context)
     {
         _configuration = configuration;
         _authorisationService = authorisationService;
+        _context = context;
     }
 
     [Authorize]
@@ -30,11 +32,9 @@ public class UserTaskController : ControllerBase
     public IActionResult AddUserTask(DtoUserTask userTask)
     {
         if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
-            return Unauthorized("Invalid user token: missing or invalid user info.");
+            return Unauthorized("Invalid user token: missing or invalid user info.");    
 
-        using var context = new MeminiDbContext();
-
-        var createdUserTask = context.UserTasks.Add(new UserTask
+        var createdUserTask = _context.UserTasks.Add(new UserTask
         {
             Year = userTask.Year,
             Month = userTask.Month,
@@ -46,7 +46,7 @@ public class UserTaskController : ControllerBase
             Userkey = userKey
         }).Entity;
 
-        context.SaveChanges();                
+        _context.SaveChanges();                
 
         return DtoResponse<DtoUserTask>.Ok(createdUserTask.ToDto(), "Task added successfully").ToOkResult();
     }
@@ -57,13 +57,11 @@ public class UserTaskController : ControllerBase
     public IActionResult GetTasksForDate(DtoUserTaskDateRequest userTaskDateRequest)
     {
         if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
-            return Unauthorized("Invalid user token: missing or invalid user info.");
+            return Unauthorized("Invalid user token: missing or invalid user info.");        
 
-        using var context = new MeminiDbContext();
-
-        List<DtoUserTask> tasksForDate = context.UserTasks.Where(ut =>
+        List<DtoUserTask> tasksForDate = _context.UserTasks.Where(ut =>
             ut.Userkey == userKey).Where(ut =>
-                ut.Year == userTaskDateRequest.Year && ut.Month == userTaskDateRequest.Month && ut.Day == userTaskDateRequest.Day).Select(ut => ut.ToDto()).ToList();
+                ut.Year == userTaskDateRequest.Year && ut.Month == userTaskDateRequest.Month && ut.Day == userTaskDateRequest.Day).Select(ut => ut.ToDto()).ToList(); 
 
         return DtoResponse<List<DtoUserTask>>.Ok(tasksForDate, "Loaded Tasks Success").ToOkResult();
     }
@@ -74,20 +72,18 @@ public class UserTaskController : ControllerBase
     public IActionResult SaveUserTask(DtoUserTask userTask)
     {
         if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
-            return Unauthorized("Invalid user token: missing or invalid user info.");
+            return Unauthorized("Invalid user token: missing or invalid user info.");     
 
-        using var context = new MeminiDbContext();
-
-        var taskToUpdate = context.UserTasks
+        var taskToUpdate = _context.UserTasks
             .FirstOrDefault(ut => ut.Usertaskkey == userTask.UserTaskKey);
 
         if (taskToUpdate == null)
-            return DtoResponse<DtoUserTask>.Fail("Couldn't find the UserTask to update").ToNotFoundResult();          
+            return DtoResponse<DtoUserTask>.Fail("Couldn't find the UserTask to update").ToNotFoundResult();
 
         // Map DtoUserTask to UserTask (properties must match)
-        context.Entry(taskToUpdate).CurrentValues.SetValues(userTask);
+        _context.Entry(taskToUpdate).CurrentValues.SetValues(userTask);
 
-        context.SaveChanges();
+        _context.SaveChanges();
 
         return DtoResponse<DtoUserTask>.Ok(taskToUpdate.ToDto(), "Updated Task successfully").ToOkResult();    
     }
@@ -100,16 +96,14 @@ public class UserTaskController : ControllerBase
         if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
             return Unauthorized("Invalid user token: missing or invalid user info.");
 
-        using var context = new MeminiDbContext();
-
-        var taskToDelete = context.UserTasks
+        var taskToDelete = _context.UserTasks
             .FirstOrDefault(ut => ut.Usertaskkey == userTask.UserTaskKey);
 
         if (taskToDelete == null)
             return NotFound("Couldn't find the UserTask to delete");
 
-        context.UserTasks.Remove(taskToDelete);
-        context.SaveChanges();
+        _context.UserTasks.Remove(taskToDelete);
+        _context.SaveChanges();
 
         return Ok(new { Response = "Task successfully deleted", Success = true });
     }

@@ -8,6 +8,9 @@ import { Typography, Box } from "@mui/material";
 import { Plug, ChevronUp, ChevronDown, Slash, ChevronsUpDown, Globe, Globe2, Boxes, Combine } from 'lucide-react';
 import { Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText } from "lucide-react";
 
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
 function PlanningPage() {    
      
     const schedulerParentRef = useRef(null); //clear name convention, this is to calculate if scroll is needed, not to be used for imperative handling.
@@ -30,7 +33,9 @@ function PlanningPage() {
         <div className="h-screen bg-white">
             <div className="grid grid-cols-12 h-full">
                 <div className="col-span-2 border-r border-r-gray-200 h-full">
-                    <TaskMaintainerContainer/>
+                     <DndProvider backend={HTML5Backend}>
+                        <TaskMaintainerContainer/>
+                    </DndProvider>
                 </div>
 
                 <div className="col-span-10 border-r border-r-gray-200 h-full ">                        

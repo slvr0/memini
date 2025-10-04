@@ -7,42 +7,59 @@ import { Typography} from "@mui/material";
 const TaskLayoutMedium: React.FC<TaskLayoutProps> = (props) => {
   return (
 
-    <div className="grid grid-rows-[20%_30%_50%] h-full w-full overflow-hidden"> 
-
-        <div className="flex flex-row px-1 overflow-hidden w-full items-center align-middle">
-            <MuiStyledStatusCircle status={props.status} style={{marginRight: '0.25rem'}}/>            
-            <TaskLayoutOptionPanel 
+    <div className="grid grid-rows-[15%_15%_40%_40%] h-full w-full overflow-hidden"> 
+        <div className="flex flex-row overflow-hidden w-full mt-0.5"> 
+       
+            <div className="flex flex-row  items-start ml-1 gap-0.5">              
+              <TaskLayoutOptionPanel 
                 borderProfile="rounded"
-                iconSize={10}  
-                iconOpacity={.6}  />    
+                iconSize={12}  
+                iconOpacity={.8}  />          
+            </div>                    
         </div>
 
-        <div className="flex flex-row px-1 overflow-hidden w-full my-0.5">
+        <div className="flex flex-row overflow-hidden w-full mt-0.5"> 
+            <div className="flex flex-row items-start ml-1">              
+                <Typography
+                  variant="caption"
+                  className="text-left w-full min-w-0 break-words"
+                  color="text.secondary"
+                  style={{ 
+                  fontSize: '11px',             
+                  lineHeight: '.75rem',       
+                  }}
+                  >
+                  {props.displayTime}
+                </Typography>            
+            </div> 
+
+                            
+        </div>
+
+        <div className="flex flex-row overflow-hidden w-full items-start justify-start ml-1">
             <Typography
-            variant="subtitle2"
+            variant="body2"
             fontWeight='medium'
             className="text-left w-full min-w-0 break-words"
             style={{ 
-            fontSize: '11px', 
-            opacity: 0.95, 
-            lineHeight: '.9rem',       
-            }}
+              lineHeight: '.9rem',       
+              }}
             >
-            {props.taskTitle}
+              {props.taskTitle}
             </Typography>            
         </div>
 
-        <div className="flex flex-row px-1 overflow-hidden w-full my-0.5">
+        <div className="flex flex-row overflow-hidden w-full my-0.5 items-start justify-start ml-1">
             <Typography
             variant="caption"
             className="text-left w-full min-w-0 break-words"
+            color="text.secondary"
             style={{ 
-            fontSize: '10px', 
-            opacity: 0.8, 
+            fontSize: '11px',             
             lineHeight: '.75rem',       
             }}
             >
-            {props.taskTitle + (props.taskDescription ? " - " + props.taskDescription : "")}
+            {props.taskDescription}
             </Typography>
         </div>
     </div>
