@@ -38,7 +38,8 @@ const theme = createTheme({
       
       body2: {
         fontSize: '0.875rem',   
-        fontWeight: 400,   
+        fontWeight: 400,  
+        opacity:1.0, 
       },
       
       subtitle1: {

@@ -1,13 +1,15 @@
 
+import { ICalendarDate } from "@/interfaces/common-interfaces";
 import { Typography } from "@mui/material";
+import {WeekDaysEnum} from "../../computes/date-computations"
 
 interface TaskSchedulerWeekDaysHeaderProps {
     week : number;
-    weekdays: Array<string>; //weekdays of selection
+    weekdays: ICalendarDate[]; //weekdays of selection
 }
 
 const TaskSchedulerWeekDaysHeader : React.FC<TaskSchedulerWeekDaysHeaderProps> = (props) => {
-
+    const calendarDateDayDisplay = (calendarDate: ICalendarDate) : string => WeekDaysEnum[calendarDate.weekDay];
     return (        
         <>
             <div 
@@ -23,14 +25,26 @@ const TaskSchedulerWeekDaysHeader : React.FC<TaskSchedulerWeekDaysHeaderProps> =
                             </Typography>
                         </div>
 
-                        {props.weekdays.map((day: string, i: number) => (
+                        {props.weekdays.map((day: ICalendarDate, i: number) => (
                             <div
                                 key={i}
                                 className="flex flex-col items-center justify-center h-full overflow-hidden border-r border-r-gray-100"
-                            >
-                                <Typography variant="overline" className="opacity-85">
-                                    {day}
+                            >                                
+                                <Typography variant="overline" className="opacity-90">
+                                    <span>
+                                        {calendarDateDayDisplay(day)}   
+                                    </span>
+                                    
+                                    <span className="ml-2">
+                                    {new Date(2024, day.month, day.day).toLocaleDateString('en-US', { 
+                                        month: 'short', 
+                                        day: 'numeric', 
+                                    })}
+
+                                    </span>
+                              
                                 </Typography>
+                               
                             </div>
                         ))}
                     </>

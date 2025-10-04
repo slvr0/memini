@@ -5,9 +5,9 @@ import TaskSchedulerWeekDaysHeader from "./task-scheduler-week-days-header";
 import { ITask } from "../../../tasks/interfaces/task-interface";
 import { Typography,Backdrop, CircularProgress } from "@mui/material";
 import { Fragment } from "react/jsx-runtime"
-import {WeekDaysEnum} from "../../computes/date-computations"
-import DragCursorLine from "./task-scheduler-drag-indication-line"
 
+import DragCursorLine from "./task-scheduler-drag-indication-line"
+import {ICalendarDate} from "../../../../interfaces/common-interfaces"
 import { useState, useRef, createRef } from "react";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -22,6 +22,7 @@ interface TaskSchedulerContentContainerProps  {
 
 const TaskSchedulerContentContainer : React.FC<TaskSchedulerContentContainerProps> = (props) => {  
     
+    console.log(props);
     
     const [dragState, setDragState] = useState<{
         isDragging: boolean;
@@ -43,7 +44,7 @@ const TaskSchedulerContentContainer : React.FC<TaskSchedulerContentContainerProp
             <TaskSchedulerWeekDaysHeader 
             
                 week={props.week}
-                weekdays={props.weekdays.map((calendarDate: ICalendarDate): string => WeekDaysEnum[calendarDate.weekDay])}                        
+                weekdays={props.weekdays}                        
             /> 
             <DndProvider backend={HTML5Backend}>
                 <div 

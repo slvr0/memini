@@ -102,13 +102,13 @@ const MonthsEnum = [
   ];
 
 const WeekDaysEnum = [
+  'Sunday',
   'Monday',
   'Tuesday', 
   'Wednesday',
   'Thursday',
   'Friday',
-  'Saturday',
-  'Sunday',
+  'Saturday',  
 ] as const;
 
 export { getWeeksInMonth, getWeekDates, getFirstWeekInMonth, 

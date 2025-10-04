@@ -35,12 +35,12 @@ const RootLayout = () => {
             {/* Main content area */}
             <div className="border border-bg-gray-200">
               {/* Sidebar - Remove fixed width, let it grow */}
-              <div className="h-screen fixed top-16 left-0 flex flex-col items-center z-9000 bg-white">
+              <div className="fixed top-16 h-[calc(100vh-4rem)] left-0 flex flex-col items-center z-[9999] transition-all bg-white">
                 <SideMenuPanel />
               </div>
 
               {/* Outlet content - Keep fixed margin so it doesn't move */}
-              <div className="h-screen">     
+              <div className="ml-16 h-screen">     
                   <Outlet />          
               </div>
             </div>

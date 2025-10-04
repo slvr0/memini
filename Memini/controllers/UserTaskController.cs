@@ -61,8 +61,8 @@ public class UserTaskController : ControllerBase
 
         using var context = new MeminiDbContext();
 
-        List<DtoUserTask> tasksForDate = context.UserTasks.Where(ut => 
-            ut.Userkey == userKey).Where(ut => 
+        List<DtoUserTask> tasksForDate = context.UserTasks.Where(ut =>
+            ut.Userkey == userKey).Where(ut =>
                 ut.Year == userTaskDateRequest.Year && ut.Month == userTaskDateRequest.Month && ut.Day == userTaskDateRequest.Day).Select(ut => ut.ToDto()).ToList();
 
         return DtoResponse<List<DtoUserTask>>.Ok(tasksForDate, "Loaded Tasks Success").ToOkResult();

@@ -7,6 +7,7 @@ import type { DateKey, IDisplayTask, ITask } from "../interfaces/task-interface"
 import { deleteTaskApi, fetchTasksForDate, updateTaskApi, addTaskApi } from "../../../features/tasks/store/task-api";
 import { makeSelectTasksByDate, isDateLoaded } from "../../../features/tasks/store/task-selector";
 import {  calculateTaskPixelTime } from "../../planning/computes/task-scheduler-computations"
+import {ICalendarDate} from "../../../interfaces/common-interfaces"
 
 import store from "../../../store/index";
 import { ApiResponse } from "@/interfaces/api-response";
@@ -60,12 +61,22 @@ export const useTaskManager = () => {
     return response;    
   }
 
+  const addTask = async (task: Omit<ITask, 'UserKey'>) : Promise<ApiResponse<ITask>> => {
+    const response = await addTaskApi(task);
+
+     if(response.Success) {
+      dispatch(userTasksActions.addTask(response.ResponseObject));      
+    }
+
+    return response;  
+  }
+
   const updateTaskFromDragEvent = (movedTask: IDisplayTask, dropDate: ICalendarDate, dropPosition: number, dropContainerHeight: number) => {
     const newStartTime = calculateTaskPixelTime(dropPosition, dropContainerHeight);
 
     const updatedTask : ITask = {...movedTask};
     updatedTask.Year = dropDate.year;
-    updatedTask.Month = dropDate.month + 1; //TODO: FIX FOR GOD SAKE :D
+    updatedTask.Month = dropDate.month;
     updatedTask.Day = dropDate.day;
 
     const l = updatedTask.EndTime - updatedTask.StartTime;
@@ -83,5 +94,5 @@ export const useTaskManager = () => {
     dispatch(userTasksActions.removeTask(task));
   }
 
-  return { areDisplayTasksLoaded, fetchTasksForDateAndStore, useTasksForDate, setSelectedTask, clearSelectedTask, updateTask, updateTaskFromDragEvent, deleteTask };
+  return { areDisplayTasksLoaded, fetchTasksForDateAndStore, useTasksForDate, setSelectedTask, clearSelectedTask, updateTask, updateTaskFromDragEvent, deleteTask, addTask };
 };

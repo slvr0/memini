@@ -1,6 +1,6 @@
 import type { IDisplayTask, ITask } from "../../../tasks/interfaces/task-interface";
 import DisplayTask from "../../../tasks/components/display-task"
-
+import {ICalendarDate} from "../../../../interfaces/common-interfaces"
 import { calculateTaskDisplayMetricsSimple, calculateTaskPixelTime } from "../../computes/task-scheduler-computations"
 import { useTaskManager } from "../../../tasks/utils/task-manager"
 import { DragItemType } from "../../../tasks/components/display-task"
@@ -40,7 +40,6 @@ const TaskSchedulerDailyContainer: React.FC<TaskDailyContainerProps> = ({
             const containerElement = containerRef.current;
             if (!containerElement) return;
 
-            //calculate mouse metrics
             const rect = containerElement.getBoundingClientRect(); 
             const relativeY = clientOffset.y - rect.top;
 
@@ -57,9 +56,10 @@ const TaskSchedulerDailyContainer: React.FC<TaskDailyContainerProps> = ({
 
     const pixelsPerHour = containerHeight / 24;
     
-    const dailyTasks : ITask[] = useTasksForDate(weekday.year, weekday.month+1, weekday.day); //lol fix the month indexing.
+    const dailyTasks : ITask[] = useTasksForDate(weekday.year, weekday.month, weekday.day); //lol fix the month indexing.
     const displayTasks = calculateTaskDisplayMetricsSimple(dailyTasks, pixelsPerHour);
 
+    console.log("day", weekday ,"displaytasks", displayTasks);
     return (        
     <div 
     ref={containerRef} 
@@ -74,8 +74,7 @@ const TaskSchedulerDailyContainer: React.FC<TaskDailyContainerProps> = ({
         { displayTasks.map((task: IDisplayTask, index: number) => {
             return (<DisplayTask
                 key={index}  
-                displayTask={task}
-                onSelect={() => {}}
+                displayTask={task}               
                 />)
             })            
         } 

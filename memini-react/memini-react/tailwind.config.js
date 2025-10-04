@@ -8,9 +8,9 @@ export default {
     extend: {
 
       colors: {      
-        miTask: '#f8fcfe',    
-        miTaskHL: '#dff3fc',
-        miTaskHBR: '#a1dbf8'      
+        miTask: '#e3f2fd',    
+        miTaskHL: '#bbdefb',
+        miTaskHBR: '#42a5f5'      
       },
 
       fontFamily: {

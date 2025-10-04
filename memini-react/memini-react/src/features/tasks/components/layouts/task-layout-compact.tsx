@@ -5,7 +5,7 @@ import { Typography } from "@mui/material";
 
 const TaskLayoutCompact : React.FC<TaskLayoutProps> = (
     {
-        displayOptions = true,
+        displayOptions = true,        
         ...props
     }
 

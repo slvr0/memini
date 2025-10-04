@@ -1,7 +1,7 @@
 import {TaskLayoutProps} from '../../interfaces/task-interface'
 import TaskLayoutOptionPanel from '../../components/layouts/task-layout-option-panel'
 import MuiStyledStatusCircle , {  } from "../../../../mui-wrappers/mui-status-circle-wrapper"
-
+import Tooltip from '@mui/material/Tooltip';
 import { Typography} from "@mui/material";
 
 const TaskLayoutMedium: React.FC<TaskLayoutProps> = (props) => {
@@ -19,21 +19,22 @@ const TaskLayoutMedium: React.FC<TaskLayoutProps> = (props) => {
 
         <div className="flex flex-row px-1 overflow-hidden w-full my-0.5">
             <Typography
-            variant="overline"
+            variant="subtitle2"
+            fontWeight='medium'
             className="text-left w-full min-w-0 break-words"
             style={{ 
-            fontSize: '10px', 
+            fontSize: '11px', 
             opacity: 0.95, 
             lineHeight: '.9rem',       
             }}
             >
-            {props.taskTitle + (props.taskDescription ? " - " + props.taskDescription : "")}
+            {props.taskTitle}
             </Typography>            
         </div>
 
         <div className="flex flex-row px-1 overflow-hidden w-full my-0.5">
             <Typography
-            variant="subtitle2"
+            variant="caption"
             className="text-left w-full min-w-0 break-words"
             style={{ 
             fontSize: '10px', 

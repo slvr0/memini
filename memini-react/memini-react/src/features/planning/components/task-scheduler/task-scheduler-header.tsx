@@ -1,26 +1,19 @@
 import { useState, useEffect, useRef, forwardRef,createRef } from "react";
-import { MuiDatePickerRef } from "../../../general/interfaces/general-types";
-import MuiDatePicker from "../../../general/components/mui-date-picker";
+
 import { Typography, InputLabel, MenuItem, Select, FormControl } from "@mui/material";
 import MuiStyledSelect from "../../../../mui-wrappers/mui-select-wrapper";
-
+import { SelectChangeEvent } from "@mui/material";
+import { ICalendarDate } from "@/interfaces/common-interfaces";
 interface TaskSchedulerContentHeaderSelectionProps  {
     defaultValue?: number;
-    onChange?: (value: number) => void;
+    onChange?: (value: number) => void;    
+    weekdaysDisplay: ICalendarDate[];
 }
 
 const weekNumbers = Array.from({ length: 52 }, (_, i) => i + 1);
 
 const TaskSchedulerHeader : React.FC<TaskSchedulerContentHeaderSelectionProps> = (props) => {
-    const taskDateRef   = createRef<MuiDatePickerRef>();
-    const [selectedWeek, setSelectedWeek] = useState<number>(props.defaultValue ?? 39);
-    
-     const handleChange = (event: any) => {
-        const value = event.target.value as number;
-        setSelectedWeek(value);
-        props.onChange?.(value); 
-    };
-    
+  
     return ( 
     
         <div className="scheduler-content-header h-20 border-b border-b-bg-gray-100">
@@ -31,16 +24,56 @@ const TaskSchedulerHeader : React.FC<TaskSchedulerContentHeaderSelectionProps> =
                     </Typography>
                 </div>
 
-                <div className="flex col-span-5 items-center justify-end">
+                <div className="flex col-span-4 items-center justify-center gap-4 ">
+                    <Typography variant="body2">
+                        {new Date(
+                            props.weekdaysDisplay[0].year, 
+                            props.weekdaysDisplay[0].month, 
+                            props.weekdaysDisplay[0].day
+                        ).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            year: 'numeric' 
+                        })}
+                    </Typography>
+                    {   props.weekdaysDisplay.length > 0 &&
+                        <>
+                            <Typography variant="body2">
+                            -
+                            </Typography>
+
+                            <Typography variant="body2">
+                                {new Date(
+                                    props.weekdaysDisplay[props.weekdaysDisplay.length - 1].year, 
+                                    props.weekdaysDisplay[props.weekdaysDisplay.length - 1].month, 
+                                    props.weekdaysDisplay[props.weekdaysDisplay.length - 1].day
+                                ).toLocaleDateString('en-US', { 
+                                    month: 'short', 
+                                    day: 'numeric', 
+                                    year: 'numeric' 
+                                })}
+                            </Typography>                
+                        </>
+                    }
+
+                    
+                </div>
+
+                <div className="flex col-span-1 items-center justify-end">
                     <FormControl variant="outlined" sx={{ minWidth: 120 }}>
                         <InputLabel id="select-label">Week</InputLabel>
                         <MuiStyledSelect
                             labelId="select-label"
                             id="select"
-                            value={selectedWeek}
+                            value={props.defaultValue}
                             label="Number"
-                            onChange={handleChange}
-                              themeProps={{
+                            onChange={(e: any) => { 
+                                const value = typeof e.target.value === 'number' 
+                                    ? e.target.value 
+                                    : Number(e.target.value);
+                                props.onChange?.(value);
+                            }}
+                            themeProps={{
                                 paletteProfile: 'main',
                                 borderProfile: 'semiStraight',
                                 mode: 'light',

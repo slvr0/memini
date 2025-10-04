@@ -15,7 +15,7 @@ const MaterialUITheme1Profile = {
       dark: { main: '#9CCEC4', hover: '#7BC4B8', text: '#000', border: '#E1E7EB', borderHover: '#C1C8CD' },
     },
     harmonicBlue: {
-      light: { main: '#a1dbf8', hover: '#95c3d1', text: '#000', border: '#9CC4CE', borderHover: '#7BB8C4' },
+      light: { main: '#1976d2', hover: '#1565c0', text: '#FFFFFF', border: '#1976d2', borderHover: '#1565c0' },
       dark: { main: '#9CC4CE', hover: '#7BB8C4', text: '#000', border: '#E1E7EB', borderHover: '#C1C8CD' },
     },
     harmonicRed: {
@@ -29,13 +29,19 @@ const MaterialUITheme1Profile = {
       shadow: '0 1px 3px rgba(0,0,0,0.05)',
       borderWidth: '1px',                       
     },
+    semiRounded: { 
+      borderRadius: '1.25rem', 
+      shadow: '0 1px 0px rgba(0,0,0,0.05)',  
+      borderWidth: '1px',    
+    },
+
     straight: { 
       borderRadius: '.375rem', 
       shadow: '0 1px 3px rgba(0,0,0,0.05)',  
       borderWidth: '1px',    
     },
     semiStraight: { 
-      borderRadius: '1.25rem', 
+      borderRadius: '0.5rem', 
       shadow: '0 1px 0px rgba(0,0,0,0.05)',  
       borderWidth: '1px',    
     },

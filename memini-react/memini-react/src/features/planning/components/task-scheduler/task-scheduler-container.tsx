@@ -10,6 +10,7 @@ import { useTaskManager } from "../../../tasks/utils/task-manager"
 import { getWeekDates } from "../../computes/task-scheduler-computations"
 
 import { IDisplayTask, ITask } from "../../../tasks/interfaces/task-interface";
+import {ICalendarDate} from "../../../../interfaces/common-interfaces"
 
 interface TaskSchedulerContainerProps { 
     schedulerHeight: number;
@@ -18,11 +19,12 @@ interface TaskSchedulerContainerProps {
 
 //add a screen zoom listener to adjust overflow if user zooms in too much.
 const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainerProps>((props, ref) => {
-    //managed dispatch / endpoint / redux and updating of tasks 
-    const { areDisplayTasksLoaded, fetchTasksForDateAndStore, useTasksForDate, setSelectedTask, clearSelectedTask, updateTask, deleteTask } = useTaskManager();
+    const [selectedWeek, setSelectedWeek] = useState<number>(40);
+    
+    const {  fetchTasksForDateAndStore  } = useTaskManager();
     const isValidSchedulerParentRef = (ref: React.RefObject<HTMLDivElement | null> ) =>  ref && typeof ref === 'object' && ref.current;  
-    const currentWeek = 39; //react on schedulerHeader inputs
-    const weekdays : ICalendarDate[] = getWeekDates(2025, currentWeek);
+
+    const weekdays : ICalendarDate[] = getWeekDates(2025, selectedWeek);
    
     /* Load tasks */    
     const [weeklyTasks, setWeeklyTasks] = useState<Array<ITask[]>>([]);    
@@ -34,7 +36,7 @@ const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainer
             
             //replace this with a task manager effect that fetches a range of tasks and we get a response from that...
             const responseSuccess: Array<boolean> = await Promise.all(
-                weekdays.map((weekday: ICalendarDate) => fetchTasksForDateAndStore(weekday.year, weekday.month + 1, weekday.day).then(response => response?.Success || false))
+                weekdays.map((weekday: ICalendarDate) => fetchTasksForDateAndStore(weekday.year, weekday.month, weekday.day).then(response => response?.Success || false))
             );
 
             setIsLoading(responseSuccess.some((responseStatus: boolean) => responseStatus === false));
@@ -42,17 +44,18 @@ const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainer
         fetchWeeklyTasksAndUpdateStore();
     }, []);
 
-    const handleDateSelectionChange = (selectedWeek: number) => {   
-        console.log("handleDateSelectionChange");
-    }
- 
-
+    const handleDateSelectionChange = (selectedWeek: number) => setSelectedWeek(selectedWeek);
+    console.log(weekdays);
     return ( 
         <Fragment>
             {/* Should probably remove the content header and scaffold from container, it doesnt need re-render when tasks update.*/}
             <TaskSchedulerHeader 
-                defaultValue={currentWeek} 
-                onChange={(selectedWeek: number) => {handleDateSelectionChange(selectedWeek)}}
+                defaultValue={selectedWeek}
+                onChange={(selectedWeek: number) => {
+                    handleDateSelectionChange(selectedWeek)
+                }}
+
+                weekdaysDisplay={weekdays}
             />
             {isLoading ? (
                 <TaskSchedulerContainerLoading />
@@ -61,7 +64,7 @@ const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainer
                     schedulerHeight={props.schedulerHeight} 
                     timeslotHeight={props.timeslotHeight} 
                     tasks={weeklyTasks} 
-                    week={currentWeek}
+                    week={selectedWeek}
                     weekdays={weekdays}        
                 />
             )}

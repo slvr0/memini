@@ -14,6 +14,7 @@ interface ThemeInputProps {
   labelFontSize?: string;
   labelOpacity?: number;
 
+
   helperTextFontSize?: string;
   helperTextOpacity?: number;
   customStyle?: CSSProperties;
@@ -44,8 +45,6 @@ const BaseStyledTextField = styled(TextField, {
     '& .MuiInputBase-input': {
       fontSize: themeProps?.fontSize || '14px',
       color: palette.text, 
-    
-
       ...themeProps?.customStyle,     
     },
     '& .MuiOutlinedInput-root': {     
@@ -54,9 +53,11 @@ const BaseStyledTextField = styled(TextField, {
       '& fieldset': {
         borderColor: palette.border,
         borderWidth: border.borderWidth,
+        
       },
       '&:hover fieldset': {
         borderColor: palette.borderHover,
+        
       },
       '&.Mui-focused fieldset': {
         borderColor: palette.borderHover,

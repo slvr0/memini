@@ -3,7 +3,8 @@ import moment, { weekdays } from "moment";
 import {ITask, IDisplayTask} from '../../../features/tasks/interfaces/task-interface'
 import { StatusType, TaskStatus } from "../../../mui-wrappers/mui-status-circle-wrapper";
 import _ from 'lodash';
-    
+import { ICalendarDate } from "../../../interfaces/common-interfaces";    
+
 /*Calculates the Task status on an ITask relative to the current time, returns the color profile map (maps to the palette) as status is presented with a colored circle. */
 export const calculateTaskStatus = (task: ITask, timeNow: moment.Moment =  moment()) : StatusType  => { 
 

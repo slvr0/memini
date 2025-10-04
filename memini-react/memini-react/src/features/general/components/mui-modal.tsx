@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from "react";
-import { MuiModalRef } from "../interfaces/general-types";
+import { MuiModalRef } from "../../../mui-wrappers/interfaces/mui-interfaces";
 
 import {  
   Modal,

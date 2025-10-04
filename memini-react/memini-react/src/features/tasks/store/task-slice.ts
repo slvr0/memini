@@ -11,14 +11,14 @@ type TasksState = ReturnType<typeof tasksAdapter.getInitialState> & {
   byDate: Record<DateKey, TaskId[]>;
   loadedDates: Record<DateKey, boolean>;
   loading: boolean;
-  selectedTask: any;
+  selectedTask: ITask | null;
 };
 
 const initialState: TasksState = tasksAdapter.getInitialState({
   byDate: {},
   loadedDates: {},
   loading: false,
-  selectedTask: null as ITask | null
+  selectedTask: null
 });
 
 const tasksSlice = createSlice({

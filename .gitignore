@@ -18,3 +18,5 @@ secrets.json
 Memini/bin/
 
 .vs/
+
+Memini/obj/

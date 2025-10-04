@@ -8,7 +8,7 @@ import TaskLayoutMedium from './layouts/task-layout-medium'
 import { useDrag } from 'react-dnd';
 import { useRef, useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
-
+import { useTaskManager } from "../../tasks/utils/task-manager"
 import { minutesToHHMM } from "../../tasks/computes/time-display-formatting";
 
 const getHeightCategory = (height: number) => {
@@ -22,12 +22,12 @@ export const DragItemType = {
   TASK: 'displaytask'
 } as const;
 
-const getTaskLayout = (height: number, slotCount: number, onSelect: (displayTask: IDisplayTask) => void, props: TaskLayoutProps): JSX.Element => {
+const getTaskLayout = (height: number, slotCount: number, props: TaskLayoutProps): JSX.Element => {
   const category = getHeightCategory(height);
   
   switch(category) {
     case 'compact':
-      return <TaskLayoutCompact displayOptions={slotCount === 1} {...props} />;
+      return <TaskLayoutCompact displayOptions={slotCount === 1}  {...props} />;
     case 'mini':
       return <TaskLayoutMini displayOptions={slotCount === 1} {...props} />;
     case 'medium':
@@ -39,21 +39,22 @@ const getTaskLayout = (height: number, slotCount: number, onSelect: (displayTask
 
 interface IDisplayTaskCompositionProps {
   displayTask: IDisplayTask;
-  onSelect: (displayTask: IDisplayTask) => void;
-  onEdit?: (displayTask: IDisplayTask) => void;
-  onDelete?: (taskId: string) => void;
   className?: string;
 }
 
 //Add parameter to shut off height / top calculation for use in lists etc.
 const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {  
     const ref = useRef<HTMLDivElement>(null);
-
     const [tooltipOpen, setTooltipOpen] = useState(false);
-
     const taskWidth = `${(props.displayTask.slotSpan || 1) / props.displayTask.slotCount * 100}`;
     const taskLeft = `${props.displayTask.slotIndex / props.displayTask.slotCount * 100}`;  
-   
+
+    const {setSelectedTask, deleteTask} = useTaskManager();
+    
+    const onEditTask = () => {
+      setSelectedTask(props.displayTask as ITask);
+    }
+    
     const [{ isDragging }, drag] = useDrag(() => ({
       type: DragItemType.TASK,
       item: () => {
@@ -81,11 +82,12 @@ const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {
               onClose={() => setTooltipOpen(false)}
               disableHoverListener={isDragging}              
             >
-        <div className="absolute h-full min-w-0 overflow-hidden border-solid rounded-md transition-all duration-800 ease-in-out  bg-miTask border-miTaskHBR
-            hover:border-dashed !hover:border-2 hover:animate-pulse hover:shadow-lg hover:bg-miTaskHL" 
+        <div className="absolute h-full min-w-0 overflow-hidden border-dashed rounded-md transition-all duration-800 ease-in-out  bg-miTask border-miTaskHBR
+            hover:border-solid !hover:border-2 hover:animate-pulse hover:shadow-lg hover:bg-miTaskHL" 
+            
+            onClick={() => onEditTask()}
             ref={ref}
-            style={{                
-           
+            style={{  
                 borderWidth: 1.5,      
                 top: props.displayTask.yPosition,
                 height: props.displayTask.height,
@@ -95,12 +97,11 @@ const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {
 
               {getTaskLayout(
                   props.displayTask.height, 
-                  props.displayTask.slotCount, 
-                  props.onSelect,
+                  props.displayTask.slotCount,                          
                   { 
                   taskTitle: props.displayTask.Title, 
                   taskDescription: props.displayTask.Description, 
-                  status: props.displayTask.status                
+                  status: props.displayTask.status,                              
               })}
           
         </div> 

@@ -7,11 +7,14 @@ interface MUI_StyledButtonProps extends ButtonProps {
   themeColor?: 'light' | 'dark';
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg';
   buttonVariant?: keyof typeof MaterialUITheme1Profile.paletteProfiles;
-  borderType?: 'rounded' | 'straight';
+  borderType?: keyof typeof MaterialUITheme1Profile.borderProfiles;
   opacity?: number;
   highlightBackgroundOnHover?: boolean,
   highlightBorderOnHover?: boolean,
   applyThemeFontColor?: boolean
+  textOpacity?: number;
+  className?: string;
+  disabled?: boolean;
 }
 
 interface ButtonPreset {
@@ -24,7 +27,7 @@ function getButtonPresets (
   themeColor?: 'light' | 'dark', // we dont apply it yet TODO
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg',
   buttonVariant?: keyof typeof MaterialUITheme1Profile.paletteProfiles,
-  borderType?: 'rounded' | 'straight'  
+  borderType?: keyof typeof MaterialUITheme1Profile.borderProfiles
 
 ) : ButtonPreset{
 
@@ -69,12 +72,15 @@ const MuiStyledButton = styled(Button, {
     'buttonVariant',
     'borderType',
     'opacity',
+    'textOpacity', 
     'highlightBackgroundOnHover',
     'highlightBorderOnHover',
-    'applyThemeFontColor'].includes(prop as string),
+    'applyThemeFontColor',
+    'className',
+    ].includes(prop as string),
 })<MUI_StyledButtonProps>(({ 
   themeColor = 'light', buttonSize = 'sm', buttonVariant = 'main', borderType = 'rounded', opacity = 1.0,
-  highlightBackgroundOnHover = true,  highlightBorderOnHover = true, applyThemeFontColor = false }) => {
+  highlightBackgroundOnHover = true,  highlightBorderOnHover = true, applyThemeFontColor = false , textOpacity = 1.0, disabled = true}) => {
 
   var buttonPresets = getButtonPresets(
     themeColor, 
@@ -84,6 +90,7 @@ const MuiStyledButton = styled(Button, {
   )
 
   return {
+
 
     borderRadius: buttonPresets.borderProfile.borderRadius,
     borderWidth: buttonPresets.borderProfile.borderWidth,
@@ -110,7 +117,8 @@ const MuiStyledButton = styled(Button, {
     },
     '& .MuiTypography-root': {
       textTransform: 'none', 
-      color: applyThemeFontColor && buttonPresets.palette.light.border             
+      color: applyThemeFontColor ? buttonPresets.palette.light.text : 'inherit',
+      opacity: textOpacity             
     }
   };
 });

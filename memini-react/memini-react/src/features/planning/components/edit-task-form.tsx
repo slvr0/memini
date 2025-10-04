@@ -1,30 +1,46 @@
 
-import DiscreteDoubleTimeSlider from "../../general/components/discrete-double-time-slider"
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import { useDispatch, useSelector } from 'react-redux';
-import { userTasksActions } from "../../tasks/store/task-slice";
-import { useTaskManager } from "../../tasks/utils/task-manager";
-import {createRef,  useState, useEffect} from "react";
-import MuiDatePicker from "../../general/components/mui-date-picker";
-import type { ITask } from "../../tasks/interfaces/task-interface";
-import { RootState } from "../../../store/index";
-import { MuiDatePickerRef } from "../../general/interfaces/general-types";
-import type {TimeSliderRef, DiscreteDoubleTimeSliderProps} from "../../general/interfaces/general-types";
+import React, { useState, createRef } from 'react';
+import { 
+  Accordion, 
+  AccordionSummary, 
+  AccordionDetails, 
+  Box,
+  Button,
+  Typography,
+ 
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddIcon from '@mui/icons-material/Add';
+import DiscreteDoubleTimeSlider from "../../../mui-wrappers/mui-double-time-slider-wrapper"
+import type {TimeSliderRef, DiscreteDoubleTimeSliderProps,MuiDatePickerRef} from "../../../mui-wrappers/interfaces/mui-interfaces";
 import { minutesToHHMM } from "../../tasks/computes/time-display-formatting";
-import { Typography } from "@mui/material";
-import MuiModal from "../../general/components/mui-modal";
-import { MuiModalRef } from "../../general/interfaces/general-types";
+import MuiStyledButton from "../../../mui-wrappers/mui-button-wrapper";
+import MuiStyledTextField from "../../../mui-wrappers/mui-textfield-wrapper";
+import { PackagePlus} from "lucide-react";
 
-const snap15 = (m: number) => Math.round(m / 15) * 15;
-  const defaultInterval = () => {
+import MuiStyledDatePicker from "../../../mui-wrappers/mui-datepicker-wrapper";
+import MuiStyledDateRangePicker from "../../../mui-wrappers/mui-date-range-picker";
+import MaterialDateRangePicker, { MaterialDateRangePickerRef } from '../../../mui-wrappers/mui-date-range-picker';
+import { ITask } from "../../tasks/interfaces/task-interface";
+import { useEffect } from 'react';
+import {DragIndicator} from "../../../lucid/lucid-anim-demo-2";
+import {LoadingSpinner, SparklingIcon, BouncingArrow} from "../../../lucid/lucid-animated-button-icon";
+import LucidIconButton from "../../../lucid/lucid-button-icon"
+import { CircleX } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTaskManager } from "../../tasks/utils/task-manager";
+import { RootState } from "../../../store/index";
+import { userTasksActions } from "../../tasks/store/task-slice";
+import { ISimpleDate } from '@/interfaces/common-interfaces';
+import { AddTask } from '@mui/icons-material';
+
+//now + 1 hour
+const defaultInterval = () : number[] => {
   const now = new Date();
-  const start = snap15(now.getHours() * 60);
-  const end = snap15((now.getHours() + 1) * 60);
+  const start = now.getHours() * 60;
+  const end = (now.getHours() + 1) * 60;
   return [start, end];
-};
+}
 
 const intervalFromTask = (task : ITask | null) => {
   if (task) {    
@@ -33,185 +49,237 @@ const intervalFromTask = (task : ITask | null) => {
   return defaultInterval();
 };
 
-type EditTaskFormProps = { 
-  modalWrapper: React.RefObject<MuiModalRef> | null;
-}
+const dateFromTaskorNull = (task: ITask | null) : ISimpleDate | null => task ? {year: task.Year, month: task.Month, day: task.Day} : null;  
 
-function EditTaskForm( { modalWrapper } : EditTaskFormProps)  { 
-    const { updateTask, deleteTask } = useTaskManager();  
-    const selectedTask      = useSelector((state : RootState ) => state.tasks.selectedTask);    
+const EditTaskForm = () => {
 
-    const dispatch          = useDispatch(); 
-    
-    const [title, setTitle] = useState(selectedTask?.Title || "");
-    const [description, setDescription] = useState(selectedTask?.Description || "");   
-    const [timeInterval, setTimeInterval] = useState(() => intervalFromTask(selectedTask));
-      
-    const titleRef        = createRef<HTMLInputElement>();
-    const descriptionRef  = createRef<HTMLInputElement>();
-    const timeIntervalRef = createRef<TimeSliderRef>(); 
-    const taskDateRef     = createRef<MuiDatePickerRef>(); 
+  const { updateTask, deleteTask, addTask } = useTaskManager();  
+  const selectedTask      = useSelector((state : RootState ) => state.tasks.selectedTask);    
+  const dispatch          = useDispatch(); 
 
-    useEffect(() => {
-      setTitle(selectedTask?.Title || "");
-      setDescription(selectedTask?.Description || "");
-      setTimeInterval(intervalFromTask(selectedTask));
-    }, [selectedTask]); // if selectedtask is set.   
+  const [taskTitle, setTaskTitle] = useState<string> ("");
+  const [taskDescription, setTaskDescription] = useState<string> ("");
+  const [taskTimeInterval, setTaskTimeInterval] = useState<number[]> ([0, 0]);
+  const [isEditing, setIsEditing] = useState<boolean> (false);
 
-    const clearSelection = () => {
-      if(selectedTask === null) {
-        setTitle("");
-        setDescription("");
-        setTimeInterval(intervalFromTask(null));
-      } else 
-        dispatch(userTasksActions.clearSelectedTask());
+  const timeIntervalRef = createRef<TimeSliderRef>(); 
+  const taskDateRef     = createRef<MuiDatePickerRef>(); 
+  const dateRangeRef    = createRef<MaterialDateRangePickerRef>();
 
-      if(modalWrapper && modalWrapper.current) {
-        modalWrapper.current.setIsOpen(false);
-      }
+  useEffect(() => {
+    setTaskTitle(selectedTask?.Title || "");
+    setTaskDescription(selectedTask?.Description || "");
+    setTaskTimeInterval(intervalFromTask(selectedTask));
+  }, [selectedTask]);
+
+  const editTaskExist = () => selectedTask && selectedTask.UserTaskKey !== 0;
+
+  const onSaveTask = () => {  
+    const timeIntervalIntegers : number[] = timeIntervalRef.current?.getValue() ?? [];
+    const StartTime : number = timeIntervalIntegers[0] ? timeIntervalIntegers[0]: 0;
+    const EndTime   : number = timeIntervalIntegers[1] ? timeIntervalIntegers[1]: 0;
+    const taskDate = taskDateRef.current?.getPickedDate();
+
+    if(!taskDate) {
+      alert("Please select a valid date for the task.");
+      return;
     }
 
-    const onDeleteUserTask = (userTask: ITask) => {
-      if(userTask === null)
-        return;
+    const userTask : Omit<ITask, 'UserKey'> = { 
+      UserTaskKey: selectedTask?.UserTaskKey ?? 0,                      
+      Year: taskDate.year,
+      Month: taskDate.month,
+      Day: taskDate.day,
+      Title: taskTitle,
+      Description: taskDescription,
+      StartTime: StartTime,
+      EndTime: EndTime
+    };
 
-      deleteTask(userTask);
-      clearSelection();      
+    if(userTask.UserTaskKey === 0) {
+      addTask(userTask);
+    } else {
+      updateTask(userTask);  
     }
+          
+    cancelEditing();
+  } 
 
-    const onSaveTask = () => {
-        const UserTaskKey = selectedTask?.UserTaskKey ?? 0;
-        const Title = titleRef.current?.value || '';
-        const Description = descriptionRef.current?.value || ''; 
-        //const timeInterval : string[] = timeIntervalRef.current?.getValue() ?? [];
-        const timeIntervalIntegers : number[] = timeIntervalRef.current?.getValue() ?? [];
-        const StartTime : number = timeIntervalIntegers[0] ? timeIntervalIntegers[0]: 0;
-        const EndTime : number = timeIntervalIntegers[1] ? timeIntervalIntegers[1]: 0;
-        const taskDate = taskDateRef.current?.getPickedDate();
 
-        if(!taskDate) {
-          alert("Please select a valid date for the task.");
-          return;
+  const cancelEditing = () => {
+    clearSelection();
+    setIsEditing(false);
+  }
+
+  const clearSelection = () => {
+    if(selectedTask === null) {
+      setTaskTitle("");
+      setTaskDescription("");
+      setTaskTimeInterval(intervalFromTask(null));
+  } else 
+      dispatch(userTasksActions.clearSelectedTask());
+  }
+
+  const onDeleteUserTask = (userTask: ITask | null) => {
+    if(userTask === null)
+      return;
+
+    deleteTask(userTask);
+    clearSelection();      
+  }
+
+  console.log(selectedTask);
+
+  return (<>
+    <div className="grid grid-cols-6 transition-all duration-300 ease-in-out">
+        <div className="col-span-3 flex items-center justify-start w-full overflow-hidden">
+            <Typography variant="h5" className="break-words w-full">
+                Management
+            </Typography>
+        </div>
+        <div className="col-span-3 flex items-center justify-end">
+          { isEditing &&          
+            <div className="flex gap-2">
+               <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.85} 
+                  onClick={() => {cancelEditing()}} >                   
+                <Typography variant="subtitle2"> Cancel </Typography>     
+              </MuiStyledButton> 
+
+              <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.85} disabled={taskTitle.length === 0}
+                onClick={() => {onSaveTask()}} >   
+                <Typography variant="subtitle2"> Save </Typography>     
+              </MuiStyledButton>
+            </div>     
+          } 
+          
+          { !isEditing && 
+            <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'harmonicBlue' borderType = 'semiStraight' 
+              opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={true} textOpacity={1.0}
+              onClick={() => {setIsEditing(true)}}
+              >
+              <PackagePlus size={16} style={{ marginLeft: '0', marginRight: '.25rem', opacity:0.85 }}/>
+              <Typography 
+                    variant="body2" 
+                    color="inherit"                     
+                    > 
+                    Create Task 
+                </Typography>            
+            </MuiStyledButton>
+          }
+
+        </div>
+
+        <div className="col-span-5 flex items-start mt-4">
+            <Typography variant="body2" color="text.secondary">
+                Edit scheduled tasks or create new ones
+            </Typography>  
+        </div>
+
+        { editTaskExist() && 
+          <div className="col-span-1 flex items-center justify-end mt-4">
+            <MuiStyledButton themeColor = 'light' buttonSize = 'xs' buttonVariant = 'harmonicRed' borderType = 'semiStraight' opacity={.85} onClick={() => {onDeleteUserTask(selectedTask)}}>                    
+              <Typography variant="subtitle2" fontSize={9}> Delete </Typography>
+            </MuiStyledButton> 
+          </div>
         }
-        const Year = taskDate.year;
-        const Month = taskDate.month;
-        const Day = taskDate.day;
 
-        const userTask : Omit<ITask, 'UserKey'> = { 
-          UserTaskKey: UserTaskKey,                      
-          Year: Year,
-          Month: Month,
-          Day: Day,
-          Title: Title,
-          Description: Description,
-          StartTime: StartTime,
-          EndTime: EndTime
-        };
+        <div className="col-span-6 border-t border-t-gray-200 w-3/4 mt-2">
+        </div>
 
-        updateTask(selectedTask);        
-        clearSelection();
-    }   
-
-    return (
-        <>
-          <Box
-            component="form"
-            sx={{
-              '& .MuiTextField-root': { m: 2, flex: 1 },
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2
-            }}
-            noValidate
-            autoComplete="off"
-          >
-
-            <TextField
-                inputRef={titleRef}
-                id="outlined-required"
+        
+         { isEditing && 
+            <>
+              <div className="col-span-6 flex items-start justify-start mb-4 mt-8">                         
+              <MuiStyledTextField
+                required
+                size='small'                     
+                id="outlined-basic"
                 label="Title"
-                multiline
-                maxRows={1}
-                placeholder="Whats the plan chief?"
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)}
-                variant="standard"
-              />
-              <TextField
-                inputRef={descriptionRef}
-                id="filled-multiline-static"
-                label="Task description"
-                multiline
-                maxRows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe the activity..."
-                variant="standard"
-              />
-
-            <div className="flex justify-center">
-              {selectedTask && 
-                <MuiDatePicker 
-                  defaultDate={{
-                    year: selectedTask.Year, 
-                    month: selectedTask.Month, 
-                    day: selectedTask.Day  
-                  }} 
-                  ref={taskDateRef} 
+                placeholder="Whatsup?"
+                value={taskTitle}
+                onChange={(e) => setTaskTitle(e.currentTarget.value)}
+                variant="outlined"
+                className="w-3/4"
+                themeProps={{
+                    paletteProfile: 'main',
+                    borderProfile: 'semiStraight',
+                    spacingProfile: 'medium',
+                    mode: 'light',
+                    fontSize: '12px',
+                    labelFontSize: '12px',
+                    labelOpacity: 0.85,
+                    helperTextFontSize:'11px',
+                    helperTextOpacity:0.6                                 
+                }}
                 />
-              }
-              {
-                !selectedTask && 
-                <MuiDatePicker 
-                  defaultDate={null} 
-                  ref={taskDateRef} 
-                />
-              }   
               </div>
-               
-              <Typography className="text-gray-500 mt-0 ml-4 flex justify-center">             
-                {minutesToHHMM(timeInterval[0])} →{" "}
-                {minutesToHHMM(timeInterval[1])}             
-              </Typography>
-            {/* Second row for the slider */}
-            <DiscreteDoubleTimeSlider  
-              ref={timeIntervalRef}
-              timeInterval={timeInterval}
-              onChange={setTimeInterval}  />
-              
-            <Stack 
-              direction="row" 
-              spacing={2} 
-              sx={{ ml: 2, mr: 2 }} 
-              justifyContent="flex-end"
-            >
-              <Button 
-                variant="outlined" 
-                onClick={() => { onSaveTask() }}
-              >
-                Cancel
-              </Button>
 
-              <Button 
-                variant="outlined" 
-                disabled={selectedTask === null} 
-                onClick={() => { onDeleteUserTask(selectedTask) }}
-              >
-                Delete
-              </Button>
+              <div className="col-span-6 flex items-start justify-start mb-8">                         
+                    <MuiStyledTextField 
+                      multiline                           
+                      size='small'
+                      id="outlined-basic"
+                      label="Description"
+                      placeholder="Describe the event..."
+                      value={taskDescription}
+                      onChange={(e) => setTaskDescription(e.currentTarget.value)}
+                      variant="outlined"
+                      className="w-3/4"
+                      themeProps={{
+                          paletteProfile: 'main',
+                          borderProfile: 'semiStraight',
+                          spacingProfile: 'roomy',
+                          mode: 'light',
+                          fontSize: '12px',
+                          labelFontSize: '12px',
+                          labelOpacity: 0.85,
+                          helperTextFontSize:'11px',
+                          helperTextOpacity:0.6                                 
+                      }}
+                      />
+              </div> 
+        
+              <div className="col-span-4 flex items-start justify-start">
+                <MuiStyledDatePicker
+                  ref={taskDateRef}
+                  defaultDate={dateFromTaskorNull(selectedTask)}
+                  buttonSize="md"
+                  buttonVariant="main"
+                  borderType="semiStraight"              
+                  label="Start date"
+                />
+              </div>
 
-              <Button 
-                variant="contained" 
-                onClick={() => { onSaveTask() }}
-              >
-                Save/Update
-              </Button>
-            </Stack>
+              <div className="col-span-2 flex items-center justify-center my-auto">
+                <Typography variant='caption'>                    
+                @ {' '}             
+                {minutesToHHMM(taskTimeInterval[0])} →{" "}
+                {minutesToHHMM(taskTimeInterval[1])}             
+                </Typography>
+              </div>
 
+              <div className="col-span-6 mt-2">
+                <DiscreteDoubleTimeSlider  
+                ref={timeIntervalRef}
+                timeInterval={taskTimeInterval}
+                onChange={setTaskTimeInterval}  />
+              </div>             
 
-          </Box>
-        </>
-    )
+              {
+                taskTitle.length > 0 &&
+                  <div className="col-span-6 flex items-center justify-center mt-2 gap-2">
+                    <MuiStyledButton themeColor = 'light' buttonSize = 'lg' buttonVariant = 'main' borderType = 'rounded' opacity={.85}> 
+                      <Typography variant="subtitle2"> Drop in shedule </Typography>
+                      <DragIndicator direction="right" animationStyle="chevrons" size={24} color="#2196F3" className="ml-4 mr-4"/>
+                    </MuiStyledButton>                     
+                  </div>
+              }
+
+            </>
+          }
+      
+      </div>
+  </>)
 }
 
 export default EditTaskForm;
