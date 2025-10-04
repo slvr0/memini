@@ -76,7 +76,8 @@ const MuiStyledButton = styled(Button, {
     'highlightBackgroundOnHover',
     'highlightBorderOnHover',
     'applyThemeFontColor',
-    'className',
+    'className'
+    ,
     ].includes(prop as string),
 })<MUI_StyledButtonProps>(({ 
   themeColor = 'light', buttonSize = 'sm', buttonVariant = 'main', borderType = 'rounded', opacity = 1.0,

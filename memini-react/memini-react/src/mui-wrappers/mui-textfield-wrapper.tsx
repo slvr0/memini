@@ -20,7 +20,7 @@ interface ThemeInputProps {
   customStyle?: CSSProperties;
 }
 
-interface StyledTextFieldProps extends Omit<TextFieldProps, 'inputRef'> {
+interface StyledTextFieldProps extends Omit<TextFieldProps, 'ref'> {
   themeProps?: ThemeInputProps;
 }
 
@@ -80,6 +80,6 @@ const BaseStyledTextField = styled(TextField, {
 });
 
 const MuiStyledTextField = forwardRef<HTMLInputElement, StyledTextFieldProps>((props, ref) => (
-  <BaseStyledTextField {...props} inputRef={ref} />
+  <BaseStyledTextField {...props} ref={ref} />
 ));
 export default MuiStyledTextField;

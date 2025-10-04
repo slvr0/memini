@@ -46,12 +46,15 @@ interface ButtonDateFieldProps extends DatePickerFieldProps {
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg';
   buttonVariant?: string;
   borderType?: string;
+  slotProps?: any;
+  slots?: any;
 }
 
 type ButtonFieldDatePickerProps = DatePickerProps & {
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg';
   buttonVariant?: string;
   borderType?: string;
+
 }
 
 function ButtonDateField(props: ButtonDateFieldProps) {
@@ -59,8 +62,16 @@ function ButtonDateField(props: ButtonDateFieldProps) {
     internalProps, 
     forwardedProps 
   } = useSplitFieldProps(props, 'date');
-
-  const { buttonSize, buttonVariant, borderType, ...restForwardedProps } = forwardedProps;
+  const forwardedPropsAny = forwardedProps as any;
+  const { 
+    buttonSize, 
+    buttonVariant, 
+    borderType,
+    slotProps, 
+    slots,   
+    inputRef,
+    ...restForwardedProps 
+  } = forwardedPropsAny;
 
   const pickerContext = usePickerContext();
   const handleRef = useForkRef(pickerContext.triggerRef, pickerContext.rootRef);
@@ -94,28 +105,16 @@ function ButtonDateField(props: ButtonDateFieldProps) {
         borderColor: hasValidationError ? '#d32f2f' : undefined,
         color: hasValidationError ? '#d32f2f' : undefined,
       }}
-      highlightBackgroundOnHover = {false}
-      highlightBorderOnHover = {true}
+      highlightBackgroundOnHover={false}
+      highlightBorderOnHover={true}
     >
-
-      <div className="flex gap-2 mx-2">
+      <div className="flex gap-2 mx-2 items-center">
         <Typography variant={labelVariant} fontSize={labelPixelSize}>
-        {pickerContext.label ? `${pickerContext.label}: ${valueStr}` : valueStr}
+          {pickerContext.label ? `${pickerContext.label}: ${valueStr}` : valueStr}
         </Typography>
-        <LucidIconButton
-                  icon={CalendarDays}
-                  size={13}
-                  opacity={.75}
-                  palette="main"
-                  borderProfile="rounded"
-                  highlightBackgroundOnHover={true}
-                  highlightBorderOnHover={true}
-                  displayBorder={false}
-                  tooltip="Select date"
-                  onClick={() => console.log("Clicked Home")}
-          /> 
+
+        <CalendarDays size={14} style={{ opacity: 0.85 }} />
       </div>
-            
     </MuiStyledButton>
   );
 }

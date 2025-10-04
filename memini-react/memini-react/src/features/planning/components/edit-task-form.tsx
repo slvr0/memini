@@ -19,8 +19,7 @@ import MuiStyledTextField from "../../../mui-wrappers/mui-textfield-wrapper";
 import { PackagePlus} from "lucide-react";
 
 import MuiStyledDatePicker from "../../../mui-wrappers/mui-datepicker-wrapper";
-import MuiStyledDateRangePicker from "../../../mui-wrappers/mui-date-range-picker";
-import MaterialDateRangePicker, { MaterialDateRangePickerRef } from '../../../mui-wrappers/mui-date-range-picker';
+
 import { IDisplayTask, ITask } from "../../tasks/interfaces/task-interface";
 import { useEffect, useRef } from 'react';
 import {DragIndicator} from "../../../lucid/lucid-anim-demo-2";

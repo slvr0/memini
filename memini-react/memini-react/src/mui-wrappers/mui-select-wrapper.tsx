@@ -23,10 +23,12 @@ interface ThemeInputProps {
   children?: React.ReactNode;
 }
 
-interface StyledSelectProps extends Omit<SelectProps, 'inputRef'> {
+interface StyledSelectProps extends Omit<SelectProps, 'ref'> {
   themeProps?: ThemeInputProps;
 }
-const BaseStyledSelect = styled(Select, {shouldForwardProp: (prop) => ![
+
+const BaseStyledSelect = styled(Select, {
+  shouldForwardProp: (prop) => ![
     'paletteProfile',
     'borderProfile',
     'spacingProfile',
@@ -83,7 +85,7 @@ const BaseStyledSelect = styled(Select, {shouldForwardProp: (prop) => ![
   };
 });
 
-const MuiStyledSelect = forwardRef<HTMLSelectElement, StyledSelectProps>((props, ref) => {
+const MuiStyledSelect = forwardRef<any, StyledSelectProps>((props, ref) => {
   const { themeProps, MenuProps, ...otherProps } = props;
   
   const paletteProfile = themeProps?.paletteProfile || 'main';
@@ -95,8 +97,8 @@ const MuiStyledSelect = forwardRef<HTMLSelectElement, StyledSelectProps>((props,
   
   return (
     <BaseStyledSelect 
-      {...otherProps} 
-      inputRef={ref} 
+      {...otherProps}
+      ref={ref}  // ✅ Changed from inputRef to ref
       themeProps={themeProps}
       MenuProps={{
         PaperProps: {
