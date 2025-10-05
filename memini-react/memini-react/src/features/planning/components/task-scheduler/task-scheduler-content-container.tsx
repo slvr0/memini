@@ -22,8 +22,6 @@ interface TaskSchedulerContentContainerProps  {
 
 const TaskSchedulerContentContainer : React.FC<TaskSchedulerContentContainerProps> = (props) => {  
     
-    console.log(props);
-    
     const [dragState, setDragState] = useState<{
         isDragging: boolean;
         mouseY: number | null;

@@ -7,20 +7,11 @@ import { Typography} from "@mui/material";
 const TaskLayoutMedium: React.FC<TaskLayoutProps> = (props) => {
   return (
 
-    <div className="grid grid-rows-[15%_15%_40%_40%] h-full w-full overflow-hidden"> 
-        <div className="flex flex-row overflow-hidden w-full mt-0.5"> 
-       
-            <div className="flex flex-row  items-start ml-1 gap-0.5">              
-              <TaskLayoutOptionPanel 
-                borderProfile="rounded"
-                iconSize={12}  
-                iconOpacity={.8}  />          
-            </div>                    
-        </div>
+    <div className="grid grid-rows-[25%_35%_40%] h-full w-full overflow-hidden"> 
+        <div className="flex flex-row overflow-hidden w-full mt-0.5">        
+            <div className="flex flex-row  items-start ml-1 gap-0.5">   
 
-        <div className="flex flex-row overflow-hidden w-full mt-0.5"> 
-            <div className="flex flex-row items-start ml-1">              
-                <Typography
+              <Typography
                   variant="caption"
                   className="text-left w-full min-w-0 break-words"
                   color="text.secondary"
@@ -30,13 +21,16 @@ const TaskLayoutMedium: React.FC<TaskLayoutProps> = (props) => {
                   }}
                   >
                   {props.displayTime}
-                </Typography>            
+                </Typography>
+              <TaskLayoutOptionPanel 
+                borderProfile="rounded"
+                iconSize={12}  
+                iconOpacity={.8}  />   
             </div> 
-
-                            
         </div>
 
-        <div className="flex flex-row overflow-hidden w-full items-start justify-start ml-1">
+
+        <div className="flex flex-row overflow-hidden w-full items-start justify-start mt-0.5 ml-1">
             <Typography
             variant="body2"
             fontWeight='medium'

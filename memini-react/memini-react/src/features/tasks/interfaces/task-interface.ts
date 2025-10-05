@@ -55,4 +55,16 @@ export interface IDisplayTask extends Omit<ITask, 'UserKey'> {
     slotCount: number; // horizontal alignment
 }
 
+export interface IStoredUserTask {
+  StoredUserTaskKey: TaskId;
+  Title: string;
+  Description?: string;
+  Duration?: number;
+  Created?: string; 
+}
+
+export interface IStoredUserTaskResponse {
+  Favorites : IStoredUserTask[];
+  Recent : IStoredUserTask[];
+}
 

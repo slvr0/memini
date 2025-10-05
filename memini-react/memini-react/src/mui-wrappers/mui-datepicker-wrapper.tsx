@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { forwardRef, useState, useImperativeHandle } from 'react';
 import useForkRef from '@mui/utils/useForkRef';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -14,32 +13,19 @@ import {
   useParsedFormat,
   usePickerContext,
 } from '@mui/x-date-pickers/hooks';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import MuiStyledButton from './mui-button-wrapper'; 
-import LucidIconButton from '../lucid/lucid-button-icon';
-
-import { Calendar, CalendarDays } from "lucide-react";
-
-
+import { CalendarDays } from "lucide-react";
 import { Typography } from '@mui/material';
 
-interface SimpleDate {
-  year: number;
-  month: number;
-  day: number;
-}
-
 interface MaterialDatePickerProps {
-  defaultDate?: SimpleDate | null;
+  value: Dayjs;
+  onChange: (newValue: Dayjs) => void;
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg';
   buttonVariant?: string;
   borderType?: string;
   label?: string;
   datePickerProps?: Omit<DatePickerProps, 'value' | 'onChange'>;
-}
-
-export interface MaterialDatePickerRef {
-  getPickedDate: () => SimpleDate;
 }
 
 interface ButtonDateFieldProps extends DatePickerFieldProps {
@@ -54,7 +40,6 @@ type ButtonFieldDatePickerProps = DatePickerProps & {
   buttonSize?: 'xs' | 'sm' | 'md' | 'lg';
   buttonVariant?: string;
   borderType?: string;
-
 }
 
 function ButtonDateField(props: ButtonDateFieldProps) {
@@ -142,52 +127,31 @@ function ButtonFieldDatePicker(props: ButtonFieldDatePickerProps) {
   );
 }
 
-const MuiStyledDatePicker = forwardRef<MaterialDatePickerRef, MaterialDatePickerProps>(
-  (props, ref) => {
-    const {
-      defaultDate,
-      buttonSize = 'sm',
-      buttonVariant = 'main',
-      borderType = 'rounded',
-      label,
-      datePickerProps,
-    } = props;
+const MuiStyledDatePicker: React.FC<MaterialDatePickerProps> = (props) => {
+  const {
+    value,
+    onChange,
+    buttonSize = 'sm',
+    buttonVariant = 'main',
+    borderType = 'rounded',
+    label,
+    datePickerProps,
+  } = props;
 
-    const setDefaultValue = (defaultDate: SimpleDate | null | undefined) => {
-      if (defaultDate) {
-        return dayjs()
-          .set('year', defaultDate.year)
-          .set('month', defaultDate.month)
-          .set('date', defaultDate.day);
-      }
-      return dayjs();
-    };
 
-    const [value, setValue] = useState<dayjs.Dayjs>(setDefaultValue(defaultDate));
-
-    useImperativeHandle(ref, () => ({
-      getPickedDate: (): SimpleDate => ({
-        year: value.year(),
-        month: value.month(),
-        day: value.date(),
-      }),
-    }));
-
-    return (
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <ButtonFieldDatePicker
-          value={value}
-          onChange={(newValue) => setValue(newValue || dayjs())}
-          label={label}
-          buttonSize={buttonSize}
-          buttonVariant={buttonVariant}
-          borderType={borderType}
-          {...datePickerProps}
-        />
-      </LocalizationProvider>
-    );
-  }
-);
-
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ButtonFieldDatePicker
+        value={value}
+        onChange={(newValue) => onChange(newValue || dayjs())}
+        label={label}
+        buttonSize={buttonSize}
+        buttonVariant={buttonVariant}
+        borderType={borderType}
+        {...datePickerProps}
+      />
+    </LocalizationProvider>
+  );
+};
 
 export default MuiStyledDatePicker;

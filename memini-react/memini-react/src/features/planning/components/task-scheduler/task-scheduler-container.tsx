@@ -45,7 +45,7 @@ const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainer
     }, []);
 
     const handleDateSelectionChange = (selectedWeek: number) => setSelectedWeek(selectedWeek);
-    console.log(weekdays);
+    
     return ( 
         <Fragment>
             {/* Should probably remove the content header and scaffold from container, it doesnt need re-render when tasks update.*/}

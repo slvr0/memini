@@ -22,6 +22,10 @@ const MaterialUITheme1Profile = {
       light: { main: '#EBD1D1', hover: '#d49c9c', text: '#000', border: '#CE9C9C', borderHover: '#C47B7B' },
       dark: { main: '#CE9C9C', hover: '#C47B7B', text: '#000', border: '#E1E7EB', borderHover: '#C1C8CD' },
     },
+    meminiThemeOutline: {      
+      light: { main: '#FFFFFF', hover: '#b4e5d6', text: '#171B25', border:'#4DC19D', borderHover:'#379f7f' },
+      dark: { main: '#90caf9', hover: '#64b5f6', text: '#000', border:'#E1E7EB', borderHover:'#C1C8CD' }, //dark modes are not configured yet.
+    }
   },
   borderProfiles: {
     rounded: { 

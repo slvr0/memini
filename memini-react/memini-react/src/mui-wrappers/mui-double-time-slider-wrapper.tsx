@@ -1,11 +1,10 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import React, { useState, useEffect } from "react";
 import { Slider, Box } from "@mui/material";
-import type {TimeSliderRef, DiscreteDoubleTimeSliderProps} from "./interfaces/mui-interfaces";
 
 const minutesInDay = 24 * 60;
 const stepMinutes = 15;
 
-const valueToTime = (value : number) => {
+const valueToTime = (value: number) => {
   const hours = Math.floor(value / 60);
   const minutes = value % 60;
   return `${hours.toString().padStart(2, "0")}:${minutes
@@ -13,42 +12,34 @@ const valueToTime = (value : number) => {
     .padStart(2, "0")}`;
 };
 
-const DiscreteDoubleTimeSlider = forwardRef<TimeSliderRef, DiscreteDoubleTimeSliderProps>(function DiscreteDoubleTimeSlider(
-  { timeInterval , onChange }, // accept prop
-  ref
-) {
-  const [timeRange, setTimeRange] = useState(timeInterval);
+interface DiscreteDoubleTimeSliderProps {
+  value: number[];
+  onChange: (newValue: number[]) => void;
+}
 
-  useEffect(() => {
-    if (timeInterval) setTimeRange(timeInterval);
-  }, [timeInterval]);
-
-  const handleChange = (event: Event, 
-    newValue: number[], activeThumb: number) => {
+const DiscreteDoubleTimeSlider: React.FC<DiscreteDoubleTimeSliderProps> = ({
+  value,
+  onChange
+}) => {
+  const handleChange = (event: Event, newValue: number | number[], activeThumb: number) => {
     if (!Array.isArray(newValue)) return;
 
-    let updatedRange;
+    let updatedRange: number[];
     if (activeThumb === 0) {
-      if (newValue[0] >= timeRange[1]) return; // block if crossing end
-      updatedRange = [newValue[0], timeRange[1]];
+      if (newValue[0] >= value[1]) return; // block if crossing end
+      updatedRange = [newValue[0], value[1]];
     } else {
-      if (newValue[1] <= timeRange[0]) return; // block if crossing start
-      updatedRange = [timeRange[0], newValue[1]];
+      if (newValue[1] <= value[0]) return; // block if crossing start
+      updatedRange = [value[0], newValue[1]];
     }
 
-    setTimeRange(updatedRange);
-    if (onChange) onChange(updatedRange); // notify parent
+    onChange(updatedRange);
   };
-
-  useImperativeHandle(ref, () => ({
-    getValue: () : number[] =>  timeRange, // raw minutes
-    getValueAsTime: () : string[] => timeRange.map(valueToTime), // formatted times
-  }));
 
   return (
     <Box sx={{ p: 3 }}>
       <Slider
-        value={timeRange}
+        value={value}
         onChange={handleChange}
         min={0}
         max={minutesInDay}
@@ -66,6 +57,6 @@ const DiscreteDoubleTimeSlider = forwardRef<TimeSliderRef, DiscreteDoubleTimeSli
       />
     </Box>
   );
-});
+};
 
 export default DiscreteDoubleTimeSlider;

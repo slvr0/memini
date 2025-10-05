@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../../store";
 import { userTasksActions } from "../../../features/tasks/store/task-slice";
 import { toDateKey } from "./date-utils";
-import type { DateKey, IDisplayTask, ITask } from "../interfaces/task-interface";
-import { deleteTaskApi, fetchTasksForDate, updateTaskApi, addTaskApi } from "../../../features/tasks/store/task-api";
+import type { DateKey, IDisplayTask, ITask, IStoredUserTask, IStoredUserTaskResponse } from "../interfaces/task-interface";
+import { deleteTaskApi, fetchTasksForDate, updateTaskApi, addTaskApi, getFavoritesAndRecentTasksApi } from "../../../features/tasks/store/task-api";
 import { makeSelectTasksByDate, isDateLoaded } from "../../../features/tasks/store/task-selector";
 import {  calculateTaskPixelTime } from "../../planning/computes/task-scheduler-computations"
 import {ICalendarDate} from "../../../interfaces/common-interfaces"
@@ -64,6 +64,7 @@ export const useTaskManager = () => {
   const addTask = async (task: Omit<ITask, 'UserKey'>) : Promise<ApiResponse<ITask>> => {
     const response = await addTaskApi(task);
 
+
      if(response.Success) {
       dispatch(userTasksActions.addTask(response.ResponseObject));      
     }
@@ -97,5 +98,22 @@ export const useTaskManager = () => {
     dispatch(userTasksActions.removeTask(task));
   }
 
-  return { areDisplayTasksLoaded, fetchTasksForDateAndStore, useTasksForDate, setSelectedTask, clearSelectedTask, updateTask, updateTaskFromDragEvent, deleteTask, addTask };
+  const fetchRecentAndFavoriteTasks = () : Promise<ApiResponse<IStoredUserTaskResponse>> => {
+      const response : Promise<ApiResponse<IStoredUserTaskResponse>> = getFavoritesAndRecentTasksApi();
+  
+      return response;
+  }
+
+  return { 
+    areDisplayTasksLoaded, 
+    fetchTasksForDateAndStore, 
+    useTasksForDate, 
+    setSelectedTask, 
+    clearSelectedTask, 
+    updateTask, 
+    updateTaskFromDragEvent, 
+    deleteTask, 
+    addTask,
+    fetchRecentAndFavoriteTasks 
+  };
 };

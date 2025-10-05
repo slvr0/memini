@@ -23,5 +23,10 @@ public partial class UserTask
 
     public int? Userkey { get; set; }
 
+    /// <summary>
+    /// Datetime when task was created
+    /// </summary>
+    public DateOnly? Created { get; set; }
+
     public virtual User? UserkeyNavigation { get; set; }
 }

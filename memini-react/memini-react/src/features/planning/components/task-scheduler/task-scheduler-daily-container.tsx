@@ -56,10 +56,9 @@ const TaskSchedulerDailyContainer: React.FC<TaskDailyContainerProps> = ({
 
     const pixelsPerHour = containerHeight / 24;
     
-    const dailyTasks : ITask[] = useTasksForDate(weekday.year, weekday.month, weekday.day); //lol fix the month indexing.
+    const dailyTasks : ITask[] = useTasksForDate(weekday.year, weekday.month, weekday.day); 
     const displayTasks = calculateTaskDisplayMetricsSimple(dailyTasks, pixelsPerHour);
 
-    console.log("day", weekday ,"displaytasks", displayTasks);
     return (        
     <div 
     ref={containerRef} 

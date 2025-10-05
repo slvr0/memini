@@ -15,6 +15,8 @@ public partial class MeminiDbContext : DbContext
     {
     }
 
+    public virtual DbSet<StoredUserTask> StoredUserTasks { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserTask> UserTasks { get; set; }
@@ -40,6 +42,31 @@ public partial class MeminiDbContext : DbContext
             .HasPostgresExtension("extensions", "uuid-ossp")
             .HasPostgresExtension("graphql", "pg_graphql")
             .HasPostgresExtension("vault", "supabase_vault");
+
+        modelBuilder.Entity<StoredUserTask>(entity =>
+        {
+            entity.HasKey(e => e.Storedusertaskkey).HasName("StoredUserTask_pkey");
+
+            entity.ToTable("StoredUserTask");
+
+            entity.Property(e => e.Storedusertaskkey).HasColumnName("storedusertaskkey");
+            entity.Property(e => e.Created)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnName("created");
+            entity.Property(e => e.Description)
+                .HasMaxLength(200)
+                .HasColumnName("description");
+            entity.Property(e => e.Duration).HasColumnName("duration");
+            entity.Property(e => e.Favorite).HasColumnName("favorite");
+            entity.Property(e => e.Title)
+                .HasMaxLength(100)
+                .HasColumnName("title");
+            entity.Property(e => e.Userkey).HasColumnName("userkey");
+
+            entity.HasOne(d => d.UserkeyNavigation).WithMany(p => p.StoredUserTasks)
+                .HasForeignKey(d => d.Userkey)
+                .HasConstraintName("StoredUserTask_userkey_fkey");
+        });
 
         modelBuilder.Entity<User>(entity =>
         {
@@ -71,6 +98,9 @@ public partial class MeminiDbContext : DbContext
             entity.ToTable("UserTask");
 
             entity.Property(e => e.Usertaskkey).HasColumnName("usertaskkey");
+            entity.Property(e => e.Created)
+                .HasComment("Datetime when task was created")
+                .HasColumnName("created");
             entity.Property(e => e.Day).HasColumnName("day");
             entity.Property(e => e.Description)
                 .HasMaxLength(200)

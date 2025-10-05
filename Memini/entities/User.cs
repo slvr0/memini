@@ -15,5 +15,7 @@ public partial class User
 
     public string LastName { get; set; } = null!;
 
+    public virtual ICollection<StoredUserTask> StoredUserTasks { get; set; } = new List<StoredUserTask>();
+
     public virtual ICollection<UserTask> UserTasks { get; set; } = new List<UserTask>();
 }

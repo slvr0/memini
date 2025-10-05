@@ -44,7 +44,9 @@ public class UserTaskController : ControllerBase
             Title = userTask.Title,
             Description = userTask.Description,
             Userkey = userKey
-        }).Entity;
+        }).Entity;        
+
+        new UserTaskManager(userKey, _context).StoreTask(createdUserTask);
 
         _context.SaveChanges();                
 
@@ -106,6 +108,29 @@ public class UserTaskController : ControllerBase
         _context.SaveChanges();
 
         return Ok(new { Response = "Task successfully deleted", Success = true });
+    }
+
+    [Authorize]
+    [HttpGet]
+    [Route("GetFavoritesAndRecentTasks")]
+    public IActionResult GetFavoritesAndRecentTasks()
+    {
+        if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
+            return Unauthorized("Invalid user token: missing or invalid user info.");
+
+        int nrOfResults = 10; // experimental
+
+        var storedUserTasks = _context.StoredUserTasks.Where(ut => ut.Userkey == userKey);
+        List<DtoStoredUserTask> favorites = storedUserTasks.Where(sut => sut.Favorite == true).Take(10).Select(sutFav => sutFav.ToDto()).ToList();
+        List<DtoStoredUserTask> recent = storedUserTasks.OrderByDescending(sut => sut.Created).Take(10).Select(sutRec => sutRec.ToDto()).ToList(); ;
+
+        DtoStoredUserTaskResponse storedUserTaskResponse = new DtoStoredUserTaskResponse()
+        {
+            Favorites = favorites,
+            Recent = recent
+        };
+
+        return DtoResponse<DtoStoredUserTaskResponse>.Ok(storedUserTaskResponse, "Fetched Favorites and Recently created tasks successfully").ToOkResult();    
     }
 }
 

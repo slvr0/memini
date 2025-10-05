@@ -1,6 +1,6 @@
 
 import moment, { weekdays } from "moment";
-import {ITask, IDisplayTask} from '../../../features/tasks/interfaces/task-interface'
+import {ITask, IDisplayTask, IStoredUserTask} from '../../../features/tasks/interfaces/task-interface'
 import { StatusType, TaskStatus } from "../../../mui-wrappers/mui-status-circle-wrapper";
 import _ from 'lodash';
 import { ICalendarDate } from "../../../interfaces/common-interfaces";    
@@ -103,7 +103,54 @@ export const getWeekDates = (year: number, weekNum: number): ICalendarDate[] => 
 
 export const calculateTaskPixelTime = (pixel:number, maxPixel:number) : number => Math.round( pixel * 24 * 60 / maxPixel ) ;
 
+// export function formatWithOrdinal(date) {
+//     const day = date.getDate();
+//     const ordinal = (day) => {
+//         const s = ["th", "st", "nd", "rd"];
+//         const v = day % 100;
+//         return day + (s[(v - 20) % 10] || s[v] || s[0]);
+//     };
+    
+//     const month = date.toLocaleDateString('en-US', { month: 'long' });
+//     const year = date.getFullYear();
+    
+//     return `${ordinal(day)} of ${month} ${year}`;
+// }
+// // Result: "5th of March 2025"
 
+// // Group by day
+// export const groupedByDay = tasks.reduce((acc, task) => {
+//     const date = new Date(task.Created);
+//     const dayKey = date.toLocaleDateString('en-US'); // "3/5/2025" or use ISO: date.toISOString().split('T')[0]
+    
+//     if (!acc[dayKey]) {
+//         acc[dayKey] = [];
+//     }
+//     acc[dayKey].push(task);
+    
+//     return acc;
+// }, {});
+
+export const groupTasksByDay = (tasks: IStoredUserTask[]) => {
+    return tasks.reduce((acc, task) => {
+        if (!task.Created) return acc;
+        
+        const date = new Date(task.Created);
+        
+        // Check if date is valid
+        if (isNaN(date.getTime()))        
+            return acc;       
+        
+        const dayKey = date.toISOString().split('T')[0]; // "2025-03-05"
+        
+        if (!acc[dayKey]) {
+            acc[dayKey] = [];
+        }
+        acc[dayKey].push(task);
+        
+        return acc;
+    }, {} as Record<string, IStoredUserTask[]>);
+};
 
 
 

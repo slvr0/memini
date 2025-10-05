@@ -135,7 +135,7 @@ function LoginPage() {
                                 <Typography variant="subtitle2"> Register account</Typography>
                             </MuiStyledButton>
 
-                            <MuiStyledButton themeColor = 'light' buttonSize = 'lg' buttonVariant = 'harmonicGreen' borderType = 'rounded' opacity={.85} onClick={() => {processLoginRequest()}}> 
+                            <MuiStyledButton themeColor = 'light' buttonSize = 'lg' buttonVariant = 'meminiThemeOutline' borderType = 'rounded' opacity={.85} onClick={() => {processLoginRequest()}}> 
                                 <Typography variant="subtitle2"> Login </Typography>
                             </MuiStyledButton>
                         </div>
