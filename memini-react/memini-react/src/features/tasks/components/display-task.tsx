@@ -67,7 +67,7 @@ const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {
       }),
     }), [props.displayTask]);
 
-    drag(ref);
+  
 
     const startTimeDisplayFormat = minutesToHHMM(props.displayTask.StartTime);
     const endTimeDisplayFormat = minutesToHHMM(props.displayTask.EndTime);
@@ -88,7 +88,7 @@ const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {
             hover:border-solid !hover:border-2 hover:animate-pulse hover:shadow-lg hover:bg-miTaskHL" 
             
             onClick={() => onEditTask()}
-            ref={ref}
+            ref={drag as any}
             style={{  
                 borderWidth: 1.5,      
                 top: props.displayTask.yPosition,

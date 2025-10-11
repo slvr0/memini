@@ -7,13 +7,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-
+using MeminiEventAPI.services;
 
 var builder = WebApplication.CreateBuilder(args);
 var jwtKey = builder.Configuration["JwtSettings:SecretKey"];
 var keyBytes = Encoding.ASCII.GetBytes(jwtKey ?? "");
-
-Console.WriteLine(jwtKey);
 
 // Add authentication
 builder.Services.AddAuthentication(options =>
@@ -33,6 +31,9 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false,
     };
 });
+
+/* Adds connection pool for event apis */
+builder.Services.AddEventApiClients(builder.Configuration);
 
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>

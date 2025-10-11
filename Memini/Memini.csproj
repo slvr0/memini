@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="event_datamodels\ticketmaster\" />
     <Folder Include="factories\" />
     <Folder Include="validators\" />
   </ItemGroup>
@@ -45,6 +46,10 @@
   <Content Remove="../memini-react/**" />
 </ItemGroup>
 
+<ItemGroup>
+  <ProjectReference Include="..\MeminiEventAPI\MeminiEventAPI.csproj" />
+</ItemGroup>
+
 <!-- Automatically build React and copy to wwwroot -->
 <Target Name="BuildReactApp" BeforeTargets="Build" Condition="!Exists('wwwroot/static')">
   <Message Text="Building React app..." Importance="high" />
@@ -54,7 +59,7 @@
   <ItemGroup>
     <ReactBuildFiles Include="../memini-react/memini-react/build/**/*.*" />
   </ItemGroup>
-  <Copy SourceFiles="@(ReactBuildFiles)" DestinationFiles="@(ReactBuildFiles-&gt;'wwwroot/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  <Copy SourceFiles="@(ReactBuildFiles)" DestinationFiles="@(ReactBuildFiles->'wwwroot/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
 </Target>
 
 

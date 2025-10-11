@@ -1,8 +1,26 @@
-function EventsPage() {    
+import { fetchEventApiData } from "../../../services/event-services"
+import MuiStyledButton from "../../../mui-wrappers/mui-button-wrapper";
+
+function EventsPage() { 
+    
+    const onFetchEventApiData = () => {        
+        fetchEventApiData().then(v => {
+                console.log(v);
+        }          
+        );
+    }
+
+
     return <>    
-       <h1> Not implemented yet, stay tuned! </h1>
+
+      
+
+        <MuiStyledButton themeColor = 'light' buttonSize = 'xs' buttonVariant = 'main' borderType = 'rounded' opacity={.85} onClick={() => {onFetchEventApiData()}}> 
+            fetch event api data
+        </MuiStyledButton>
+    
     </>
 }
 
 
-export default EventsPage;
+export default EventsPage;                                                                      
