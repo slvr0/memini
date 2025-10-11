@@ -9,109 +9,93 @@ using MeminiEventAPI.structures;
 using MeminiEventAPI.mapping;
 using MeminiEventAPI.mapping.profiles;
 using MeminiEventAPI.api_datamodels.predict_hq;
-
-
+using MeminiEventAPI.api_datamodels;
 namespace MeminiEventAPI.adapters;
 
-public class PredictHQEventApiAdapter(HttpClient httpClient) : EventApiBaseAdapter(httpClient, "PredictHQ")
+internal class PredictHqEventApiAdapter(HttpClient httpClient) : EventApiBaseAdapter<PredictHqDataModel, PredictHqEvent>(httpClient, "Ticketmaster")
 {
-    public override Task<BulkMappingResult> MapEventResultBulkData(IApiDataModel deserializedData)
-    {
-        if (deserializedData is not PredictHqDataModel predictHqDataModel)
-            return Task.FromResult(new BulkMappingResult()); // or handle error / return null, depending on context
-
-        const double keepThreshold = 0.1; // data quality for storing the data
-
-        var predictHqEvents = predictHqDataModel.Results;
-        if (predictHqEvents == null || !predictHqEvents.Any())
-            return Task.FromResult(new BulkMappingResult()); 
-
-        var predictHqDataMapper = new PredictHqMapper();
-
-        var result = BulkMappingHelper.MapEventsAsync(
-            sources: predictHqEvents,
-            mapFunction: evt => predictHqDataMapper.Map(evt),
-            minQuality: keepThreshold
-        );
-
-        return result;
-    }
-
     public readonly static string ConnectionString = "https://api.predicthq.com/v1/events/";
 
-    #region generate request
-    public override string GenerateApiRequestUrl(MeminiEventApiRequest requestConfig)
+    protected override int ApiDataModelTotalResult(PredictHqDataModel dataModel) => dataModel.Results?.Count ?? 0;
+
+    protected override List<PredictHqEvent> ApiDataModelResult(PredictHqDataModel dataModel) => dataModel.Results ?? [];
+
+    #region generate request url
+    public override string GenerateApiRequestUrl(IApiRequest requestConfig) 
     {
+        if (!(requestConfig is MeminiEventApiRequest eventRequestConfig))
+            return "";
+
         var queryParams = new List<string>();
 
         // Location parameters
-        if (!string.IsNullOrEmpty(requestConfig.Location))
+        if (!string.IsNullOrEmpty(eventRequestConfig.Location))
         {
-            if (!string.IsNullOrEmpty(requestConfig.Radius))
+            if (!string.IsNullOrEmpty(eventRequestConfig.Radius))
             {
                 // Ensure radius includes unit (mi, km, m, or ft)
-                queryParams.Add($"within={requestConfig.Radius}@{requestConfig.Location}");
+                queryParams.Add($"within={eventRequestConfig.Radius}@{eventRequestConfig.Location}");
             }
         }
 
         // Date parameters
-        if (requestConfig.StartDate.HasValue)
+        if (eventRequestConfig.StartDate.HasValue)
         {
-            queryParams.Add($"active.gte={requestConfig.StartDate.Value:yyyy-MM-dd}");
+            queryParams.Add($"active.gte={eventRequestConfig.StartDate.Value:yyyy-MM-dd}");
         }
 
-        if (requestConfig.EndDate.HasValue)
+        if (eventRequestConfig.EndDate.HasValue)
         {
-            queryParams.Add($"active.lte={requestConfig.EndDate.Value:yyyy-MM-dd}");
+            queryParams.Add($"active.lte={eventRequestConfig.EndDate.Value:yyyy-MM-dd}");
         }
 
         // Category filter
-        if (!string.IsNullOrEmpty(requestConfig.Category))
+        if (!string.IsNullOrEmpty(eventRequestConfig.Category))
         {
-            queryParams.Add($"category={requestConfig.Category}");
+            queryParams.Add($"category={eventRequestConfig.Category}");
         }
 
-        if (!string.IsNullOrEmpty(requestConfig.Country))
+        if (!string.IsNullOrEmpty(eventRequestConfig.Country))
         {
             // But use CountryCode (2-letter) for the API parameter
-            queryParams.Append($"&country={requestConfig.CountryCode}");
+            queryParams.Append($"&country={eventRequestConfig.CountryCode}");
         }
 
         // State filter
-        if (!string.IsNullOrEmpty(requestConfig.State))
+        if (!string.IsNullOrEmpty(eventRequestConfig.State))
         {
-            queryParams.Add($"state={requestConfig.State}");
+            queryParams.Add($"state={eventRequestConfig.State}");
         }
 
         // Labels
-        if (!string.IsNullOrEmpty(requestConfig.Labels))
+        if (!string.IsNullOrEmpty(eventRequestConfig.Labels))
         {
-            queryParams.Add($"phq_labels={Uri.EscapeDataString(requestConfig.Labels)}");
+            queryParams.Add($"phq_labels={Uri.EscapeDataString(eventRequestConfig.Labels)}");
         }
 
         // Sort order
-        if (!string.IsNullOrEmpty(requestConfig.SortBy))
+        if (!string.IsNullOrEmpty(eventRequestConfig.SortBy))
         {
             // Map your internal sort values to PredictHQ's valid sort fields
-            var sortValue = requestConfig.SortBy.ToLower() switch
+            var sortValue = eventRequestConfig.SortBy.ToLower() switch
             {
                 "score.desc" => "-rank",           // Map to descending rank
                 "score.asc" => "rank",             // Map to ascending rank
                 "date.desc" => "-start",           // Map to descending start date
                 "date.asc" => "start",             // Map to ascending start date  
                 "relevance" => "relevance,-start", // Default
-                _ => requestConfig.SortBy          // Pass through if already valid
+                _ => eventRequestConfig.SortBy          // Pass through if already valid
             };
             queryParams.Add($"sort={sortValue}");
         }
 
         // Pagination
-        var pageSize = requestConfig.PageSize ?? 20;
+        var pageSize = eventRequestConfig.PageSize ?? 20;
         queryParams.Add($"limit={pageSize}");
 
-        if (requestConfig.PageOffset.HasValue && requestConfig.PageOffset.Value > 1)
+        if (eventRequestConfig.PageOffset.HasValue && eventRequestConfig.PageOffset.Value > 1)
         {
-            var offset = (requestConfig.PageOffset.Value - 1) * pageSize;
+            var offset = (eventRequestConfig.PageOffset.Value - 1) * pageSize;
             queryParams.Add($"offset={offset}");
         }
 
@@ -119,28 +103,11 @@ public class PredictHQEventApiAdapter(HttpClient httpClient) : EventApiBaseAdapt
             ? $"?{string.Join("&", queryParams)}"
             : string.Empty;
     }
-    #endregion generate request
+    #endregion generate request url
 
-    public override async Task<IApiDataModel> DeserializeData(string jsonContent)
+    public override List<MappingResult<NormalizedEvent>> MapToNormalizedEvents(double keepThreshold = 0.1)
     {
-        try
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-            long responseSizeBytes = Encoding.UTF8.GetByteCount(jsonContent);
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonContent));
-            var result = await JsonSerializer.DeserializeAsync<PredictHqDataModel>(stream, options);
-            int eventCount = result?.Results?.Count ?? 0;
-            InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
-            return result ?? new PredictHqDataModel();
-        }
-        catch (Exception ex)
-        {
-            InvokeDataMetricsResponse(0, (int)0, ex);
-            return new PredictHqDataModel();
-        }
+        var mapper = new mapping.profiles.PredictHqMapper();
+        return EventsMapperExecutor.Execute<PredictHqEvent>(AccumulatedData, mapper, keepThreshold);
     }
-
 }

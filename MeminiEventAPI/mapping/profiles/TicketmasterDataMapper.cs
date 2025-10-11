@@ -10,171 +10,35 @@ namespace MeminiEventAPI.mapping.profiles;
 /// <summary>
 /// Ticketmaster to NormalizedEvent mapper using FluentQualityMapper
 /// </summary>
-public class TicketmasterMapper
+public class TicketmasterMapper : FluentQualityMapper<TM.TicketmasterEvent, NormalizedEvent>
 {
-    private readonly FluentQualityMapper<TM.TicketmasterEvent, NormalizedEvent> _mapper;
-
     public TicketmasterMapper()
     {
-        _mapper = new FluentQualityMapper<TM.TicketmasterEvent, NormalizedEvent>();
         ConfigureMapping();
     }
 
-    public FluentQualityMapper<TM.TicketmasterEvent, NormalizedEvent> Mapper => _mapper;
 
     private void ConfigureMapping()
     {
         // ==================== BASIC INFORMATION ====================
-        try { 
-        // External ID
-        _mapper.Map(
-            sourceExpression: s => s.Id,
-            destExpression: d => d.ExternalId,
-            converter: id => id?.Trim(),
-            trackQuality: true
-        );
+        Map(s => s.Id, d => d.ExternalId, id => id?.Trim(), trackQuality: true);
+        Map(s => s.Name, d => d.Name, name => name?.Trim(), trackQuality: true);
+        Map(s => s.Url, d => d.Url, trackQuality: true);
+        Map(s => s.Info, d => d.Description,
+            info => string.IsNullOrWhiteSpace(info) ? null : info.Trim(), trackQuality: true);
 
-        // Event Name
-        _mapper.Map(
-            sourceExpression: s => s.Name,
-            destExpression: d => d.Name,
-            converter: name => name?.Trim(),
-            trackQuality: true
-        );
-
-        // Event URL
-        _mapper.Map(
-            sourceExpression: s => s.Url,
-            destExpression: d => d.Url,
-            trackQuality: true
-        );
-
-        // Description (from Info field)
-        _mapper.Map(
-            sourceExpression: s => s.Info,
-            destExpression: d => d.Description,
-            converter: info => string.IsNullOrWhiteSpace(info) ? null : info.Trim(),
-            trackQuality: true
-        );
-
-        // Source - Not tracked (always set)
-        //_mapper.Map(
-        //    sourceExpression: s => s,
-        //    destExpression: d => d.Source,
-        //    converter: _ => EventSource.Ticketmaster,
-        //    trackQuality: false
-        //);
-
-        // ==================== TEMPORAL INFORMATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Dates,
-            destExpression: d => d.TemporalInfo,
-            converter: dates => BuildTemporalInfo(dates),
-            trackQuality: true
-        );
-
-        // ==================== GEOGRAPHIC INFORMATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Embedded,
-            destExpression: d => d.GeographicInfo,
-            converter: embedded => BuildGeographicInfo(embedded),
-            trackQuality: true
-        );
-
-        // ==================== VENUE INFORMATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Embedded,
-            destExpression: d => d.VenueInfo,
-            converter: embedded => BuildVenueInfo(embedded),
-            trackQuality: true
-        );
-
-        // ==================== CATEGORIZATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Classifications,
-            destExpression: d => d.CategorizationInfo,
-            converter: classifications => BuildCategorizationInfo(classifications),
-            trackQuality: true
-        );
-
-        // ==================== STATUS INFORMATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Sales,
-            destExpression: d => d.StatusInfo,
-            converter: sales => BuildStatusInfo(sales),
-            trackQuality: true
-        );
-
-        // ==================== PRICING ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.PriceRanges,
-            destExpression: d => d.PricingInfo,
-            converter: priceRanges => BuildPricingInfo(priceRanges),
-            trackQuality: true
-        );
-
-        // ==================== MEDIA ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Images,
-            destExpression: d => d.Media,
-            converter: images => BuildMedia(images),
-            trackQuality: true
-        );
-
-        // ==================== PERFORMERS ====================
-        // Note: Your Ticketmaster model doesn't include Attractions/Performers
-        //_mapper.Map(
-        //    sourceExpression: s => s,
-        //    destExpression: d => d.Performers,
-        //    converter: _ => (List<EventPerformer>?)null,
-        //    trackQuality: false
-        //);
-
-        // ==================== METADATA (Not tracked) ====================
-
-
-        }
-        catch(Exception e)
-        {
-            Console.WriteLine(e.Message);
-            throw;
-        }
+        // ==================== COMPLEX MAPPINGS ====================
+        Map(s => s.Dates, d => d.TemporalInfo, dates => BuildTemporalInfo(dates), trackQuality: true);
+        Map(s => s.Embedded, d => d.GeographicInfo, embedded => BuildGeographicInfo(embedded), trackQuality: true);
+        Map(s => s.Embedded, d => d.VenueInfo, embedded => BuildVenueInfo(embedded), trackQuality: true);
+        Map(s => s.Classifications, d => d.CategorizationInfo,
+            classifications => BuildCategorizationInfo(classifications), trackQuality: true);
+        Map(s => s.Sales, d => d.StatusInfo, sales => BuildStatusInfo(sales), trackQuality: true);
+        Map(s => s.PriceRanges, d => d.PricingInfo,
+            priceRanges => BuildPricingInfo(priceRanges), trackQuality: true);
+        Map(s => s.Images, d => d.Media, images => BuildMedia(images), trackQuality: true);
+    
     }
-
-    /// <summary>
-    /// Map a single Ticketmaster event to NormalizedEvent with quality tracking
-    /// </summary>
-    public MappingResult<NormalizedEvent> Map(TM.TicketmasterEvent source)
-    {
-        var result = _mapper.Execute(source);
-
-        // Set the quality score on the result object
-        if (result.Result != null)
-        {
-            result.Result.DataQuality = result.Quality;
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    /// Map multiple events with quality filtering
-    /// </summary>
-    public List<MappingResult<NormalizedEvent>> MapMany(IEnumerable<TM.TicketmasterEvent> sources, double minQuality = 0.0)
-    {
-        return sources
-            .Select(s => Map(s))
-            .Where(r => r.Quality >= minQuality)
-            .ToList();
-    }
-
     // ==================== TEMPORAL INFO BUILDER ====================
 
     private EventTemporalInfo? BuildTemporalInfo(TM.DateInfo? dates)

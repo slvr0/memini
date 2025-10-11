@@ -19,25 +19,9 @@ namespace MeminiEventAPI.handlers
     {
         private readonly Dictionary<string, HttpConnectionResponse> _httpConnectionResponseInformation = new();
         private readonly Dictionary<string, ApiFetchMetrics> _apiFetchMetrics = new();
-        private readonly IEnumerable<EventApiBaseAdapter> _adapters;
-
+        private readonly IEnumerable<BaseAdapter> _adapters;
         private readonly bool connectionOutput = true;
         private readonly bool metricsOutput = true;
-
-        private string FormatBytes(long bytes)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB" };
-            double len = bytes;
-            int order = 0;
-
-            while (len >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                len /= 1024;
-            }
-
-            return $"{len:0.##} {sizes[order]}";
-        }
 
         private void OnSuccessfulFetch(object sender, HttpConnectionResponse httpConnectionResponse)
         {
@@ -52,10 +36,10 @@ namespace MeminiEventAPI.handlers
             if (sender is not BaseAdapter adapter || apiFetchMetrics == null)
                 return;
 
-            _apiFetchMetrics[adapter.AdapterId] = apiFetchMetrics;  
+            _apiFetchMetrics[adapter.AdapterId] = apiFetchMetrics;
         }
 
-        public ApiAdapterHandler(IEnumerable<EventApiBaseAdapter> adapters)
+        public ApiAdapterHandler(IEnumerable<BaseAdapter> adapters)
         {
             _adapters = adapters.ToList();
 
@@ -65,113 +49,70 @@ namespace MeminiEventAPI.handlers
 
         public void Subscribe(BaseAdapter adapter)
         {
-            if(connectionOutput)
+            if (connectionOutput)
                 adapter.FetchResponse += OnSuccessfulFetch!;
-            if(metricsOutput)
+            if (metricsOutput)
                 adapter.MetricsResponse += OnSuccessfulCollectMetrics!;
         }
 
-        public async Task<UnifiedFetchResult> FetchDataFromAllApis(MeminiEventApiRequest requestConfig)
+        public async Task<MeminiApiResponse> FetchDataFromApis(Dictionary<string, ICollection<IApiRequest>> apiFetchRequestFormat)
         {
-            var unifiedEvents = new List<NormalizedEvent>();
-            var resultsBySource = new Dictionary<string, BulkMappingResult>();
-            var startTime = DateTime.UtcNow;
+            var results = new MeminiApiResponse();
+            var tasks = new List<Task<IApiResult?>>();
 
+            foreach (var apiFetchRequest in apiFetchRequestFormat)
+            {
+                var baseAdapter = _adapters.FirstOrDefault(adapter => adapter.AdapterId == apiFetchRequest.Key);
+                if (baseAdapter == null)
+                    continue;
+
+                tasks.Add(FetchDataFromApi(baseAdapter: baseAdapter, requestConfigs: apiFetchRequest.Value));
+            }
+            var completedResults = await Task.WhenAll(tasks);
+
+            foreach(IApiResult? apiResult in completedResults)
+            {
+                if(apiResult == null)
+                    continue;
+
+                results.ApiResults[apiResult.AdapterId] = apiResult;
+            }
+
+            return results;                
+        }
+
+        private EventsApiResult CreateEventApiResult(string adapterId, List<MappingResult<NormalizedEvent>> mappedResult, int totalFetched, int totalMapped) => 
+            new(adapterId, mappedResult, totalFetched, totalMapped);
+        private PlacesApiResult CreatePlaceApiResult(string adapterId, List<MappingResult<NormalizedPlace>> mappedResult, int totalFetched, int totalMapped) =>
+            new(adapterId, mappedResult, totalFetched, totalMapped);     
+
+        private async Task<IApiResult?> FetchDataFromApi(BaseAdapter baseAdapter, ICollection<IApiRequest> requestConfigs)
+        {
+            IApiResult apiResult = null;
             try
             {
-                foreach (var adapter in _adapters)
+                if (baseAdapter is IEventAdapter eventApiBaseAdapter)
                 {
-                    var result              = await adapter.FetchDataAsync(requestConfig);
-                    var deserializedData    = await adapter.DeserializeData(result);
-                    var mappedBulkData      = await adapter.MapEventResultBulkData(deserializedData);
-
-                    resultsBySource[adapter.AdapterId] = mappedBulkData;
-                    unifiedEvents.AddRange(mappedBulkData.Events);
-
-                    Console.WriteLine("=== PERFORMANCE METRICS ===");
-                    Console.WriteLine($"Total Events Processed: {mappedBulkData.TotalProcessed}");
-                    Console.WriteLine($"Successfully Mapped: {mappedBulkData.TotalMapped}");
-                    Console.WriteLine($"Filtered Out: {mappedBulkData.TotalFiltered}");
-                    Console.WriteLine($"Duration: {mappedBulkData.Duration.TotalSeconds:F2} seconds");
-                    Console.WriteLine($"Events per Second: {mappedBulkData.EventsPerSecond:F2}");
-                    Console.WriteLine($"Average Processing Time: {mappedBulkData.Duration.TotalMilliseconds / mappedBulkData.TotalProcessed:F2}ms per event");
-
-                    PrintFetchSummary();                    
+                    await eventApiBaseAdapter.FetchAllAndDeserialize(requestConfigs, new System.Text.Json.JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                    List<MappingResult<NormalizedEvent>> mappingResult = eventApiBaseAdapter.MapToNormalizedEvents();
+                    apiResult = CreateEventApiResult(mappedResult: mappingResult, adapterId: baseAdapter.AdapterId, totalFetched: eventApiBaseAdapter.GetAccumulatedFetchData(), totalMapped: mappingResult.Count);
+                }
+                else if (baseAdapter is IPlaceAdapter placeApiBaseAdapter)
+                {
+                    await placeApiBaseAdapter.FetchAllAndDeserialize(requestConfigs, new System.Text.Json.JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                    List<MappingResult<NormalizedPlace>> mappingResult = placeApiBaseAdapter.MapToNormalizedPlaces();
+                    apiResult = CreatePlaceApiResult(mappedResult: mappingResult, adapterId: baseAdapter.AdapterId, totalFetched: placeApiBaseAdapter.GetAccumulatedFetchData(), totalMapped: mappingResult.Count);
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _httpConnectionResponseInformation["Error"] = new HttpConnectionResponse()
-                {
-                    ErrorMessage = e.Message,
-                };
-            }
-            var endTime = DateTime.UtcNow;
-            return new UnifiedFetchResult
-            {
-                UnifiedEvents = unifiedEvents,
-                ResultsBySource = resultsBySource,
-                TotalEvents = unifiedEvents.Count,
-                TotalProcessed = resultsBySource.Values.Sum(r => r.TotalProcessed),
-                OverallAverageQuality = unifiedEvents.Any()
-                  ? unifiedEvents.Average(e => e.DataQuality ?? 0)
-                  : 0,
-                StartTime = startTime,
-                EndTime = endTime,
-                HttpConnectionResponses = _httpConnectionResponseInformation,
-                FetchMetrics = _apiFetchMetrics
-            };
-        }
-
-        public async Task<string> FetchDataFromApi(string api, MeminiEventApiRequest requestConfig)
-        {
-            var selectedApi = _adapters.FirstOrDefault(adapter => adapter.AdapterId == api);
-
-            if (selectedApi == null)
-                return "";
-
-            var result = await selectedApi.FetchDataAsync(requestConfig);
-            var deserializedData = await selectedApi.DeserializeData(result);
-            var mappedBulkData = await selectedApi.MapEventResultBulkData(deserializedData);
-
-
-            return "";
-        }
-
-        private void PrintFetchSummary()
-        {
-            Console.WriteLine("\n" + new string('=', 80));
-            Console.WriteLine("API FETCH SUMMARY");
-            Console.WriteLine(new string('=', 80));
-
-            // Print HTTP Connection Information
-            Console.WriteLine("\n--- HTTP Connection Details ---");
-            foreach (var (adapterId, response) in _httpConnectionResponseInformation)
-            {
-                Console.WriteLine($"\nAdapter: {adapterId}");
-                Console.WriteLine($"  Source: {response.Source}");
-                Console.WriteLine($"  URL: {response.Url}");
-                Console.WriteLine($"  Status Code: {response.StatusCode}");
+                Console.WriteLine(ex.Message);               
             }
 
-            // Print Fetch Metrics
-            Console.WriteLine("\n--- Fetch Metrics ---");
-            foreach (var (adapterId, metrics) in _apiFetchMetrics)
-            {
-                Console.WriteLine($"\nAdapter: {adapterId}");
-                Console.WriteLine($"  Events Fetched: {metrics.EventCount}");
-                Console.WriteLine($"  Response Size: {FormatBytes(metrics.ResponseSizeBytes)}");
-            }
-
-            // Print Aggregated Stats
-            Console.WriteLine("\n--- Aggregated Statistics ---");
-            var totalEvents = _apiFetchMetrics.Values.Sum(m => m.EventCount);
-            var totalSize = _apiFetchMetrics.Values.Sum(m => m.ResponseSizeBytes);
-
-            Console.WriteLine($"  Total Events: {totalEvents}");
-            Console.WriteLine($"  Total Data: {FormatBytes(totalSize)}");
-
-            Console.WriteLine("\n" + new string('=', 80) + "\n");
+            return apiResult;
         }
+
+
+
     }
 }

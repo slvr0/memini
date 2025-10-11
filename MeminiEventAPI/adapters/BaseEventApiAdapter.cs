@@ -5,19 +5,30 @@ using System.Text.Json;
 using MeminiEventAPI.Attributes;
 using MeminiEventAPI.handlers;
 using MeminiEventAPI.structures;
+using MeminiEventAPI.api_datamodels;
 using MeminiEventAPI.api_datamodels.ticketmaster;
 using MeminiEventAPI.mapping;
 
 namespace MeminiEventAPI.adapters;
 
-public abstract class BaseAdapter(string apiKey, string adapterId)
+public abstract class BaseAdapter
 {
-    public string AdapterId = adapterId;
-    public string ApiKey { get; set; } = apiKey;
-    
+    protected readonly HttpClient _httpClient;
+    public string AdapterId;
+    public string ApiKey { get; set; } = string.Empty;
+
     public event EventHandler<HttpConnectionResponse>? FetchResponse;
     public event EventHandler<ApiFetchMetrics>? MetricsResponse;
-    public abstract string GenerateApiRequestUrl(MeminiEventApiRequest requestConfig); //Implement me
+
+    protected BaseAdapter(HttpClient httpClient, string adapterId)
+    {
+        _httpClient = httpClient;
+        AdapterId = adapterId;
+        ApiKey = BaseAdapter.ExtractApiKey(_httpClient);
+    }
+    /* Requires implementation */
+    public abstract string GenerateApiRequestUrl(IApiRequest requestConfig);    
+
     public void InvokeHttpResponse(string url, int statusCode, Exception? exception = null)
     {
         FetchResponse?.Invoke(this, new HttpConnectionResponse
@@ -40,15 +51,6 @@ public abstract class BaseAdapter(string apiKey, string adapterId)
             ErrorMessage = exception?.Message ?? ""
         });
     }
-}
-public abstract class EventApiBaseAdapter : BaseAdapter
-{
-    protected readonly HttpClient _httpClient;
-    protected EventApiBaseAdapter(HttpClient httpClient, string adapterId)
-       : base(ExtractApiKey(httpClient), adapterId)
-    {
-        _httpClient = httpClient;
-    }
     private static string ExtractApiKey(HttpClient httpClient)
     {
         var authHeader = httpClient.DefaultRequestHeaders.Authorization;
@@ -57,8 +59,8 @@ public abstract class EventApiBaseAdapter : BaseAdapter
             return authHeader.Parameter ?? "";
         }
         return "";
-    } 
-    public async Task<string> FetchDataAsync(MeminiEventApiRequest requestConfig)
+    }
+    public virtual async Task<string> FetchDataAsync(IApiRequest requestConfig)
     {
         string url = GenerateApiRequestUrl(requestConfig);
         HttpResponseMessage? response = null;
@@ -78,21 +80,91 @@ public abstract class EventApiBaseAdapter : BaseAdapter
         }
     }
 
-    public abstract Task<BulkMappingResult> MapEventResultBulkData(IApiDataModel deserializedData); // Implement me
-  
+    public Task FetchOneAndDeserialize(IApiRequest requestconfig, JsonSerializerOptions options) => FetchAllAndDeserialize(new List<IApiRequest> () { requestconfig }, options);
+    public abstract Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options);
 
-    public abstract Task<IApiDataModel> DeserializeData(string jsonContent); //Implement me
-    public async Task<IApiDataModel?> DeserializeApiData(string jsonContent)
+}
+public abstract class ApiBaseAdapter<TDModel, TDModelResult> : BaseAdapter where TDModel : IApiDataModel
+{
+    protected List<TDModelResult> AccumulatedData { get; } = new List<TDModelResult>(); //Accumulated data from each http fetch to the API.
+    protected ApiBaseAdapter(HttpClient httpClient, string adapterId)
+      : base(httpClient, adapterId) { }
+
+    /* Requires implementation */
+    protected abstract int ApiDataModelTotalResult(TDModel dataModel); // The datamodel tree varies, specific adapter points the nested total result
+    protected abstract List<TDModelResult> ApiDataModelResult(TDModel dataModel); // The datamodel tree varies, specific adapter points the nested result  
+    
+    public void ClearAccumulatedData() => AccumulatedData.Clear();
+}
+
+public abstract class EventApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapter<TDModel, TDModelResult>, IEventAdapter where TDModel : IApiDataModel {
+     
+    protected EventApiBaseAdapter(HttpClient httpClient, string adapterId)
+      : base(httpClient, adapterId) { }
+
+    public abstract List<MappingResult<NormalizedEvent>> MapToNormalizedEvents(double keepThreshold = 0.1);
+    public int GetAccumulatedFetchData()  => AccumulatedData.Count;
+
+    //I dont enjoy this being in two places in the IEvent/PlaceAdapter but at this point i need to move on
+    public override async Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options)
     {
         try
         {
-            var result = await DeserializeData(jsonContent);               
-            return result;
+            foreach (IApiRequest requestConfig in requestconfigs)
+            {
+                string jsonData = await this.FetchDataAsync(requestConfig);
+                long responseSizeBytes = System.Text.Encoding.UTF8.GetByteCount(jsonData);
+                using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonData));
+                var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
+                int eventCount = ApiDataModelTotalResult(result);
+                InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
+                List<TDModelResult> resultData = ApiDataModelResult(result);
+                AccumulatedData.AddRange(resultData);
+            }
         }
-        catch (System.Text.Json.JsonException e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Deserialization error: {e.Message}");
-            return default; // or throw
+            InvokeDataMetricsResponse(0, (int)0, ex);
         }
+
+        return;
     }
-}   
+
+}
+
+public abstract class PlacesApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapter<TDModel, TDModelResult>, IPlaceAdapter where TDModel : IApiDataModel
+{
+    protected PlacesApiBaseAdapter(HttpClient httpClient, string adapterId)
+      : base(httpClient, adapterId) { }
+
+    public abstract List<MappingResult<NormalizedPlace>> MapToNormalizedPlaces(double keepThreshold = 0.1);
+    public int GetAccumulatedFetchData() => AccumulatedData.Count;
+
+    public override async Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options)
+    {
+        try
+        {
+            foreach (IApiRequest requestConfig in requestconfigs)
+            {
+                string jsonData = await this.FetchDataAsync(requestConfig);
+                long responseSizeBytes = System.Text.Encoding.UTF8.GetByteCount(jsonData);
+                using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonData));
+                var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
+                int eventCount = ApiDataModelTotalResult(result);
+                InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
+                List<TDModelResult> resultData = ApiDataModelResult(result);
+                AccumulatedData.AddRange(resultData);
+            }
+        }
+        catch (Exception ex)
+        {
+            InvokeDataMetricsResponse(0, (int)0, ex);
+        }
+
+        return;
+    }
+}
+
+
+
+

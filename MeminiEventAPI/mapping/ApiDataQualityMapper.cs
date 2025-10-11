@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using MeminiEventAPI.api_datamodels;
+using MeminiEventAPI.structures;
 
 
 namespace MeminiEventAPI.mapping;
@@ -31,7 +32,6 @@ public class FluentQualityMapper<TSource, TDestination> where TDestination : new
 
     /// <summary>
     /// Map a field with optional conversion and quality tracking
-    /// Usage: mapper.Map(s => s.SourceField, d => d.DestField, (value) => Convert(value), trackQuality: true)
     /// </summary>
     public FluentQualityMapper<TSource, TDestination> Map<TSourceProp, TDestProp>(
         Expression<Func<TSource, TSourceProp>> sourceExpression,
@@ -58,7 +58,7 @@ public class FluentQualityMapper<TSource, TDestination> where TDestination : new
     }
 
     /// <summary>
-    /// Execute mapping with quality calculation
+    /// Execute mapping with quality calculation and auto-set DataQuality property
     /// </summary>
     public MappingResult<TDestination> Execute(TSource source)
     {
@@ -89,19 +89,56 @@ public class FluentQualityMapper<TSource, TDestination> where TDestination : new
             }
             catch
             {
-                // Mapping failed, skip this field
                 if (rule.TrackQuality)
                     totalFields++;
             }
         }
 
+        var quality = totalFields > 0 ? (double)filledFields / totalFields : 0.0;
+
+        // Auto-set DataQuality property if it exists
+        var dataQualityProp = typeof(TDestination).GetProperty("DataQuality");
+        if (dataQualityProp != null && dataQualityProp.CanWrite)
+        {
+            dataQualityProp.SetValue(destination, quality);
+        }
+
         return new MappingResult<TDestination>
         {
             Result = destination,
-            Quality = totalFields > 0 ? (double)filledFields / totalFields : 0.0,
+            Quality = quality,
             TotalFields = totalFields,
             FilledFields = filledFields
         };
+    }
+
+    /// <summary>
+    /// Map a single item
+    /// </summary>
+    public MappingResult<TDestination> MapOne(TSource source)
+    {
+        return Execute(source);
+    }
+
+    /// <summary>
+    /// Map multiple items with quality filtering
+    /// </summary>
+    public List<MappingResult<TDestination>> MapMany(IEnumerable<TSource> sources, double minQuality = 0.0)
+    {
+        return sources
+            .Select(s => Execute(s))
+            .Where(r => r.Quality >= minQuality)
+            .ToList();
+    }
+
+    /// <summary>
+    /// Map multiple items and return only the results (not MappingResult wrapper)
+    /// </summary>
+    public List<TDestination> MapManyResults(IEnumerable<TSource> sources, double minQuality = 0.0)
+    {
+        return MapMany(sources, minQuality)
+            .Select(r => r.Result)
+            .ToList();
     }
 
     private Action<TDestination, TProp> CreateSetter<TProp>(Expression<Func<TDestination, TProp>> expression)
@@ -119,7 +156,6 @@ public class FluentQualityMapper<TSource, TDestination> where TDestination : new
 
     private string GetMemberName<T, TProp>(Expression<Func<T, TProp>> expression)
     {
-        // Handle case where expression is just the parameter itself (e.g., s => s)
         if (expression.Body is ParameterExpression)
             return "$self";
 
@@ -134,19 +170,11 @@ public class FluentQualityMapper<TSource, TDestination> where TDestination : new
         if (value == null) return false;
         if (value is string str) return !string.IsNullOrWhiteSpace(str);
         if (value is DateTime dt) return dt != default;
-
-        // For complex objects, consider them filled if not null
         return true;
     }
 }
 
-public class MappingResult<T>
-{
-    public T Result { get; set; }
-    public double Quality { get; set; }
-    public int TotalFields { get; set; }
-    public int FilledFields { get; set; }
-}
+
 
 //// ==================== EXAMPLE USAGE ====================
 

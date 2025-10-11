@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MeminiEventAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+30777a5497db4ae8d5136d5f4adc2c12147d7dee")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1775ca59e9aa02485001f4789da694fb96fe8fb5")]
 [assembly: System.Reflection.AssemblyProductAttribute("MeminiEventAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MeminiEventAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

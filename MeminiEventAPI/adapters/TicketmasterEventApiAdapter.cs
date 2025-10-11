@@ -2,43 +2,29 @@
 using MeminiEventAPI.mapping;
 using MeminiEventAPI.mapping.profiles;
 using MeminiEventAPI.api_datamodels.ticketmaster;
+using MeminiEventAPI.api_datamodels;
 
 namespace MeminiEventAPI.adapters;
 
-internal class TicketmasterEventApiAdapter(HttpClient httpClient) : EventApiBaseAdapter(httpClient, "Ticketmaster")
+internal class TicketmasterApiAdapter(HttpClient httpClient) : EventApiBaseAdapter<TicketmasterDatamodel, TicketmasterEvent>(httpClient, "Ticketmaster")
 {
-    public override Task<BulkMappingResult> MapEventResultBulkData(IApiDataModel deserializedData)
-    {
-        if (deserializedData is not TicketmasterDatamodel tmDataModel)
-            return Task.FromResult(new BulkMappingResult());
-
-        const double keepThreshold = 0.1; // data quality for storing the data
-
-        var ticketmasterEvents = tmDataModel.Embedded?.Events;
-        if (ticketmasterEvents == null || !ticketmasterEvents.Any())
-            return Task.FromResult(new BulkMappingResult());
-
-        var ticketmasterDataMapper = new TicketmasterMapper();
-
-        var result = BulkMappingHelper.MapEventsAsync(
-            sources: ticketmasterEvents,
-            mapFunction: evt => ticketmasterDataMapper.Map(evt),
-            minQuality: keepThreshold
-        );
-
-        return result;
-    }
-
     public readonly static string ConnectionString = "https://app.ticketmaster.com/discovery/v2/";
 
-    public override string GenerateApiRequestUrl(MeminiEventApiRequest requestConfig)
+    protected override int ApiDataModelTotalResult(TicketmasterDatamodel dataModel) => dataModel.Embedded?.Events?.Count ?? 0;
+
+    protected override List<TicketmasterEvent> ApiDataModelResult(TicketmasterDatamodel dataModel) => dataModel.Embedded?.Events ?? [];
+
+    public override string GenerateApiRequestUrl(IApiRequest requestConfig)
     {
+        if (!(requestConfig is MeminiEventApiRequest eventRequestConfig))
+            return "";
+
         var queryParams = new Dictionary<string, string>()
         {
-            ["city"] = requestConfig.City,
-            ["countryCode"] = requestConfig.CountryCode,
+            ["city"] = eventRequestConfig.City,
+            ["countryCode"] = eventRequestConfig.CountryCode,
             ["apikey"] = ApiKey,
-            ["size"] = requestConfig.SearchSize.ToString()
+            ["size"] = eventRequestConfig.SearchSize.ToString()
         };
 
         var queryString = string.Join("&",
@@ -49,25 +35,10 @@ internal class TicketmasterEventApiAdapter(HttpClient httpClient) : EventApiBase
         return $"events.json?{queryString}";
     }
 
-    public async override Task<IApiDataModel> DeserializeData(string jsonContent)
+    public override List<MappingResult<NormalizedEvent>> MapToNormalizedEvents(double keepThreshold = 0.1)
     {
-        try
-        {
-            var options = new System.Text.Json.JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-            long responseSizeBytes = System.Text.Encoding.UTF8.GetByteCount(jsonContent);
-            using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonContent));
-            var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TicketmasterDatamodel>(stream, options);
-            int eventCount = result?.Embedded?.Events?.Count ?? 0;
-            InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
-            return result ?? new TicketmasterDatamodel();
-        }
-        catch (Exception ex)
-        {
-            InvokeDataMetricsResponse(0, (int)0, ex);
-            return new TicketmasterDatamodel();
-        }
-    }
-}
+        var mapper = new mapping.profiles.TicketmasterMapper();
+        return EventsMapperExecutor.Execute<TicketmasterEvent>(AccumulatedData, mapper, keepThreshold);
+    } 
+} 
+

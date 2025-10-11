@@ -15,6 +15,7 @@ using MeminiEventAPI.adapters;
 using MeminiEventAPI.structures;
 using MeminiEventAPI.handlers;
 using MeminiEventAPI.structures;
+using MeminiEventAPI.testing.configs.foursquare;
 
 namespace Memini.Controllers;
 
@@ -54,12 +55,16 @@ public EventController(ApiAdapterHandler apiAdapterHandler)
         };
         try
         {
-            UnifiedFetchResult res = await _apiAdapterHandler.FetchDataFromAllApis(mockedConfig);
-            return DtoResponse<UnifiedFetchResult>.Ok(res, "Fetched new events successfully").ToOkResult();
+            FourSquareTesting fsqTest = new FourSquareTesting();
+
+            MeminiApiResponse response = await fsqTest.RunSimpleTest(_apiAdapterHandler);
+
+            //object res = await _apiAdapterHandler.FetchDataFromAllApis(mockedConfig);
+            return DtoResponse<object>.Ok(response, "Fetched new events successfully").ToOkResult();
         }
         catch (Exception e)
         {
-            return DtoResponse<UnifiedFetchResult>.Fail("Failed to fetch new events.").ToNotFoundResult();
+            return DtoResponse<object>.Fail("Failed to fetch new events.").ToNotFoundResult();
         }        
     }
 }

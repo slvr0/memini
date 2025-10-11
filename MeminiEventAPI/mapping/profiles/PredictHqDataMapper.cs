@@ -1,170 +1,59 @@
-﻿using System;
+﻿// PredictHqMapper.cs
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MeminiEventAPI.api_datamodels;
 using PHQ = MeminiEventAPI.api_datamodels.predict_hq;
-using MeminiEventAPI.mapping;
 
 namespace MeminiEventAPI.mapping.profiles;
 
 /// <summary>
-/// PredictHQ to NormalizedEvent mapper using FluentQualityMapper
+/// PredictHQ to NormalizedEvent mapper
 /// </summary>
-public class PredictHqMapper
+public class PredictHqMapper : FluentQualityMapper<PHQ.PredictHqEvent, NormalizedEvent>
 {
-    private readonly FluentQualityMapper<PHQ.PredictHqEvent, NormalizedEvent> _mapper;
-
     public PredictHqMapper()
     {
-        _mapper = new FluentQualityMapper<PHQ.PredictHqEvent, NormalizedEvent>();
         ConfigureMapping();
     }
-
-    public FluentQualityMapper<PHQ.PredictHqEvent, NormalizedEvent> Mapper => _mapper;
 
     private void ConfigureMapping()
     {
         // ==================== BASIC INFORMATION ====================
+        Map(s => s.Id, d => d.ExternalId, id => id?.Trim(), trackQuality: true);
+        Map(s => s.Title, d => d.Name, title => title?.Trim(), trackQuality: true);
+        Map(s => s.Description, d => d.Description,
+            desc => string.IsNullOrWhiteSpace(desc) ? null : desc.Trim(), trackQuality: true);
 
-        // External ID
-        _mapper.Map(
-            sourceExpression: s => s.Id,
-            destExpression: d => d.ExternalId,
-            converter: id => id?.Trim(),
-            trackQuality: true
-        );
-
-        // Event Name
-        _mapper.Map(
-            sourceExpression: s => s.Title,
-            destExpression: d => d.Name,
-            converter: title => title?.Trim(),
-            trackQuality: true
-        );
-
-        // Description
-        _mapper.Map(
-            sourceExpression: s => s.Description,
-            destExpression: d => d.Description,
-            converter: desc => string.IsNullOrWhiteSpace(desc) ? null : desc.Trim(),
-            trackQuality: true
-        );
+        // ==================== TEMPORAL INFORMATION ====================
+        Map(s => s, d => d.TemporalInfo, evt => BuildTemporalInfo(evt), trackQuality: true);
 
         // ==================== GEOGRAPHIC INFORMATION ====================
+        Map(s => s, d => d.GeographicInfo, evt => BuildGeographicInfo(evt), trackQuality: true);
 
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.GeographicInfo,
-            converter: evt => BuildGeographicInfo(evt),
-            trackQuality: true
-        );
-    
         // ==================== CATEGORIZATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.CategorizationInfo,
-            converter: evt => BuildCategorizationInfo(evt),
-            trackQuality: true
-        );
+        Map(s => s, d => d.CategorizationInfo, evt => BuildCategorizationInfo(evt), trackQuality: true);
 
         // ==================== STATUS INFORMATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.StatusInfo,
-            converter: evt => BuildStatusInfo(evt),
-            trackQuality: true
-        );
+        Map(s => s, d => d.StatusInfo, evt => BuildStatusInfo(evt), trackQuality: true);
 
         // ==================== PRICING ====================
-        // PredictHQ doesn't have pricing info
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.PricingInfo,
-            converter: _ => null,
-            trackQuality: false
-        );
+        Map(s => s, d => d.PricingInfo, _ => null, trackQuality: false);
 
         // ==================== MEDIA ====================
-        // PredictHQ doesn't have media
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.Media,
-            converter: _ => null,
-            trackQuality: false
-        );
+        Map(s => s, d => d.Media, _ => null, trackQuality: false);
 
         // ==================== PERFORMERS ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Entities,
-            destExpression: d => d.Performers,
-            converter: entities => BuildPerformers(entities),
-            trackQuality: true
-        );
+        Map(s => s.Entities, d => d.Performers, entities => BuildPerformers(entities), trackQuality: true);
 
         // ==================== METADATA (Not tracked) ====================
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.Id,
-            converter: _ => Guid.NewGuid().ToString(),
-            trackQuality: false
-        );
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.CreatedAt,
-            converter: _ => DateTime.UtcNow,
-            trackQuality: false
-        );
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.UpdatedAt,
-            converter: _ => DateTime.UtcNow,
-            trackQuality: false
-        );
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.AdditionalData,
-            converter: _ => null,
-            trackQuality: false
-        );
+        Map(s => s, d => d.Id, _ => Guid.NewGuid().ToString(), trackQuality: false);
+        Map(s => s, d => d.CreatedAt, _ => DateTime.UtcNow, trackQuality: false);
+        Map(s => s, d => d.UpdatedAt, _ => DateTime.UtcNow, trackQuality: false);
+        Map(s => s, d => d.AdditionalData, _ => null, trackQuality: false);
     }
 
-    /// <summary>
-    /// Map a single PredictHQ event to NormalizedEvent with quality tracking
-    /// </summary>
-    public MappingResult<NormalizedEvent> Map(PHQ.PredictHqEvent source)
-    {
-        var result = _mapper.Execute(source);
-
-        // Set the quality score on the result object
-        if (result.Result != null)
-        {
-            result.Result.DataQuality = result.Quality;
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    /// Map multiple events with quality filtering
-    /// </summary>
-    public List<MappingResult<NormalizedEvent>> MapMany(IEnumerable<PHQ.PredictHqEvent> sources, double minQuality = 0.0)
-    {
-        return sources
-            .Select(s => Map(s))
-            .Where(r => r.Quality >= minQuality)
-            .ToList();
-    }
-
-    // ==================== TEMPORAL INFO BUILDER ====================
+    // ==================== BUILDER METHODS ====================
 
     private EventTemporalInfo? BuildTemporalInfo(PHQ.PredictHqEvent source)
     {
@@ -181,8 +70,6 @@ public class PredictHqMapper
             Duration = source.Duration.HasValue ? TimeSpan.FromSeconds(source.Duration.Value) : null
         };
     }
-
-    // ==================== GEOGRAPHIC INFO BUILDER ====================
 
     private EventGeographicInfo? BuildGeographicInfo(PHQ.PredictHqEvent source)
     {
@@ -203,7 +90,6 @@ public class PredictHqMapper
             };
         }
 
-        // Only return if we have at least some geographic data
         var hasData = !string.IsNullOrWhiteSpace(source.Country) ||
                      !string.IsNullOrWhiteSpace(address?.Locality) ||
                      geoCoords != null;
@@ -222,8 +108,6 @@ public class PredictHqMapper
             PlaceId = string.IsNullOrWhiteSpace(geo.Placekey) ? null : geo.Placekey
         };
     }
-
-    // ==================== CATEGORIZATION INFO BUILDER ====================
 
     private EventCategorizationInfo? BuildCategorizationInfo(PHQ.PredictHqEvent source)
     {
@@ -253,8 +137,6 @@ public class PredictHqMapper
         };
     }
 
-    // ==================== STATUS INFO BUILDER ====================
-
     private EventStatusInfo? BuildStatusInfo(PHQ.PredictHqEvent source)
     {
         EventStatus? status = null;
@@ -274,8 +156,6 @@ public class PredictHqMapper
             StatusChangedAt = source.Cancelled ?? source.Postponed
         };
     }
-
-    // ==================== PERFORMERS BUILDER ====================
 
     private List<EventPerformer>? BuildPerformers(List<PHQ.EventEntity>? entities)
     {

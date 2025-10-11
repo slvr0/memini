@@ -1,201 +1,63 @@
-﻿using System;
+﻿// SeatGeekMapper.cs
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MeminiEventAPI.api_datamodels;
 using SG = MeminiEventAPI.api_datamodels.seatgeek;
-using MeminiEventAPI.mapping;
 
 namespace MeminiEventAPI.mapping.profiles;
 
 /// <summary>
-/// SeatGeek to NormalizedEvent mapper using FluentQualityMapper
+/// SeatGeek to NormalizedEvent mapper
 /// </summary>
-public class SeatGeekMapper
+public class SeatGeekMapper : FluentQualityMapper<SG.SeatGeekEvent, NormalizedEvent>
 {
-    private readonly FluentQualityMapper<SG.SeatGeekEvent, NormalizedEvent> _mapper;
-
     public SeatGeekMapper()
     {
-        _mapper = new FluentQualityMapper<SG.SeatGeekEvent, NormalizedEvent>();
         ConfigureMapping();
     }
-
-    public FluentQualityMapper<SG.SeatGeekEvent, NormalizedEvent> Mapper => _mapper;
 
     private void ConfigureMapping()
     {
         // ==================== BASIC INFORMATION ====================
-
-        // External ID
-        _mapper.Map(
-            sourceExpression: s => s.Id,
-            destExpression: d => d.ExternalId,
-            converter: id => id.ToString(),
-            trackQuality: true
-        );
-
-        // Event Name
-        _mapper.Map(
-            sourceExpression: s => s.Title,
-            destExpression: d => d.Name,
-            converter: title => title?.Trim(),
-            trackQuality: true
-        );
-
-        // Event URL
-        _mapper.Map(
-            sourceExpression: s => s.Url,
-            destExpression: d => d.Url,
-            trackQuality: true
-        );
-
-        // Source - Not tracked (always set)
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.Source,
-            converter: _ => EventSource.SeatGeek,
-            trackQuality: false
-        );
+        Map(s => s.Id, d => d.ExternalId, id => id.ToString(), trackQuality: true);
+        Map(s => s.Title, d => d.Name, title => title?.Trim(), trackQuality: true);
+        Map(s => s.Url, d => d.Url, trackQuality: true);
+        Map(s => s, d => d.Source, _ => EventSource.SeatGeek, trackQuality: false);
 
         // ==================== TEMPORAL INFORMATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.TemporalInfo,
-            converter: evt => BuildTemporalInfo(evt),
-            trackQuality: true
-        );
+        Map(s => s, d => d.TemporalInfo, evt => BuildTemporalInfo(evt), trackQuality: true);
 
         // ==================== GEOGRAPHIC INFORMATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Venue,
-            destExpression: d => d.GeographicInfo,
-            converter: venue => BuildGeographicInfo(venue),
-            trackQuality: true
-        );
+        Map(s => s.Venue, d => d.GeographicInfo, venue => BuildGeographicInfo(venue), trackQuality: true);
 
         // ==================== VENUE INFORMATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Venue,
-            destExpression: d => d.VenueInfo,
-            converter: venue => BuildVenueInfo(venue),
-            trackQuality: true
-        );
+        Map(s => s.Venue, d => d.VenueInfo, venue => BuildVenueInfo(venue), trackQuality: true);
 
         // ==================== CATEGORIZATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Type,
-            destExpression: d => d.CategorizationInfo,
-            converter: type => BuildCategorizationInfo(type),
-            trackQuality: true
-        );
+        Map(s => s.Type, d => d.CategorizationInfo, type => BuildCategorizationInfo(type), trackQuality: true);
 
         // ==================== STATUS INFORMATION ====================
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.StatusInfo,
-            converter: _ => BuildStatusInfo(),
-            trackQuality: true
-        );
+        Map(s => s, d => d.StatusInfo, _ => BuildStatusInfo(), trackQuality: true);
 
         // ==================== PRICING ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Stats,
-            destExpression: d => d.PricingInfo,
-            converter: stats => BuildPricingInfo(stats),
-            trackQuality: true
-        );
+        Map(s => s.Stats, d => d.PricingInfo, stats => BuildPricingInfo(stats), trackQuality: true);
 
         // ==================== MEDIA ====================
-        // SeatGeek doesn't have media in the provided model
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.Media,
-            converter: _ => null,
-            trackQuality: false
-        );
+        Map(s => s, d => d.Media, _ => null, trackQuality: false);
 
         // ==================== PERFORMERS ====================
-
-        _mapper.Map(
-            sourceExpression: s => s.Performers,
-            destExpression: d => d.Performers,
-            converter: performers => BuildPerformers(performers),
-            trackQuality: true
-        );
+        Map(s => s.Performers, d => d.Performers, performers => BuildPerformers(performers), trackQuality: true);
 
         // ==================== METADATA (Not tracked) ====================
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.Id,
-            converter: _ => Guid.NewGuid().ToString(),
-            trackQuality: false
-        );
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.CreatedAt,
-            converter: _ => DateTime.UtcNow,
-            trackQuality: false
-        );
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.UpdatedAt,
-            converter: _ => DateTime.UtcNow,
-            trackQuality: false
-        );
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.AdditionalData,
-            converter: _ => null,
-            trackQuality: false
-        );
-
-        _mapper.Map(
-            sourceExpression: s => s,
-            destExpression: d => d.Description,
-            converter: _ => null,
-            trackQuality: false
-        );
+        Map(s => s, d => d.Id, _ => Guid.NewGuid().ToString(), trackQuality: false);
+        Map(s => s, d => d.CreatedAt, _ => DateTime.UtcNow, trackQuality: false);
+        Map(s => s, d => d.UpdatedAt, _ => DateTime.UtcNow, trackQuality: false);
+        Map(s => s, d => d.AdditionalData, _ => null, trackQuality: false);
+        Map(s => s, d => d.Description, _ => null, trackQuality: false);
     }
 
-    /// <summary>
-    /// Map a single SeatGeek event to NormalizedEvent with quality tracking
-    /// </summary>
-    public MappingResult<NormalizedEvent> Map(SG.SeatGeekEvent source)
-    {
-        var result = _mapper.Execute(source);
-
-        // Set the quality score on the result object
-        if (result.Result != null)
-        {
-            result.Result.DataQuality = result.Quality;
-        }
-
-        return result;
-    }
-
-    /// <summary>
-    /// Map multiple events with quality filtering
-    /// </summary>
-    public List<MappingResult<NormalizedEvent>> MapMany(IEnumerable<SG.SeatGeekEvent> sources, double minQuality = 0.0)
-    {
-        return sources
-            .Select(s => Map(s))
-            .Where(r => r.Quality >= minQuality)
-            .ToList();
-    }
-
-    // ==================== TEMPORAL INFO BUILDER ====================
+    // ==================== BUILDER METHODS ====================
 
     private EventTemporalInfo? BuildTemporalInfo(SG.SeatGeekEvent source)
     {
@@ -209,8 +71,6 @@ public class SeatGeekMapper
         };
     }
 
-    // ==================== GEOGRAPHIC INFO BUILDER ====================
-
     private EventGeographicInfo? BuildGeographicInfo(SG.SeatGeekVenue? venue)
     {
         if (venue == null)
@@ -221,12 +81,11 @@ public class SeatGeekMapper
         {
             coordinates = new GeoCoordinates
             {
-                Latitude = venue.Location.Lat,
-                Longitude = venue.Location.Lon
+                Latitude = venue.Location.Lat.Value,
+                Longitude = venue.Location.Lon.Value
             };
         }
 
-        // Only return if we have at least some geographic data
         var hasData = !string.IsNullOrWhiteSpace(venue.Country) ||
                      !string.IsNullOrWhiteSpace(venue.City) ||
                      coordinates != null;
@@ -244,8 +103,6 @@ public class SeatGeekMapper
         };
     }
 
-    // ==================== VENUE INFO BUILDER ====================
-
     private EventVenueInfo? BuildVenueInfo(SG.SeatGeekVenue? venue)
     {
         if (venue == null)
@@ -256,8 +113,8 @@ public class SeatGeekMapper
         {
             coordinates = new GeoCoordinates
             {
-                Latitude = venue.Location.Lat,
-                Longitude = venue.Location.Lon
+                Latitude = venue.Location.Lat.Value,
+                Longitude = venue.Location.Lon.Value
             };
         }
 
@@ -271,8 +128,6 @@ public class SeatGeekMapper
         };
     }
 
-    // ==================== CATEGORIZATION INFO BUILDER ====================
-
     private EventCategorizationInfo? BuildCategorizationInfo(string? type)
     {
         if (string.IsNullOrWhiteSpace(type))
@@ -285,11 +140,8 @@ public class SeatGeekMapper
         };
     }
 
-    // ==================== STATUS INFO BUILDER ====================
-
     private EventStatusInfo BuildStatusInfo()
     {
-        // SeatGeek events returned from API are typically active
         return new EventStatusInfo
         {
             IsActive = true,
@@ -297,14 +149,11 @@ public class SeatGeekMapper
         };
     }
 
-    // ==================== PRICING INFO BUILDER ====================
-
     private EventPricingInfo? BuildPricingInfo(SG.SeatGeekStats? stats)
     {
         if (stats == null)
             return null;
 
-        // Check if we have any price data
         if (!stats.LowestPrice.HasValue && !stats.HighestPrice.HasValue)
             return null;
 
@@ -312,11 +161,9 @@ public class SeatGeekMapper
         {
             MinPrice = stats.LowestPrice,
             MaxPrice = stats.HighestPrice,
-            Currency = "USD" // SeatGeek typically uses USD
+            Currency = "USD"
         };
     }
-
-    // ==================== PERFORMERS BUILDER ====================
 
     private List<EventPerformer>? BuildPerformers(List<SG.SeatGeekPerformer>? performers)
     {

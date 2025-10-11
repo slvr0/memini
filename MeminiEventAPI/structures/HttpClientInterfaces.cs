@@ -3,8 +3,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MeminiEventAPI.api_datamodels;
 
 namespace MeminiEventAPI.structures;
+
+/* Final endpoint data response */
+public class MeminiApiResponse
+{
+    public Dictionary<string, IApiResult> ApiResults = new Dictionary<string, IApiResult>();
+}
+
+public interface IApiResult
+{
+    public string AdapterId { get; set; }
+}
+
+public class EventsApiResult : IApiResult
+{
+    public string AdapterId { get; set; } = string.Empty;
+    public List<MappingResult<NormalizedEvent>>? Events { get; set; }
+    public int TotalFetched { get; set; }
+    public int TotalMapped { get; set; }
+    public EventsApiResult(string adapterId, List<MappingResult<NormalizedEvent>>? events, int totalFetched, int totalMapped)
+    {
+        AdapterId = adapterId;
+        Events = events;
+        TotalFetched = totalFetched;
+        TotalMapped = totalMapped;
+    }
+}
+public class PlacesApiResult : IApiResult
+{
+    public string AdapterId { get; set; } = string.Empty;
+    public List<MappingResult<NormalizedPlace>>? Places { get; set; }
+    public int TotalFetched { get; set; }
+    public int TotalMapped { get; set; }
+
+    public PlacesApiResult(string adapterId, List<MappingResult<NormalizedPlace>>? places, int totalFetched, int totalMapped)
+    {
+        AdapterId = adapterId;
+        Places = places;
+        TotalFetched = totalFetched;
+        TotalMapped = totalMapped;
+    }
+}
 
 public class HttpConnectionResponse : EventArgs
 {
@@ -24,36 +66,7 @@ public class ApiFetchMetrics : EventArgs
     public string ErrorMessage { get; set; } = string.Empty;
 }
 
-public class TicketmasterRequestConfiguration : IRequestConfiguration
-{
-    public string? City { get; set; }
-    public string? CountryCode { get; set; }
-    public int SearchSize { get; set; } = 20;
-}
-
-public class PredictHqRequestConfiguration : IRequestConfiguration
-{
-    public string? Location { get; set; } // Format: "latitude,longitude" e.g. "40.7128,-74.0060"
-    public string? Radius { get; set; } // Format: "{value}{unit}" e.g. "10mi", "5km"
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
-    public string? Category { get; set; }
-    public string? Country { get; set; } // 2-letter country code e.g. "US"
-    public string? Query { get; set; } // Full-text search
-    public int? PageSize { get; set; }
-    public int? Page { get; set; }
-
-    // PredictHQ specific properties
-    public string? State { get; set; } // "active", "predicted", "cancelled", "postponed"
-    public bool? BrandSafe { get; set; } // true to exclude brand-unsafe events
-    public string? Labels { get; set; } // Comma-separated PHQ labels
-    public int? MinRank { get; set; } // 0-100
-    public int? MaxRank { get; set; } // 0-100
-    public string? SortBy { get; set; } // "rank", "-rank", "start", "-start", etc.
-}
-
-
-public class MeminiEventApiRequest
+public class MeminiEventApiRequest : IApiRequest
 {
     /* Search geographically filters */
     public string? Country { get; set; } = string.Empty;
@@ -79,8 +92,17 @@ public class MeminiEventApiRequest
     public string? SortBy { get; set; } = null;// "rank", "-rank", "start", "-start", etc.
 
     public string? SortBySeatGeek { get; set; } = null;
-    
-
-
 }
 
+public class FoursquareApiRequest : IApiRequest
+{
+    public string? Country { get; set; } = string.Empty;
+    public string? CountryCode { get; set; } = string.Empty;
+    public string? City { get; set; } = string.Empty;
+    public string? Location { get; set; } // "latitude,longitude"
+    public string? Radius { get; set; } // in meters (e.g., "5000")
+    public int? SearchSize { get; set; } = 50; // limit parameter
+    public string? Query { get; set; } = string.Empty; // search query
+    public string? Categories { get; set; } = string.Empty; // comma-separated category IDs
+    public string? SortBy { get; set; } = string.Empty;
+}

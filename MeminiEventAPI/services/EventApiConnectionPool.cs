@@ -18,13 +18,15 @@ public static class MeminiEventApiConnectionSetup
      IConfiguration configuration)
     {
         // Register all adapters
-        RegisterApiAdapter<TicketmasterEventApiAdapter>(services, configuration, "Ticketmaster");
-        RegisterApiAdapter<PredictHQEventApiAdapter>(services, configuration, "PredictHQ");
+        RegisterApiAdapter<TicketmasterApiAdapter>(services, configuration, "Ticketmaster");
+        //RegisterApiAdapter<PredictHQEventApiAdapter>(services, configuration, "PredictHQ");
         //RegisterApiAdapter<SeatGeekEventApiAdapter>(services, configuration, "SeatGeek");
         //RegisterApiAdapter<SongkickEventApiAdapter>(services, configuration, "SeatGeek"); // Note: uses SeatGeek key
 
         // Eventful doesn't need an API key
         //RegisterApiAdapter<EventfulEventApiAdapter>(services, configuration, null);
+
+        RegisterApiAdapter<FourSquareApiAdapter>(services, configuration, "FourSquare");
 
         // Register the handler
         services.AddSingleton<ApiAdapterHandler>();
@@ -33,19 +35,16 @@ public static class MeminiEventApiConnectionSetup
     }
 
     private static void RegisterApiAdapter<TAdapter>(
-            IServiceCollection services,
-            IConfiguration configuration,
-            string? configKey)
-            where TAdapter : EventApiBaseAdapter
+           IServiceCollection services,
+           IConfiguration configuration,
+           string? configKey)
+           where TAdapter : BaseAdapter
     {
         string apiKey = string.IsNullOrEmpty(configKey)
             ? ""
             : configuration[$"EventApis:{configKey}:ApiKey"] ?? "";
-
         var connectionString = GetConnectionString<TAdapter>();
 
-        // The framework will automatically inject this configured HttpClient
-        // into your adapter's constructor
         services.AddHttpClient<TAdapter>(client =>
         {
             client.BaseAddress = new Uri(connectionString);
@@ -53,25 +52,32 @@ public static class MeminiEventApiConnectionSetup
 
             if (!string.IsNullOrEmpty(apiKey))
             {
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", apiKey);
+                // Special handling for Foursquare
+                if (typeof(TAdapter).Name == nameof(FourSquareApiAdapter))
+                {
+                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                    client.DefaultRequestHeaders.Add("X-Places-Api-Version", "2025-06-17");
+                }
+                else
+                {
+                    client.DefaultRequestHeaders.Authorization =
+                        new AuthenticationHeaderValue("Bearer", apiKey);
+                }
             }
             client.DefaultRequestHeaders.Add("Accept", "application/json");
         });
 
-        // Optional: Also register as base type for polymorphic usage
-        services.AddTransient<EventApiBaseAdapter>(sp =>
+        services.AddTransient<BaseAdapter>(sp =>
             sp.GetRequiredService<TAdapter>());
     }
-
-    private static string GetConnectionString<TAdapter>() where TAdapter : EventApiBaseAdapter
+    private static string GetConnectionString<TAdapter>() where TAdapter : BaseAdapter
     {
         return typeof(TAdapter).Name switch
         {
-            nameof(TicketmasterEventApiAdapter) => TicketmasterEventApiAdapter.ConnectionString,
-            nameof(PredictHQEventApiAdapter) => PredictHQEventApiAdapter.ConnectionString,
-            nameof(SeatGeekEventApiAdapter) => SeatGeekEventApiAdapter.ConnectionString,
-            nameof(SongkickEventApiAdapter) => SongkickEventApiAdapter.ConnectionString,          
+            nameof(TicketmasterApiAdapter) => TicketmasterApiAdapter.ConnectionString,
+            nameof(FourSquareApiAdapter) => FourSquareApiAdapter.ConnectionString,
+            //nameof(PredictHQEventApiAdapter) => PredictHQEventApiAdapter.ConnectionString,
+            //nameof(SeatGeekEventApiAdapter) => SeatGeekEventApiAdapter.ConnectionString,                  
             _ => throw new InvalidOperationException($"Unknown adapter type: {typeof(TAdapter).Name}")
         };
     }
