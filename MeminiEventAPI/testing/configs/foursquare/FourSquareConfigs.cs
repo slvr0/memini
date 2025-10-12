@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MeminiEventAPI.handlers;
 using MeminiEventAPI.structures;
-
+using MeminiEventAPI.structures.foursquare;
 namespace MeminiEventAPI.testing.configs.foursquare;
 
 public class FourSquareTesting {
@@ -167,7 +167,7 @@ private Dictionary<string, ICollection<IApiRequest>> CreateTestConfigs()
 
         var config = CreateTestConfigs();
 
-        return await handler.FetchDataFromApis(config);
+        return await handler.FetchDataFromApis(simpleConfig);
        
     }
 }

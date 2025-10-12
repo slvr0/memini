@@ -9,6 +9,10 @@ using MeminiEventAPI.mapping;
 using MeminiEventAPI.api_datamodels;
 namespace MeminiEventAPI.structures
 {
+    public interface IApiRequest
+    {
+    }
+
     public interface IApiDataModel
     {
 
@@ -33,16 +37,18 @@ namespace MeminiEventAPI.structures
         public Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options);
     }
 
-    public interface IApiRequest
+    public interface INewsAdapter
     {
-        // Common geographic filters
-        string? Country { get; set; }
-        string? CountryCode { get; set; }
-        string? City { get; set; }
-        string? Location { get; set; }
-        string? Radius { get; set; }
-        // Result control
-        int? SearchSize { get; set; }
+        List<MappingResult<NormalizedNews>> MapToNormalizedNews(double minQuality = 0.1);
+        public int GetAccumulatedFetchData();
+        public Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options);
+    }
+
+    public interface IWeatherAdapter
+    {
+        List<MappingResult<NormalizedWeather>> MapToNormalizedWeather(double minQuality = 0.1);
+        public int GetAccumulatedFetchData();
+        public Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options);
     }
 
     public class MappingResult<T>
@@ -58,20 +64,6 @@ namespace MeminiEventAPI.structures
         MappingResult<TResult> Map(TSource source);
     }
 
-    public enum FoursquareCategory
-    {
-        Restaurant = 13065,
-        Bar = 13003,
-        CoffeeShop = 13032,
-        Hotel = 13033,
-        Landmark = 16000,
-        Entertainment = 10000,
-        Nightclub = 10032,
-        FastFood = 13145,
-        Bakery = 13002,
-        Museum = 10027,
-        Park = 16013,
-        ShoppingMall = 17114
-    }
+
 
 }

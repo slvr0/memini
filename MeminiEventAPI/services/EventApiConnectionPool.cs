@@ -18,7 +18,7 @@ public static class MeminiEventApiConnectionSetup
      IConfiguration configuration)
     {
         // Register all adapters
-        RegisterApiAdapter<TicketmasterApiAdapter>(services, configuration, "Ticketmaster");
+        //RegisterApiAdapter<TicketmasterApiAdapter>(services, configuration, "Ticketmaster");
         //RegisterApiAdapter<PredictHQEventApiAdapter>(services, configuration, "PredictHQ");
         //RegisterApiAdapter<SeatGeekEventApiAdapter>(services, configuration, "SeatGeek");
         //RegisterApiAdapter<SongkickEventApiAdapter>(services, configuration, "SeatGeek"); // Note: uses SeatGeek key
@@ -26,7 +26,10 @@ public static class MeminiEventApiConnectionSetup
         // Eventful doesn't need an API key
         //RegisterApiAdapter<EventfulEventApiAdapter>(services, configuration, null);
 
-        RegisterApiAdapter<FourSquareApiAdapter>(services, configuration, "FourSquare");
+        //RegisterApiAdapter<FourSquareApiAdapter>(services, configuration, "FourSquare");
+        //RegisterApiAdapter<TheNewsApiAdapter>(services, configuration, "TheNews");
+
+        RegisterApiAdapter<OpenMeteoApiAdapter>(services, configuration, "OpenMeteo");
 
         // Register the handler
         services.AddSingleton<ApiAdapterHandler>();
@@ -50,6 +53,7 @@ public static class MeminiEventApiConnectionSetup
             client.BaseAddress = new Uri(connectionString);
             client.Timeout = TimeSpan.FromSeconds(30);
 
+            //open meteo doesnt require api key so it wont set up the header.
             if (!string.IsNullOrEmpty(apiKey))
             {
                 // Special handling for Foursquare
@@ -76,6 +80,8 @@ public static class MeminiEventApiConnectionSetup
         {
             nameof(TicketmasterApiAdapter) => TicketmasterApiAdapter.ConnectionString,
             nameof(FourSquareApiAdapter) => FourSquareApiAdapter.ConnectionString,
+            nameof(TheNewsApiAdapter) => TheNewsApiAdapter.ConnectionString,
+            nameof(OpenMeteoApiAdapter) => OpenMeteoApiAdapter.ConnectionString,
             //nameof(PredictHQEventApiAdapter) => PredictHQEventApiAdapter.ConnectionString,
             //nameof(SeatGeekEventApiAdapter) => SeatGeekEventApiAdapter.ConnectionString,                  
             _ => throw new InvalidOperationException($"Unknown adapter type: {typeof(TAdapter).Name}")

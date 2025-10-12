@@ -3,6 +3,7 @@ using MeminiEventAPI.mapping;
 using MeminiEventAPI.mapping.profiles;
 using MeminiEventAPI.api_datamodels.foursquare;
 using MeminiEventAPI.api_datamodels;
+using MeminiEventAPI.structures.foursquare;
 namespace MeminiEventAPI.adapters;
 
 internal class FourSquareApiAdapter(HttpClient httpClient) : PlacesApiBaseAdapter<FoursquareDatamodel, FoursquarePlace>(httpClient, "FourSquare")
@@ -10,7 +11,8 @@ internal class FourSquareApiAdapter(HttpClient httpClient) : PlacesApiBaseAdapte
     public readonly static string ConnectionString = "https://places-api.foursquare.com/";
 
     protected override int ApiDataModelTotalResult(FoursquareDatamodel dataModel) => dataModel.Results?.Count ?? 0;
-    protected override List<FoursquarePlace> ApiDataModelResult(FoursquareDatamodel dataModel) => dataModel.Results ?? new List<FoursquarePlace>();
+    protected override Task<List<FoursquarePlace>> ApiDataModelResult(FoursquareDatamodel dataModel) => Task.FromResult(dataModel.Results ?? new List<FoursquarePlace>());
+
 
     public override string GenerateApiRequestUrl(IApiRequest requestConfig)
     {

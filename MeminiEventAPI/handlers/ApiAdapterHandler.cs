@@ -84,7 +84,11 @@ namespace MeminiEventAPI.handlers
         private EventsApiResult CreateEventApiResult(string adapterId, List<MappingResult<NormalizedEvent>> mappedResult, int totalFetched, int totalMapped) => 
             new(adapterId, mappedResult, totalFetched, totalMapped);
         private PlacesApiResult CreatePlaceApiResult(string adapterId, List<MappingResult<NormalizedPlace>> mappedResult, int totalFetched, int totalMapped) =>
-            new(adapterId, mappedResult, totalFetched, totalMapped);     
+            new(adapterId, mappedResult, totalFetched, totalMapped);
+        private NewsApiResult CreateNewsApiResult(string adapterId, List<MappingResult<NormalizedNews>> mappedResult, int totalFetched, int totalMapped) =>
+            new(adapterId, mappedResult, totalFetched, totalMapped);
+        private WeatherApiResult CreateWeatherApiResult(string adapterId, List<MappingResult<NormalizedWeather>> mappedResult, int totalFetched, int totalMapped) =>
+            new(adapterId, mappedResult, totalFetched, totalMapped);
 
         private async Task<IApiResult?> FetchDataFromApi(BaseAdapter baseAdapter, ICollection<IApiRequest> requestConfigs)
         {
@@ -102,6 +106,18 @@ namespace MeminiEventAPI.handlers
                     await placeApiBaseAdapter.FetchAllAndDeserialize(requestConfigs, new System.Text.Json.JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
                     List<MappingResult<NormalizedPlace>> mappingResult = placeApiBaseAdapter.MapToNormalizedPlaces();
                     apiResult = CreatePlaceApiResult(mappedResult: mappingResult, adapterId: baseAdapter.AdapterId, totalFetched: placeApiBaseAdapter.GetAccumulatedFetchData(), totalMapped: mappingResult.Count);
+                }
+                else if (baseAdapter is INewsAdapter newsApiBaseAdapter)
+                {
+                    await newsApiBaseAdapter.FetchAllAndDeserialize(requestConfigs, new System.Text.Json.JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                    List<MappingResult<NormalizedNews>> mappingResult = newsApiBaseAdapter.MapToNormalizedNews();
+                    apiResult = CreateNewsApiResult(mappedResult: mappingResult, adapterId: baseAdapter.AdapterId, totalFetched: newsApiBaseAdapter.GetAccumulatedFetchData(), totalMapped: mappingResult.Count);
+                }
+                else if (baseAdapter is IWeatherAdapter weatherApiBaseAdapter)
+                {
+                    await weatherApiBaseAdapter.FetchAllAndDeserialize(requestConfigs, new System.Text.Json.JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                    List<MappingResult<NormalizedWeather>> mappingResult = weatherApiBaseAdapter.MapToNormalizedWeather();
+                    apiResult = CreateWeatherApiResult(mappedResult: mappingResult, adapterId: baseAdapter.AdapterId, totalFetched: weatherApiBaseAdapter.GetAccumulatedFetchData(), totalMapped: mappingResult.Count);
                 }
             }
             catch (Exception ex)

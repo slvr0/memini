@@ -48,6 +48,38 @@ public class PlacesApiResult : IApiResult
     }
 }
 
+public class NewsApiResult : IApiResult
+{
+    public string AdapterId { get; set; } = string.Empty;
+    public List<MappingResult<NormalizedNews>>? News { get; set; }
+    public int TotalFetched { get; set; }
+    public int TotalMapped { get; set; }
+
+    public NewsApiResult(string adapterId, List<MappingResult<NormalizedNews>>? news, int totalFetched, int totalMapped)
+    {
+        AdapterId = adapterId;
+        News = news;
+        TotalFetched = totalFetched;
+        TotalMapped = totalMapped;
+    }
+}
+
+public class WeatherApiResult : IApiResult
+{
+    public string AdapterId { get; set; } = string.Empty;
+    public List<MappingResult<NormalizedWeather>>? Weathers { get; set; }
+    public int TotalFetched { get; set; }
+    public int TotalMapped { get; set; }
+
+    public WeatherApiResult(string adapterId, List<MappingResult<NormalizedWeather>>? weathers, int totalFetched, int totalMapped)
+    {
+        AdapterId = adapterId;
+        Weathers = weathers;
+        TotalFetched = totalFetched;
+        TotalMapped = totalMapped;
+    }
+}
+
 public class HttpConnectionResponse : EventArgs
 {
     public string Source { get; set; } = string.Empty;
@@ -94,15 +126,4 @@ public class MeminiEventApiRequest : IApiRequest
     public string? SortBySeatGeek { get; set; } = null;
 }
 
-public class FoursquareApiRequest : IApiRequest
-{
-    public string? Country { get; set; } = string.Empty;
-    public string? CountryCode { get; set; } = string.Empty;
-    public string? City { get; set; } = string.Empty;
-    public string? Location { get; set; } // "latitude,longitude"
-    public string? Radius { get; set; } // in meters (e.g., "5000")
-    public int? SearchSize { get; set; } = 50; // limit parameter
-    public string? Query { get; set; } = string.Empty; // search query
-    public string? Categories { get; set; } = string.Empty; // comma-separated category IDs
-    public string? SortBy { get; set; } = string.Empty;
-}
+

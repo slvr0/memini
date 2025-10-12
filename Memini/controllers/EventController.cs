@@ -16,7 +16,8 @@ using MeminiEventAPI.structures;
 using MeminiEventAPI.handlers;
 using MeminiEventAPI.structures;
 using MeminiEventAPI.testing.configs.foursquare;
-
+using MeminiEventAPI.testing.configs.thenews;
+using MeminiEventAPI.testing.configs.weather;
 namespace Memini.Controllers;
 
 [Authorize]
@@ -31,8 +32,6 @@ public EventController(ApiAdapterHandler apiAdapterHandler)
 {
         _apiAdapterHandler = apiAdapterHandler;
 }
-
-
     [HttpPost]
     [Route("FetchEventApiData")]
     public async Task<IActionResult> FetchEventApiData()
@@ -55,9 +54,13 @@ public EventController(ApiAdapterHandler apiAdapterHandler)
         };
         try
         {
-            FourSquareTesting fsqTest = new FourSquareTesting();
+            //FourSquareTesting fsqTest = new FourSquareTesting();
+            //TheNewsTesting tnTest = new TheNewsTesting();
+            OpenMeteoTestConfig omTest = new OpenMeteoTestConfig();
 
-            MeminiApiResponse response = await fsqTest.RunSimpleTest(_apiAdapterHandler);
+            //MeminiApiResponse response = await tnTest.SimpleTestConfig(_apiAdapterHandler);
+            //MeminiApiResponse response = await tnTest.ComprehensiveTestConfig(_apiAdapterHandler);
+            MeminiApiResponse response = await omTest.WeatherTestConfig(_apiAdapterHandler);
 
             //object res = await _apiAdapterHandler.FetchDataFromAllApis(mockedConfig);
             return DtoResponse<object>.Ok(response, "Fetched new events successfully").ToOkResult();

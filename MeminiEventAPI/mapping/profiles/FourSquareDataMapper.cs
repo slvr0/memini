@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using MeminiEventAPI.api_datamodels;
+﻿using MeminiEventAPI.api_datamodels;
 using FSQ = MeminiEventAPI.api_datamodels.foursquare;
-using MeminiEventAPI.mapping;
-using MeminiEventAPI.structures;
+using MeminiEventAPI.structures.foursquare;
+
 namespace MeminiEventAPI.mapping.profiles;
 
 /// <summary>

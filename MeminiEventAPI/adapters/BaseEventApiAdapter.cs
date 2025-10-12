@@ -82,7 +82,6 @@ public abstract class BaseAdapter
 
     public Task FetchOneAndDeserialize(IApiRequest requestconfig, JsonSerializerOptions options) => FetchAllAndDeserialize(new List<IApiRequest> () { requestconfig }, options);
     public abstract Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options);
-
 }
 public abstract class ApiBaseAdapter<TDModel, TDModelResult> : BaseAdapter where TDModel : IApiDataModel
 {
@@ -92,7 +91,7 @@ public abstract class ApiBaseAdapter<TDModel, TDModelResult> : BaseAdapter where
 
     /* Requires implementation */
     protected abstract int ApiDataModelTotalResult(TDModel dataModel); // The datamodel tree varies, specific adapter points the nested total result
-    protected abstract List<TDModelResult> ApiDataModelResult(TDModel dataModel); // The datamodel tree varies, specific adapter points the nested result  
+    protected abstract Task<List<TDModelResult>> ApiDataModelResult(TDModel dataModel); // The datamodel tree varies, specific adapter points the nested result  
     
     public void ClearAccumulatedData() => AccumulatedData.Clear();
 }
@@ -118,7 +117,7 @@ public abstract class EventApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapt
                 var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
                 int eventCount = ApiDataModelTotalResult(result);
                 InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
-                List<TDModelResult> resultData = ApiDataModelResult(result);
+                List<TDModelResult> resultData = await ApiDataModelResult(result);
                 AccumulatedData.AddRange(resultData);
             }
         }
@@ -152,7 +151,73 @@ public abstract class PlacesApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdap
                 var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
                 int eventCount = ApiDataModelTotalResult(result);
                 InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
-                List<TDModelResult> resultData = ApiDataModelResult(result);
+                List<TDModelResult> resultData = await ApiDataModelResult(result);
+                AccumulatedData.AddRange(resultData);
+            }
+        }
+        catch (Exception ex)
+        {
+            InvokeDataMetricsResponse(0, (int)0, ex);
+        }
+
+        return;
+    }
+}
+
+public abstract class NewsApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapter<TDModel, TDModelResult>, INewsAdapter where TDModel : IApiDataModel
+{
+    protected NewsApiBaseAdapter(HttpClient httpClient, string adapterId)
+      : base(httpClient, adapterId) { }
+
+    public abstract List<MappingResult<NormalizedNews>> MapToNormalizedNews(double keepThreshold = 0.1);
+    public int GetAccumulatedFetchData() => AccumulatedData.Count;
+
+    public override async Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options)
+    {
+        try
+        {
+            foreach (IApiRequest requestConfig in requestconfigs)
+            {
+                string jsonData = await this.FetchDataAsync(requestConfig);
+                long responseSizeBytes = System.Text.Encoding.UTF8.GetByteCount(jsonData);
+                using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonData));
+                var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
+                int eventCount = ApiDataModelTotalResult(result);
+                InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
+                List<TDModelResult> resultData = await ApiDataModelResult(result);
+                AccumulatedData.AddRange(resultData);
+            }
+        }
+        catch (Exception ex)
+        {
+            InvokeDataMetricsResponse(0, (int)0, ex);
+        }
+
+        return;
+    }
+}
+
+public abstract class WeatherApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapter<TDModel, TDModelResult>, IWeatherAdapter where TDModel : IApiDataModel
+{
+    protected WeatherApiBaseAdapter(HttpClient httpClient, string adapterId)
+      : base(httpClient, adapterId) { }
+
+    public abstract List<MappingResult<NormalizedWeather>> MapToNormalizedWeather(double keepThreshold = 0.1);
+    public int GetAccumulatedFetchData() => AccumulatedData.Count;
+
+    public override async Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options)
+    {
+        try
+        {
+            foreach (IApiRequest requestConfig in requestconfigs)
+            {
+                string jsonData = await this.FetchDataAsync(requestConfig);
+                long responseSizeBytes = System.Text.Encoding.UTF8.GetByteCount(jsonData);
+                using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(jsonData));
+                var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
+                int eventCount = ApiDataModelTotalResult(result);
+                InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
+                List<TDModelResult> resultData = await ApiDataModelResult(result);
                 AccumulatedData.AddRange(resultData);
             }
         }

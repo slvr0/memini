@@ -12,7 +12,7 @@ internal class TicketmasterApiAdapter(HttpClient httpClient) : EventApiBaseAdapt
 
     protected override int ApiDataModelTotalResult(TicketmasterDatamodel dataModel) => dataModel.Embedded?.Events?.Count ?? 0;
 
-    protected override List<TicketmasterEvent> ApiDataModelResult(TicketmasterDatamodel dataModel) => dataModel.Embedded?.Events ?? [];
+    protected override Task<List<TicketmasterEvent>> ApiDataModelResult(TicketmasterDatamodel dataModel) => Task.FromResult(dataModel.Embedded?.Events ?? []);
 
     public override string GenerateApiRequestUrl(IApiRequest requestConfig)
     {
