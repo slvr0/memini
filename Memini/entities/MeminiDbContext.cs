@@ -15,6 +15,16 @@ public partial class MeminiDbContext : DbContext
     {
     }
 
+    public virtual DbSet<CommercialStatusInfo> CommercialStatusInfos { get; set; }
+
+    public virtual DbSet<ContentImage> ContentImages { get; set; }
+
+    public virtual DbSet<ContentInfo> ContentInfos { get; set; }
+
+    public virtual DbSet<CoreNode> CoreNodes { get; set; }
+
+    public virtual DbSet<SpatialInfo> SpatialInfos { get; set; }
+
     public virtual DbSet<StoredUserTask> StoredUserTasks { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -42,6 +52,260 @@ public partial class MeminiDbContext : DbContext
             .HasPostgresExtension("extensions", "uuid-ossp")
             .HasPostgresExtension("graphql", "pg_graphql")
             .HasPostgresExtension("vault", "supabase_vault");
+
+        modelBuilder.Entity<CommercialStatusInfo>(entity =>
+        {
+            entity.HasKey(e => e.CommercialStatusInfoKey).HasName("commercial_status_info_pkey");
+
+            entity.ToTable("commercial_status_info");
+
+            entity.HasIndex(e => e.Active, "idx_commercial_status_info_active");
+
+            entity.HasIndex(e => e.Availability, "idx_commercial_status_info_availability");
+
+            entity.HasIndex(e => e.Free, "idx_commercial_status_info_free");
+
+            entity.HasIndex(e => e.Status, "idx_commercial_status_info_status");
+
+            entity.HasIndex(e => e.CoreNodeKey, "uk_commercial_status_info_core_node").IsUnique();
+
+            entity.Property(e => e.CommercialStatusInfoKey).HasColumnName("commercial_status_info_key");
+            entity.Property(e => e.Active).HasColumnName("active");
+            entity.Property(e => e.Availability)
+                .HasMaxLength(50)
+                .HasColumnName("availability");
+            entity.Property(e => e.Cancelled).HasColumnName("cancelled");
+            entity.Property(e => e.CoreNodeKey).HasColumnName("core_node_key");
+            entity.Property(e => e.Currency)
+                .HasMaxLength(50)
+                .HasColumnName("currency");
+            entity.Property(e => e.Free).HasColumnName("free");
+            entity.Property(e => e.MaxPrice)
+                .HasMaxLength(50)
+                .HasColumnName("max_price");
+            entity.Property(e => e.MinPrice)
+                .HasMaxLength(50)
+                .HasColumnName("min_price");
+            entity.Property(e => e.Postponed).HasColumnName("postponed");
+            entity.Property(e => e.Rescheduled).HasColumnName("rescheduled");
+            entity.Property(e => e.SoldOut).HasColumnName("sold_out");
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .HasColumnName("status");
+            entity.Property(e => e.StatusReason)
+                .HasMaxLength(200)
+                .HasColumnName("status_reason");
+
+            entity.HasOne(d => d.CoreNodeKeyNavigation).WithOne(p => p.CommercialStatusInfo)
+                .HasForeignKey<CommercialStatusInfo>(d => d.CoreNodeKey)
+                .HasConstraintName("commercial_status_info_core_node_key_fkey");
+        });
+
+        modelBuilder.Entity<ContentImage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("content_image_pkey");
+
+            entity.ToTable("content_image");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Attribution)
+                .HasMaxLength(500)
+                .HasColumnName("attribution");
+            entity.Property(e => e.Height).HasColumnName("height");
+            entity.Property(e => e.IsPrimary)
+                .HasDefaultValue(false)
+                .HasColumnName("is_primary");
+            entity.Property(e => e.ParentContentId).HasColumnName("parent_content_id");
+            entity.Property(e => e.Type)
+                .HasMaxLength(50)
+                .HasColumnName("type");
+            entity.Property(e => e.Url)
+                .HasMaxLength(500)
+                .HasColumnName("url");
+            entity.Property(e => e.Width).HasColumnName("width");
+
+            entity.HasOne(d => d.ParentContent).WithMany(p => p.ContentImages)
+                .HasForeignKey(d => d.ParentContentId)
+                .HasConstraintName("content_image_parent_content_id_fkey");
+        });
+
+        modelBuilder.Entity<ContentInfo>(entity =>
+        {
+            entity.HasKey(e => e.ContentInfoKey).HasName("content_info_pkey");
+
+            entity.ToTable("content_info");
+
+            entity.HasIndex(e => e.Category, "idx_content_info_category");
+
+            entity.HasIndex(e => e.Genre, "idx_content_info_genre");
+
+            entity.HasIndex(e => e.ContentInformation, "idx_content_info_information");
+
+            entity.HasIndex(e => e.PerformerName, "idx_content_info_performer");
+
+            entity.HasIndex(e => e.SubGenre, "idx_content_info_sub_genre");
+
+            entity.HasIndex(e => e.ContentSubtext, "idx_content_info_subtext");
+
+            entity.HasIndex(e => e.Tags, "idx_content_info_tags");
+
+            entity.HasIndex(e => e.CoreNodeKey, "uk_content_info_core_node").IsUnique();
+
+            entity.Property(e => e.ContentInfoKey).HasColumnName("content_info_key");
+            entity.Property(e => e.Category)
+                .HasMaxLength(100)
+                .HasColumnName("category");
+            entity.Property(e => e.ContentInformation)
+                .HasMaxLength(5000)
+                .HasColumnName("content_information");
+            entity.Property(e => e.ContentSubtext)
+                .HasMaxLength(1000)
+                .HasColumnName("content_subtext");
+            entity.Property(e => e.CoreNodeKey).HasColumnName("core_node_key");
+            entity.Property(e => e.Genre)
+                .HasMaxLength(100)
+                .HasColumnName("genre");
+            entity.Property(e => e.GlobalRank).HasColumnName("global_rank");
+            entity.Property(e => e.LocalRank).HasColumnName("local_rank");
+            entity.Property(e => e.PerformerGenre)
+                .HasMaxLength(100)
+                .HasColumnName("performer_genre");
+            entity.Property(e => e.PerformerName)
+                .HasMaxLength(100)
+                .HasColumnName("performer_name");
+            entity.Property(e => e.PerformerType)
+                .HasMaxLength(100)
+                .HasColumnName("performer_type");
+            entity.Property(e => e.Relevance).HasColumnName("relevance");
+            entity.Property(e => e.SubGenre)
+                .HasMaxLength(100)
+                .HasColumnName("sub_genre");
+            entity.Property(e => e.Tags)
+                .HasMaxLength(200)
+                .HasColumnName("tags");
+
+            entity.HasOne(d => d.CoreNodeKeyNavigation).WithOne(p => p.ContentInfo)
+                .HasForeignKey<ContentInfo>(d => d.CoreNodeKey)
+                .HasConstraintName("content_info_core_node_key_fkey");
+        });
+
+        modelBuilder.Entity<CoreNode>(entity =>
+        {
+            entity.HasKey(e => e.Key).HasName("core_node_pkey");
+
+            entity.ToTable("core_node");
+
+            entity.HasIndex(e => e.Guid, "core_node_guid_key").IsUnique();
+
+            entity.HasIndex(e => e.CityCode, "idx_core_node_city_code");
+
+            entity.HasIndex(e => e.CountryCode, "idx_core_node_country_code");
+
+            entity.HasIndex(e => e.Description, "idx_core_node_description");
+
+            entity.HasIndex(e => e.EndDate, "idx_core_node_end");
+
+            entity.HasIndex(e => e.Label, "idx_core_node_label");
+
+            entity.HasIndex(e => e.Source, "idx_core_node_source");
+
+            entity.HasIndex(e => e.StartDate, "idx_core_node_start");
+
+            entity.HasIndex(e => e.Type, "idx_core_node_type");
+
+            entity.Property(e => e.Key).HasColumnName("key");
+            entity.Property(e => e.CityCode)
+                .HasMaxLength(100)
+                .HasColumnName("city_code");
+            entity.Property(e => e.CountryCode)
+                .HasMaxLength(100)
+                .HasColumnName("country_code");
+            entity.Property(e => e.Description)
+                .HasMaxLength(2000)
+                .HasColumnName("description");
+            entity.Property(e => e.EndDate).HasColumnName("end_date");
+            entity.Property(e => e.ExternalId)
+                .HasMaxLength(50)
+                .HasColumnName("external_id");
+            entity.Property(e => e.Guid)
+                .HasMaxLength(50)
+                .HasColumnName("guid");
+            entity.Property(e => e.Label)
+                .HasMaxLength(2000)
+                .HasColumnName("label");
+            entity.Property(e => e.Source)
+                .HasMaxLength(50)
+                .HasColumnName("source");
+            entity.Property(e => e.StartDate).HasColumnName("start_date");
+            entity.Property(e => e.Type).HasColumnName("type");
+        });
+
+        modelBuilder.Entity<SpatialInfo>(entity =>
+        {
+            entity.HasKey(e => e.SpatialInfoKey).HasName("spatial_info_pkey");
+
+            entity.ToTable("spatial_info");
+
+            entity.HasIndex(e => e.VenueName, "idx_spatial_info_venue_name");
+
+            entity.HasIndex(e => e.VenueType, "idx_spatial_info_venue_type");
+
+            entity.HasIndex(e => e.CoreNodeKey, "uk_spatial_info_core_node").IsUnique();
+
+            entity.Property(e => e.SpatialInfoKey).HasColumnName("spatial_info_key");
+            entity.Property(e => e.Address)
+                .HasMaxLength(200)
+                .HasColumnName("address");
+            entity.Property(e => e.City)
+                .HasMaxLength(100)
+                .HasColumnName("city");
+            entity.Property(e => e.CoreNodeKey).HasColumnName("core_node_key");
+            entity.Property(e => e.Country)
+                .HasMaxLength(100)
+                .HasColumnName("country");
+            entity.Property(e => e.Duration)
+                .HasMaxLength(50)
+                .HasColumnName("duration");
+            entity.Property(e => e.Latitude)
+                .HasMaxLength(50)
+                .HasColumnName("latitude");
+            entity.Property(e => e.Longitude)
+                .HasMaxLength(50)
+                .HasColumnName("longitude");
+            entity.Property(e => e.PostalCode)
+                .HasMaxLength(50)
+                .HasColumnName("postal_code");
+            entity.Property(e => e.RecurrenceFrequency)
+                .HasMaxLength(50)
+                .HasColumnName("recurrence_frequency");
+            entity.Property(e => e.Recurring).HasColumnName("recurring");
+            entity.Property(e => e.State)
+                .HasMaxLength(50)
+                .HasColumnName("state");
+            entity.Property(e => e.StateCode)
+                .HasMaxLength(50)
+                .HasColumnName("state_code");
+            entity.Property(e => e.Timezone)
+                .HasMaxLength(50)
+                .HasColumnName("timezone");
+            entity.Property(e => e.VenueCapacity).HasColumnName("venue_capacity");
+            entity.Property(e => e.VenueId)
+                .HasMaxLength(100)
+                .HasColumnName("venue_id");
+            entity.Property(e => e.VenueName)
+                .HasMaxLength(100)
+                .HasColumnName("venue_name");
+            entity.Property(e => e.VenueType)
+                .HasMaxLength(100)
+                .HasColumnName("venue_type");
+            entity.Property(e => e.VenueUrl)
+                .HasMaxLength(200)
+                .HasColumnName("venue_url");
+
+            entity.HasOne(d => d.CoreNodeKeyNavigation).WithOne(p => p.SpatialInfo)
+                .HasForeignKey<SpatialInfo>(d => d.CoreNodeKey)
+                .HasConstraintName("spatial_info_core_node_key_fkey");
+        });
 
         modelBuilder.Entity<StoredUserTask>(entity =>
         {

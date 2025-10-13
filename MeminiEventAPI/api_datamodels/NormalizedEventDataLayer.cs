@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace MeminiEventAPI.api_datamodels;
 using System;
@@ -93,7 +94,7 @@ public class SearchRadius
     public double? Value { get; set; }
     public DistanceUnit? Unit { get; set; }
 }
-
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum DistanceUnit
 {
     Miles,
@@ -161,7 +162,7 @@ public class EventStatusInfo
     public DateTime? StatusChangedAt { get; set; }
     public TicketAvailability? TicketAvailability { get; set; }
 }
-
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum EventStatus
 {
     Active,
@@ -173,7 +174,7 @@ public enum EventStatus
     OnSale,
     OffSale
 }
-
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TicketAvailability
 {
     Available,
@@ -226,7 +227,7 @@ public class EventMedia
     public bool? IsPrimary { get; set; }
     public string? Attribution { get; set; }
 }
-
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MediaType
 {
     Image,
@@ -236,6 +237,8 @@ public enum MediaType
 
 // ==================== SOURCE INFORMATION ====================
 
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum EventSource
 {
     Ticketmaster,
@@ -245,128 +248,4 @@ public enum EventSource
     Unknown
 }
 
-// ==================== SEARCH & QUERY MODELS ====================
 
-/// <summary>
-/// Unified search query parameters for all event sources
-/// </summary>
-public class EventSearchQuery
-{
-    public EventGeographicFilter? GeographicFilter { get; set; }
-    public EventTemporalFilter? TemporalFilter { get; set; }
-    public EventCategorizationFilter? CategorizationFilter { get; set; }
-    public EventStatusFilter? StatusFilter { get; set; }
-    public string? Keyword { get; set; }
-    public List<EventSource>? Sources { get; set; }
-    public EventResultControl? ResultControl { get; set; }
-}
-
-public class EventGeographicFilter
-{
-    public string? Country { get; set; }
-    public string? CountryCode { get; set; }
-    public string? State { get; set; }
-    public string? StateCode { get; set; }
-    public string? City { get; set; }
-    public string? PostalCode { get; set; }
-    public GeoCoordinates? Center { get; set; }
-    public SearchRadius? Radius { get; set; }
-    public GeoBoundingBox? BoundingBox { get; set; }
-}
-
-public class GeoBoundingBox
-{
-    public GeoCoordinates? NorthEast { get; set; }
-    public GeoCoordinates? SouthWest { get; set; }
-}
-
-public class EventTemporalFilter
-{
-    public DateTime? StartDateFrom { get; set; }
-    public DateTime? StartDateTo { get; set; }
-    public DateTime? EndDateFrom { get; set; }
-    public DateTime? EndDateTo { get; set; }
-    public List<DayOfWeek>? DaysOfWeek { get; set; }
-    public TimeSpan? MinDuration { get; set; }
-    public TimeSpan? MaxDuration { get; set; }
-}
-
-public class EventCategorizationFilter
-{
-    public List<string>? Categories { get; set; }
-    public List<string>? Genres { get; set; }
-    public List<string>? Tags { get; set; }
-    public List<string>? Types { get; set; }
-    public string? Segment { get; set; }
-    public int? MinRank { get; set; }
-    public int? MaxRank { get; set; }
-    public bool? IsFeatured { get; set; }
-}
-
-public class EventStatusFilter
-{
-    public List<EventStatus>? Statuses { get; set; }
-    public bool? IsActive { get; set; }
-    public bool? IsCancelled { get; set; }
-    public bool? IsSoldOut { get; set; }
-    public List<TicketAvailability>? TicketAvailability { get; set; }
-}
-
-public class EventResultControl
-{
-    public int? PageSize { get; set; }
-    public int? PageOffset { get; set; }
-    public int? PageNumber { get; set; }
-    public int? MaxResults { get; set; }
-    public EventSortOption? SortBy { get; set; }
-    public SortDirection? SortDirection { get; set; }
-}
-
-public enum EventSortOption
-{
-    Relevance,
-    Date,
-    Name,
-    Distance,
-    Popularity,
-    Rank,
-    Random
-}
-
-public enum SortDirection
-{
-    Ascending,
-    Descending
-}
-
-// ==================== RESPONSE MODELS ====================
-
-/// <summary>
-/// Paginated response wrapper for event searches
-/// </summary>
-public class EventSearchResponse
-{
-    public List<NormalizedEvent>? Events { get; set; }
-    public PaginationInfo? Pagination { get; set; }
-    public SearchMetadata? Metadata { get; set; }
-}
-
-public class PaginationInfo
-{
-    public int? TotalResults { get; set; }
-    public int? PageSize { get; set; }
-    public int? PageOffset { get; set; }
-    public int? PageNumber { get; set; }
-    public int? TotalPages { get; set; }
-    public bool? HasNextPage { get; set; }
-    public bool? HasPreviousPage { get; set; }
-}
-
-public class SearchMetadata
-{
-    public DateTime? SearchTimestamp { get; set; }
-    public TimeSpan? SearchDuration { get; set; }
-    public List<EventSource>? SourcesQueried { get; set; }
-    public Dictionary<EventSource, int>? ResultsBySource { get; set; }
-    public Dictionary<string, object>? AdditionalInfo { get; set; }
-}

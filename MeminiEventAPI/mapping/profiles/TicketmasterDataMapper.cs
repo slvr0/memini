@@ -17,9 +17,8 @@ public class TicketmasterMapper : FluentQualityMapper<TM.TicketmasterEvent, Norm
         ConfigureMapping();
     }
 
-
     private void ConfigureMapping()
-    {
+    {        
         // ==================== BASIC INFORMATION ====================
         Map(s => s.Id, d => d.ExternalId, id => id?.Trim(), trackQuality: true);
         Map(s => s.Name, d => d.Name, name => name?.Trim(), trackQuality: true);
@@ -141,8 +140,8 @@ public class TicketmasterMapper : FluentQualityMapper<TM.TicketmasterEvent, Norm
         if (firstClass == null) return null;
 
         var hasData = !string.IsNullOrWhiteSpace(firstClass.Segment?.Name) ||
-                     !string.IsNullOrWhiteSpace(firstClass.Genre?.Name) ||
-                     !string.IsNullOrWhiteSpace(firstClass.SubGenre?.Name);
+                      !string.IsNullOrWhiteSpace(firstClass.Genre?.Name) ||
+                      !string.IsNullOrWhiteSpace(firstClass.SubGenre?.Name);
 
         if (!hasData) return null;
 
@@ -180,7 +179,7 @@ public class TicketmasterMapper : FluentQualityMapper<TM.TicketmasterEvent, Norm
         // Build individual price ranges for the normalized model
         var ranges = priceRanges
             .Where(pr => !string.IsNullOrWhiteSpace(pr.Currency))
-            .Select(pr => new PriceRange  // ✅ Normalized model, not API model
+            .Select(pr => new PriceRange 
             {
                 Type = string.IsNullOrWhiteSpace(pr.Type) ? null : pr.Type,
                 Min = pr.Min,
@@ -195,7 +194,7 @@ public class TicketmasterMapper : FluentQualityMapper<TM.TicketmasterEvent, Norm
             MaxPrice = firstRange.Max,
             Currency = string.IsNullOrWhiteSpace(firstRange.Currency) ? null : firstRange.Currency,
             IsFree = firstRange.Min == 0,
-            PriceRanges = ranges.Any() ? ranges : null  // ✅ No ?. needed, ranges is never null
+            PriceRanges = ranges.Any() ? ranges : null 
         };
     }
 

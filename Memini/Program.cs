@@ -35,6 +35,7 @@ builder.Services.AddAuthentication(options =>
 /* Adds connection pool for event apis */
 builder.Services.AddEventApiClients(builder.Configuration);
 
+
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 {

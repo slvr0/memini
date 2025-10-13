@@ -12,6 +12,7 @@ public class UserTaskManager
         _context = context;
     } 
 
+    //easily confused with just store a user task, this is storing a favory/recent entry.
     public void StoreTask(UserTask userTask, bool isFavorite = false)
     {
         bool uniqueEntry = _context.StoredUserTasks

@@ -125,10 +125,8 @@ public abstract class EventApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapt
         {
             InvokeDataMetricsResponse(0, (int)0, ex);
         }
-
         return;
     }
-
 }
 
 public abstract class PlacesApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapter<TDModel, TDModelResult>, IPlaceAdapter where TDModel : IApiDataModel
@@ -171,7 +169,6 @@ public abstract class NewsApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapte
 
     public abstract List<MappingResult<NormalizedNews>> MapToNormalizedNews(double keepThreshold = 0.1);
     public int GetAccumulatedFetchData() => AccumulatedData.Count;
-
     public override async Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options)
     {
         try
@@ -204,7 +201,6 @@ public abstract class WeatherApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAda
 
     public abstract List<MappingResult<NormalizedWeather>> MapToNormalizedWeather(double keepThreshold = 0.1);
     public int GetAccumulatedFetchData() => AccumulatedData.Count;
-
     public override async Task FetchAllAndDeserialize(ICollection<IApiRequest> requestconfigs, JsonSerializerOptions options)
     {
         try

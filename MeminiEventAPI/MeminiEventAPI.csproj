@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="factories\" />
-    <Folder Include="observers\" />
   </ItemGroup>
 
   <ItemGroup>
