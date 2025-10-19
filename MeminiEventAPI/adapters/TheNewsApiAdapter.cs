@@ -21,12 +21,16 @@ internal class TheNewsApiAdapter(HttpClient httpClient) : NewsApiBaseAdapter<The
         if (config == null)
             throw new ArgumentException("Invalid request config type");
 
-        var endpoint = config.Endpoint switch
-        {
-            NewsApiEndpoint.All => "all",
-            NewsApiEndpoint.Top => "top",
-            _ => "all"
-        };
+        //var endpoint = config.Endpoint switch
+        //{
+        //    NewsApiEndpoint.All => "all",
+        //    NewsApiEndpoint.Headlines => "headlines",
+        //    NewsApiEndpoint.Top => "top",
+        //    _ => "all"
+        //};
+
+        //all does not support locale search so this needs to be top for now.
+        var endpoint = "top";
 
         var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
 
@@ -50,7 +54,7 @@ internal class TheNewsApiAdapter(HttpClient httpClient) : NewsApiBaseAdapter<The
         if (!string.IsNullOrEmpty(config.Language))
             query["language"] = config.Language;
         if (!string.IsNullOrEmpty(config.Locale))
-            query["locale"] = config.Locale;
+            query["locale"] = config.Locale;    
 
         // Date filtering
         if (config.PublishedBefore.HasValue)

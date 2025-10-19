@@ -2,7 +2,7 @@
 using Memini.structures;
 using Microsoft.EntityFrameworkCore;
 
-namespace Memini.services;
+namespace Memini.selectors;
 
 public static class CoreNodeQueryExtensions
 {
@@ -19,7 +19,7 @@ public static class CoreNodeQueryExtensions
 
     public static IQueryable<CoreNode> ByCity(this IQueryable<CoreNode> query, string city)
     {
-        return query.Where(cn => cn.CityCode == city);
+        return query.Where(cn => cn.City == city);
     }
 
     public static IQueryable<CoreNode> ByStartDate(this IQueryable<CoreNode> query, DateTime start)
@@ -63,7 +63,7 @@ public static class CoreNodeQueryExtensions
     {
         return query
             .Include(cn => cn.ContentInfo)
-                .ThenInclude(ci => ci.ContentImages);
+                .ThenInclude(ci => ci.ContentMedia);
     }
 
     public static IQueryable<CoreNode> WithSpatialInfo(this IQueryable<CoreNode> query)
@@ -80,7 +80,7 @@ public static class CoreNodeQueryExtensions
     {
         return query
             .Include(cn => cn.ContentInfo)
-                .ThenInclude(ci => ci.ContentImages)
+                .ThenInclude(ci => ci.ContentMedia)
             .Include(cn => cn.SpatialInfo)
             .Include(cn => cn.CommercialStatusInfo);
     }

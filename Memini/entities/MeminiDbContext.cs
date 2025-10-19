@@ -17,11 +17,15 @@ public partial class MeminiDbContext : DbContext
 
     public virtual DbSet<CommercialStatusInfo> CommercialStatusInfos { get; set; }
 
-    public virtual DbSet<ContentImage> ContentImages { get; set; }
-
     public virtual DbSet<ContentInfo> ContentInfos { get; set; }
 
+    public virtual DbSet<ContentMedium> ContentMedia { get; set; }
+
     public virtual DbSet<CoreNode> CoreNodes { get; set; }
+
+    public virtual DbSet<NewsInfo> NewsInfos { get; set; }
+
+    public virtual DbSet<PoiInfo> PoiInfos { get; set; }
 
     public virtual DbSet<SpatialInfo> SpatialInfos { get; set; }
 
@@ -30,6 +34,8 @@ public partial class MeminiDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserTask> UserTasks { get; set; }
+
+    public virtual DbSet<WeatherInfo> WeatherInfos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -42,7 +48,10 @@ public partial class MeminiDbContext : DbContext
             .HasPostgresEnum("auth", "code_challenge_method", new[] { "s256", "plain" })
             .HasPostgresEnum("auth", "factor_status", new[] { "unverified", "verified" })
             .HasPostgresEnum("auth", "factor_type", new[] { "totp", "webauthn", "phone" })
+            .HasPostgresEnum("auth", "oauth_authorization_status", new[] { "pending", "approved", "denied", "expired" })
+            .HasPostgresEnum("auth", "oauth_client_type", new[] { "public", "confidential" })
             .HasPostgresEnum("auth", "oauth_registration_type", new[] { "dynamic", "manual" })
+            .HasPostgresEnum("auth", "oauth_response_type", new[] { "code" })
             .HasPostgresEnum("auth", "one_time_token_type", new[] { "confirmation_token", "reauthentication_token", "recovery_token", "email_change_token_new", "email_change_token_current", "phone_change_token" })
             .HasPostgresEnum("realtime", "action", new[] { "INSERT", "UPDATE", "DELETE", "TRUNCATE", "ERROR" })
             .HasPostgresEnum("realtime", "equality_op", new[] { "eq", "neq", "lt", "lte", "gt", "gte", "in" })
@@ -66,6 +75,8 @@ public partial class MeminiDbContext : DbContext
             entity.HasIndex(e => e.Free, "idx_commercial_status_info_free");
 
             entity.HasIndex(e => e.Status, "idx_commercial_status_info_status");
+
+            entity.HasIndex(e => e.Verified, "idx_commercial_status_info_verified");
 
             entity.HasIndex(e => e.CoreNodeKey, "uk_commercial_status_info_core_node").IsUnique();
 
@@ -95,38 +106,11 @@ public partial class MeminiDbContext : DbContext
             entity.Property(e => e.StatusReason)
                 .HasMaxLength(200)
                 .HasColumnName("status_reason");
+            entity.Property(e => e.Verified).HasColumnName("verified");
 
             entity.HasOne(d => d.CoreNodeKeyNavigation).WithOne(p => p.CommercialStatusInfo)
                 .HasForeignKey<CommercialStatusInfo>(d => d.CoreNodeKey)
                 .HasConstraintName("commercial_status_info_core_node_key_fkey");
-        });
-
-        modelBuilder.Entity<ContentImage>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("content_image_pkey");
-
-            entity.ToTable("content_image");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Attribution)
-                .HasMaxLength(500)
-                .HasColumnName("attribution");
-            entity.Property(e => e.Height).HasColumnName("height");
-            entity.Property(e => e.IsPrimary)
-                .HasDefaultValue(false)
-                .HasColumnName("is_primary");
-            entity.Property(e => e.ParentContentId).HasColumnName("parent_content_id");
-            entity.Property(e => e.Type)
-                .HasMaxLength(50)
-                .HasColumnName("type");
-            entity.Property(e => e.Url)
-                .HasMaxLength(500)
-                .HasColumnName("url");
-            entity.Property(e => e.Width).HasColumnName("width");
-
-            entity.HasOne(d => d.ParentContent).WithMany(p => p.ContentImages)
-                .HasForeignKey(d => d.ParentContentId)
-                .HasConstraintName("content_image_parent_content_id_fkey");
         });
 
         modelBuilder.Entity<ContentInfo>(entity =>
@@ -189,6 +173,59 @@ public partial class MeminiDbContext : DbContext
                 .HasConstraintName("content_info_core_node_key_fkey");
         });
 
+        modelBuilder.Entity<ContentMedium>(entity =>
+        {
+            entity.HasKey(e => e.ContentMediaKey).HasName("content_media_pkey");
+
+            entity.ToTable("content_media");
+
+            entity.HasIndex(e => new { e.ContentInfoKey, e.IsPrimary }, "idx_content_media_content_primary").HasFilter("(is_primary = true)");
+
+            entity.HasIndex(e => new { e.ContentInfoKey, e.Type }, "idx_content_media_content_type");
+
+            entity.HasIndex(e => new { e.PoiInfoKey, e.IsPrimary }, "idx_content_media_poi_primary").HasFilter("(is_primary = true)");
+
+            entity.HasIndex(e => new { e.PoiInfoKey, e.Type }, "idx_content_media_poi_type");
+
+            entity.HasIndex(e => new { e.Type, e.IsPrimary }, "idx_content_media_type_primary").HasFilter("(is_primary = true)");
+
+            entity.HasIndex(e => e.Url, "idx_content_media_url");
+
+            entity.Property(e => e.ContentMediaKey).HasColumnName("content_media_key");
+            entity.Property(e => e.Attribution)
+                .HasMaxLength(500)
+                .HasColumnName("attribution");
+            entity.Property(e => e.ContentInfoKey).HasColumnName("content_info_key");
+            entity.Property(e => e.Height).HasColumnName("height");
+            entity.Property(e => e.IsPrimary)
+                .HasDefaultValue(false)
+                .HasColumnName("is_primary");
+            entity.Property(e => e.PoiInfoKey).HasColumnName("poi_info_key");
+            entity.Property(e => e.Prefix)
+                .HasMaxLength(50)
+                .HasColumnName("prefix");
+            entity.Property(e => e.Suffix)
+                .HasMaxLength(50)
+                .HasColumnName("suffix");
+            entity.Property(e => e.Type)
+                .HasMaxLength(50)
+                .HasColumnName("type");
+            entity.Property(e => e.Url)
+                .HasMaxLength(500)
+                .HasColumnName("url");
+            entity.Property(e => e.Width).HasColumnName("width");
+
+            entity.HasOne(d => d.ContentInfoKeyNavigation).WithMany(p => p.ContentMedia)
+                .HasForeignKey(d => d.ContentInfoKey)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("content_media_content_info_key_fkey");
+
+            entity.HasOne(d => d.PoiInfoKeyNavigation).WithMany(p => p.ContentMedia)
+                .HasForeignKey(d => d.PoiInfoKey)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("content_media_poi_info_key_fkey");
+        });
+
         modelBuilder.Entity<CoreNode>(entity =>
         {
             entity.HasKey(e => e.Key).HasName("core_node_pkey");
@@ -197,7 +234,7 @@ public partial class MeminiDbContext : DbContext
 
             entity.HasIndex(e => e.Guid, "core_node_guid_key").IsUnique();
 
-            entity.HasIndex(e => e.CityCode, "idx_core_node_city_code");
+            entity.HasIndex(e => e.City, "idx_core_node_city_code");
 
             entity.HasIndex(e => e.CountryCode, "idx_core_node_country_code");
 
@@ -214,12 +251,18 @@ public partial class MeminiDbContext : DbContext
             entity.HasIndex(e => e.Type, "idx_core_node_type");
 
             entity.Property(e => e.Key).HasColumnName("key");
-            entity.Property(e => e.CityCode)
+            entity.Property(e => e.City)
                 .HasMaxLength(100)
-                .HasColumnName("city_code");
+                .HasColumnName("city");
+            entity.Property(e => e.Country)
+                .HasMaxLength(100)
+                .HasColumnName("country");
             entity.Property(e => e.CountryCode)
                 .HasMaxLength(100)
                 .HasColumnName("country_code");
+            entity.Property(e => e.DateAdded)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("date_added");
             entity.Property(e => e.Description)
                 .HasMaxLength(2000)
                 .HasColumnName("description");
@@ -240,6 +283,126 @@ public partial class MeminiDbContext : DbContext
             entity.Property(e => e.Type).HasColumnName("type");
         });
 
+        modelBuilder.Entity<NewsInfo>(entity =>
+        {
+            entity.HasKey(e => e.NewsInfoKey).HasName("news_info_pkey");
+
+            entity.ToTable("news_info");
+
+            entity.HasIndex(e => e.Categories, "idx_news_info_categories");
+
+            entity.HasIndex(e => e.CoreNodeKey, "idx_news_info_core_node");
+
+            entity.HasIndex(e => e.Description, "idx_news_info_description");
+
+            entity.HasIndex(e => e.Locale, "idx_news_info_locale");
+
+            entity.HasIndex(e => e.Source, "idx_news_info_source");
+
+            entity.HasIndex(e => e.Title, "idx_news_info_title");
+
+            entity.HasIndex(e => e.Uuid, "idx_news_info_uuid");
+
+            entity.Property(e => e.NewsInfoKey).HasColumnName("news_info_key");
+            entity.Property(e => e.Categories)
+                .HasMaxLength(200)
+                .HasColumnName("categories");
+            entity.Property(e => e.CoreNodeKey).HasColumnName("core_node_key");
+            entity.Property(e => e.DateAdded)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("date_added");
+            entity.Property(e => e.Description)
+                .HasMaxLength(2000)
+                .HasColumnName("description");
+            entity.Property(e => e.ImageUrl)
+                .HasMaxLength(500)
+                .HasColumnName("image_url");
+            entity.Property(e => e.Keywords)
+                .HasMaxLength(500)
+                .HasColumnName("keywords");
+            entity.Property(e => e.Language)
+                .HasMaxLength(100)
+                .HasColumnName("language");
+            entity.Property(e => e.Locale)
+                .HasMaxLength(100)
+                .HasColumnName("locale");
+            entity.Property(e => e.PublishedDate).HasColumnName("published_date");
+            entity.Property(e => e.Relevance).HasColumnName("relevance");
+            entity.Property(e => e.Snippet)
+                .HasMaxLength(1000)
+                .HasColumnName("snippet");
+            entity.Property(e => e.Source)
+                .HasMaxLength(100)
+                .HasColumnName("source");
+            entity.Property(e => e.Title)
+                .HasMaxLength(1000)
+                .HasColumnName("title");
+            entity.Property(e => e.Url)
+                .HasMaxLength(500)
+                .HasColumnName("url");
+            entity.Property(e => e.Uuid)
+                .HasMaxLength(50)
+                .HasColumnName("uuid");
+
+            entity.HasOne(d => d.CoreNodeKeyNavigation).WithMany(p => p.NewsInfos)
+                .HasForeignKey(d => d.CoreNodeKey)
+                .HasConstraintName("news_info_core_node_key_fkey");
+        });
+
+        modelBuilder.Entity<PoiInfo>(entity =>
+        {
+            entity.HasKey(e => e.PoiInfoKey).HasName("poi_info_pkey");
+
+            entity.ToTable("poi_info");
+
+            entity.HasIndex(e => e.AllCategories, "idx_poi_info_all_categories");
+
+            entity.HasIndex(e => e.CoreNodeKey, "idx_poi_info_core_node");
+
+            entity.HasIndex(e => e.Open, "idx_poi_info_open");
+
+            entity.HasIndex(e => e.Rating, "idx_poi_info_rating");
+
+            entity.HasIndex(e => e.TotalRatings, "idx_poi_info_total_rating");
+
+            entity.HasIndex(e => e.Verified, "idx_poi_info_verified");
+
+            entity.HasIndex(e => e.CoreNodeKey, "poi_info_core_node_key_key").IsUnique();
+
+            entity.HasIndex(e => e.CoreNodeKey, "uk_poi_info_core_node").IsUnique();
+
+            entity.Property(e => e.PoiInfoKey).HasColumnName("poi_info_key");
+            entity.Property(e => e.Address)
+                .HasMaxLength(100)
+                .HasColumnName("address");
+            entity.Property(e => e.AllCategories)
+                .HasMaxLength(200)
+                .HasColumnName("all_categories");
+            entity.Property(e => e.Category).HasColumnName("category");
+            entity.Property(e => e.Closed).HasColumnName("closed");
+            entity.Property(e => e.CoreNodeKey).HasColumnName("core_node_key");
+            entity.Property(e => e.DateClosed).HasColumnName("date_closed");
+            entity.Property(e => e.Free).HasColumnName("free");
+            entity.Property(e => e.Latitude).HasColumnName("latitude");
+            entity.Property(e => e.Longitude).HasColumnName("longitude");
+            entity.Property(e => e.Open).HasColumnName("open");
+            entity.Property(e => e.Popularity).HasColumnName("popularity");
+            entity.Property(e => e.PostalCode)
+                .HasMaxLength(100)
+                .HasColumnName("postal_code");
+            entity.Property(e => e.PriceLevel).HasColumnName("price_level");
+            entity.Property(e => e.Rating).HasColumnName("rating");
+            entity.Property(e => e.TotalRatings).HasColumnName("total_ratings");
+            entity.Property(e => e.Verified).HasColumnName("verified");
+            entity.Property(e => e.WebsiteUrl)
+                .HasMaxLength(200)
+                .HasColumnName("website_url");
+
+            entity.HasOne(d => d.CoreNodeKeyNavigation).WithOne(p => p.PoiInfo)
+                .HasForeignKey<PoiInfo>(d => d.CoreNodeKey)
+                .HasConstraintName("poi_info_core_node_key_fkey");
+        });
+
         modelBuilder.Entity<SpatialInfo>(entity =>
         {
             entity.HasKey(e => e.SpatialInfoKey).HasName("spatial_info_pkey");
@@ -256,13 +419,7 @@ public partial class MeminiDbContext : DbContext
             entity.Property(e => e.Address)
                 .HasMaxLength(200)
                 .HasColumnName("address");
-            entity.Property(e => e.City)
-                .HasMaxLength(100)
-                .HasColumnName("city");
             entity.Property(e => e.CoreNodeKey).HasColumnName("core_node_key");
-            entity.Property(e => e.Country)
-                .HasMaxLength(100)
-                .HasColumnName("country");
             entity.Property(e => e.Duration)
                 .HasMaxLength(50)
                 .HasColumnName("duration");
@@ -381,6 +538,34 @@ public partial class MeminiDbContext : DbContext
             entity.HasOne(d => d.UserkeyNavigation).WithMany(p => p.UserTasks)
                 .HasForeignKey(d => d.Userkey)
                 .HasConstraintName("UserTask_userkey_fkey");
+        });
+
+        modelBuilder.Entity<WeatherInfo>(entity =>
+        {
+            entity.HasKey(e => e.WeatherInfoKey).HasName("weather_info_pkey");
+
+            entity.ToTable("weather_info");
+
+            entity.HasIndex(e => e.CoreNodeKey, "idx_weather_info_core_node");
+
+            entity.HasIndex(e => e.WeatherDescription, "idx_weather_info_weather_description");
+
+            entity.Property(e => e.WeatherInfoKey).HasColumnName("weather_info_key");
+            entity.Property(e => e.CoreNodeKey).HasColumnName("core_node_key");
+            entity.Property(e => e.PrecipitationSum).HasColumnName("precipitation_sum");
+            entity.Property(e => e.TemperatureMax).HasColumnName("temperature_max");
+            entity.Property(e => e.TemperatureMin).HasColumnName("temperature_min");
+            entity.Property(e => e.WeatherDescription)
+                .HasMaxLength(100)
+                .HasColumnName("weather_description");
+            entity.Property(e => e.WindDirection)
+                .HasMaxLength(20)
+                .HasColumnName("wind_direction");
+            entity.Property(e => e.WindspeedMax).HasColumnName("windspeed_max");
+
+            entity.HasOne(d => d.CoreNodeKeyNavigation).WithMany(p => p.WeatherInfos)
+                .HasForeignKey(d => d.CoreNodeKey)
+                .HasConstraintName("weather_info_core_node_key_fkey");
         });
         modelBuilder.HasSequence<int>("seq_schema_version", "graphql").IsCyclic();
 

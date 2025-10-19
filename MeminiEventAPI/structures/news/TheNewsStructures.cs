@@ -10,7 +10,8 @@ namespace MeminiEventAPI.structures.news
     public enum NewsApiEndpoint
     {
         All,
-        Top
+        Top,
+        Headlines
     }
 
     public enum NewsApiSort

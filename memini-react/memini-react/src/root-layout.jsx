@@ -40,7 +40,7 @@ const RootLayout = () => {
               </div>
 
               {/* Outlet content - Keep fixed margin so it doesn't move */}
-              <div className="ml-16 h-screen">     
+              <div className="ml-16 ">     
                   <Outlet />          
               </div>
             </div>

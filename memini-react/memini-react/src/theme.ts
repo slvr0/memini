@@ -24,11 +24,14 @@ const theme = createTheme({
       //   fontWeight: 600,
       // },
       
- 
+      h4: {
+        fontSize: '18px',
+        fontWeight: 500,
+      },
       
       h6: {
-        fontSize: '10px',
-        fontWeight: 500,
+        fontSize: '16px',
+        fontWeight: 400,
       },
       
       body1: {

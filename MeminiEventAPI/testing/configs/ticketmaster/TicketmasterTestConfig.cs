@@ -6,9 +6,9 @@ namespace MeminiEventAPI.testing.configs.ticketmaster
 {
     public class TicketmasterTestConfig
     {
-        public async Task<MeminiApiResponse> SimpleTestConfig(ApiAdapterHandler handler)
+        public Dictionary<string, ICollection<IApiRequest>>  SimpleTestConfig()
         {
-            var configs = new Dictionary<string, ICollection<IApiRequest>>
+            return new Dictionary<string, ICollection<IApiRequest>>
             {
                 ["Ticketmaster"] = new List<IApiRequest>
         {
@@ -21,7 +21,7 @@ namespace MeminiEventAPI.testing.configs.ticketmaster
             }
         }
             };
-            return await handler.FetchDataFromApis(configs);
+        
         }
     }
 }

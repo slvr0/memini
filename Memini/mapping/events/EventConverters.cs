@@ -1,8 +1,8 @@
-﻿
-using Memini.entities;
+﻿using Memini.entities;
+using Memini.structures;
 using MeminiEventAPI.api_datamodels;
 
-namespace Memini.structures.events;
+namespace Memini.mapping.events;
 
 public static class EventConverters
 {
@@ -11,15 +11,16 @@ public static class EventConverters
         return new CoreNode()
         {
             ExternalId = normalizedEvent.ExternalId,
-            Guid = normalizedEvent.ExternalId, //generate one if null
+            Guid = string.IsNullOrEmpty(normalizedEvent.ExternalId) ? Guid.NewGuid().ToString() : normalizedEvent.ExternalId, //generate one if null
             Source = normalizedEvent.Source.ToString() ?? "Unknown",       
             Label = normalizedEvent.Name,
             Description = "",
             StartDate = normalizedEvent.TemporalInfo?.StartDate ?? null,
             EndDate = normalizedEvent.TemporalInfo?.EndDate ?? null,
             Type = (int)CoreNodeTypes.Event, 
+            Country = normalizedEvent.GeographicInfo?.Country ?? null,
             CountryCode = normalizedEvent.GeographicInfo?.CountryCode ?? null,
-            CityCode = normalizedEvent.GeographicInfo?.City ?? null // well this conversion isnt exactly right
+            City = normalizedEvent.GeographicInfo?.City ?? null 
         };
     }
 
@@ -27,9 +28,7 @@ public static class EventConverters
     {
         return new SpatialInfo()
         {
-            CoreNodeKey = 0, // its not connected yet
-            Country = normalizedEvent.GeographicInfo?.Country ?? null,
-            City = normalizedEvent.GeographicInfo?.City ?? null,
+            CoreNodeKey = 0, // its not connected yet         
             Address = normalizedEvent.GeographicInfo?.Address ?? null,
             State = normalizedEvent.GeographicInfo?.State ?? null,
             StateCode = normalizedEvent.GeographicInfo?.StateCode ?? null,
@@ -50,14 +49,13 @@ public static class EventConverters
 
     public static ContentInfo ConvertToContentInfo(this NormalizedEvent normalizedEvent)
     {
-        var images = new List<ContentImage>();
+        var images = new List<ContentMedium>();
         if (normalizedEvent.Media != null)
         {
             foreach (var mediaContent in normalizedEvent.Media)
             {
-                images.Add(new ContentImage()
+                images.Add(new ContentMedium()
                 {
-                    ParentContentId = 0, // need to set later.
                     Url = mediaContent?.Url ?? "",
                     Type = mediaContent?.Type.ToString(),
                     Width = mediaContent?.Width ?? 0,
@@ -83,7 +81,7 @@ public static class EventConverters
             PerformerName = normalizedEvent.Performers?.First().Name ?? null,
             PerformerType = normalizedEvent.Performers?.First().Type ?? null,
             PerformerGenre = normalizedEvent.Performers?.First()?.Genres?.ToString() ?? null,
-            ContentImages = images
+            ContentMedia = images
         };
     }
 

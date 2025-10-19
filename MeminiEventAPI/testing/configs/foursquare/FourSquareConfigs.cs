@@ -11,7 +11,7 @@ namespace MeminiEventAPI.testing.configs.foursquare;
 public class FourSquareTesting {
 
 // FoursquareApiTester.cs - Updated CreateTestConfigs
-private Dictionary<string, ICollection<IApiRequest>> CreateTestConfigs()
+public Dictionary<string, ICollection<IApiRequest>> CreateTestConfigs()
 {
     var configs = new Dictionary<string, ICollection<IApiRequest>>
     {

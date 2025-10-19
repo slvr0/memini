@@ -5,11 +5,11 @@ using MeminiEventAPI.handlers;
 
 namespace MeminiEventAPI.testing.configs.weather
 {
-    public class OpenMeteoTestConfig
+    public static class OpenMeteoTestConfig
     {
-        public async Task<MeminiApiResponse> WeatherTestConfig(ApiAdapterHandler handler)
+        public static Dictionary<string, ICollection<IApiRequest>> WeatherTestConfig()
         {
-            var configs = new Dictionary<string, ICollection<IApiRequest>>
+            return new Dictionary<string, ICollection<IApiRequest>>
             {
                 ["OpenMeteo"] = new List<IApiRequest>
                 {
@@ -52,9 +52,7 @@ namespace MeminiEventAPI.testing.configs.weather
                         Timezone = "Asia/Tokyo"
                     }
                 }
-            };
-
-            return await handler.FetchDataFromApis(configs);
+            };            
         }
     }
 }

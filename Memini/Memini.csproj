@@ -34,6 +34,7 @@
   <ItemGroup>
     <Folder Include="event_datamodels\ticketmaster\" />
     <Folder Include="factories\" />
+    <Folder Include="structures\dto\" />
   </ItemGroup>
   
   

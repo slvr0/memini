@@ -43,23 +43,11 @@ namespace MeminiEventAPI.mapping.profiles
             Map(s => s.WindDirection, d => d.WindDirectionCardinal,
                 direction => GetCardinalDirection(direction), trackQuality: true);
 
-            Map(s => s.LocationInfo, d => d.LocationInfo, locationInfo => BuildLocationInfo(locationInfo) ,trackQuality: true);
+
+        
+            Map(s => s.LocationInfo, d => d.LocationInfo, locationInfo => locationInfo ,trackQuality: true);
         }
-        private LocationInfo? BuildLocationInfo(LocationInfo locationInfo)
-        {
-            if (locationInfo.City == "Unknown")
-                return null;
-            if (locationInfo.Country == "Unknown")
-                return null;
-
-            if (locationInfo.CountryCode == null)
-                return null;
-
-            if (locationInfo.Country == "Unknown")
-                return null;    
-
-            return locationInfo;
-        }
+     
 
 
         private static string GetWeatherDescription(int? weatherCode)

@@ -25,11 +25,21 @@ public partial class CoreNode
 
     public string? CountryCode { get; set; }
 
-    public string? CityCode { get; set; }
+    public string? City { get; set; }
+
+    public DateTime? DateAdded { get; set; }
+
+    public string? Country { get; set; }
 
     public virtual CommercialStatusInfo? CommercialStatusInfo { get; set; }
 
     public virtual ContentInfo? ContentInfo { get; set; }
 
+    public virtual ICollection<NewsInfo> NewsInfos { get; set; } = new List<NewsInfo>();
+
+    public virtual PoiInfo? PoiInfo { get; set; }
+
     public virtual SpatialInfo? SpatialInfo { get; set; }
+
+    public virtual ICollection<WeatherInfo> WeatherInfos { get; set; } = new List<WeatherInfo>();
 }

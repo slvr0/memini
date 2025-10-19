@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace Memini.services;
 
@@ -64,6 +65,9 @@ public class AuthorisationService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    public string GenerateGuid() => Guid.NewGuid().ToString();  
+  
 
 
 }

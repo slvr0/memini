@@ -19,17 +19,16 @@ public static class MeminiEventApiConnectionSetup
     {
         // Register all adapters
         RegisterApiAdapter<TicketmasterApiAdapter>(services, configuration, "Ticketmaster");
-        //RegisterApiAdapter<PredictHQEventApiAdapter>(services, configuration, "PredictHQ");
+        RegisterApiAdapter<PredictHqEventApiAdapter>(services, configuration, "PredictHQ");
         //RegisterApiAdapter<SeatGeekEventApiAdapter>(services, configuration, "SeatGeek");
         //RegisterApiAdapter<SongkickEventApiAdapter>(services, configuration, "SeatGeek"); // Note: uses SeatGeek key
 
-        // Eventful doesn't need an API key
+        // Eventful doesn't need an API key, its also not operational anymore no data response
         //RegisterApiAdapter<EventfulEventApiAdapter>(services, configuration, null);
 
-        //RegisterApiAdapter<FourSquareApiAdapter>(services, configuration, "FourSquare");
-        //RegisterApiAdapter<TheNewsApiAdapter>(services, configuration, "TheNews");
-
-        //RegisterApiAdapter<OpenMeteoApiAdapter>(services, configuration, "OpenMeteo");
+        RegisterApiAdapter<FourSquareApiAdapter>(services, configuration, "FourSquare");
+        RegisterApiAdapter<TheNewsApiAdapter>(services, configuration, "TheNews");
+        RegisterApiAdapter<OpenMeteoApiAdapter>(services, configuration, "OpenMeteo");
 
         // Register the handler
         services.AddSingleton<ApiAdapterHandler>();
@@ -82,8 +81,8 @@ public static class MeminiEventApiConnectionSetup
             nameof(FourSquareApiAdapter) => FourSquareApiAdapter.ConnectionString,
             nameof(TheNewsApiAdapter) => TheNewsApiAdapter.ConnectionString,
             nameof(OpenMeteoApiAdapter) => OpenMeteoApiAdapter.ConnectionString,
-            //nameof(PredictHQEventApiAdapter) => PredictHQEventApiAdapter.ConnectionString,
-            //nameof(SeatGeekEventApiAdapter) => SeatGeekEventApiAdapter.ConnectionString,                  
+            nameof(PredictHqEventApiAdapter) => PredictHqEventApiAdapter.ConnectionString,
+            //nameof(SeatGeekEventApiAdapter) => SeatGeekEventApiAdapter.ConnectionString,   STILL WAITING FOR APPROVAL KEY , GODAMN BASTARDS               
             _ => throw new InvalidOperationException($"Unknown adapter type: {typeof(TAdapter).Name}")
         };
     }

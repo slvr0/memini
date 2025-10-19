@@ -33,5 +33,7 @@ public partial class CommercialStatusInfo
 
     public bool? Free { get; set; }
 
+    public bool? Verified { get; set; }
+
     public virtual CoreNode CoreNodeKeyNavigation { get; set; } = null!;
 }

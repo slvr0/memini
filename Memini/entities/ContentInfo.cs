@@ -33,7 +33,7 @@ public partial class ContentInfo
 
     public string? PerformerGenre { get; set; }
 
-    public virtual ICollection<ContentImage> ContentImages { get; set; } = new List<ContentImage>();
+    public virtual ICollection<ContentMedium> ContentMedia { get; set; } = new List<ContentMedium>();
 
     public virtual CoreNode CoreNodeKeyNavigation { get; set; } = null!;
 }
