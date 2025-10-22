@@ -8,12 +8,14 @@ namespace MeminiEventAPI.adapters;
 
 internal class FourSquareApiAdapter(HttpClient httpClient) : PlacesApiBaseAdapter<FoursquareDatamodel, FoursquarePlace>(httpClient, "FourSquare")
 {
+    structures.foursquare.FoursquareCategory searchCategories = structures.foursquare.FoursquareCategory.Any;
     public readonly static string ConnectionString = "https://places-api.foursquare.com/";
-
     protected override int ApiDataModelTotalResult(FoursquareDatamodel dataModel) => dataModel.Results?.Count ?? 0;
-    protected override Task<List<FoursquarePlace>> ApiDataModelResult(FoursquareDatamodel dataModel) => Task.FromResult(dataModel.Results ?? new List<FoursquarePlace>());
-
-
+    protected override Task<List<FoursquarePlace>> ApiDataModelResult(FoursquareDatamodel dataModel) 
+    {
+        dataModel.Results.ForEach(res => res.SearchCategory = (int)searchCategories);
+        return Task.FromResult(dataModel.Results ?? new List<FoursquarePlace>());
+    } 
     public override string GenerateApiRequestUrl(IApiRequest requestConfig)
     {
         if (!(requestConfig is FoursquareApiRequest config))
@@ -38,13 +40,16 @@ internal class FourSquareApiAdapter(HttpClient httpClient) : PlacesApiBaseAdapte
             if (!string.IsNullOrWhiteSpace(config.Country))
                 near += $", {config.Country}";
             parts.Add($"near={Uri.EscapeDataString(near)}");
-
             // Do NOT add radius when using "near"
         }
 
         // Categories
-        if (!string.IsNullOrWhiteSpace(config.Categories))
-            parts.Add($"categories={config.Categories}");
+        if (config.Categories != structures.foursquare.FoursquareCategory.Any)
+        {
+            var categoryIds = FoursquareCategoryIds.GetCategoryIds(config.Categories);        
+            parts.Add($"categories={categoryIds}");
+            searchCategories = config.Categories;
+        }           
 
         // Query
         if (!string.IsNullOrWhiteSpace(config.Query))

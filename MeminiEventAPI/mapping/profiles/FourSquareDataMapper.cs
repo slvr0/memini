@@ -36,6 +36,8 @@ public class FoursquareMapper : FluentQualityMapper<FSQ.FoursquarePlace, Normali
         Map(s => s.Price, d => d.PriceLevel, trackQuality: true);
         Map(s => s, d => d.StatusInfo, place => BuildStatusInfo(place), trackQuality: true);
         Map(s => s.Photos, d => d.Media, photos => BuildMedia(photos), trackQuality: true);
+        Map(s => s.SearchCategory, d => d.SearchCategories, sc => sc.HasValue ? (FoursquareCategory)sc.Value : FoursquareCategory.Any, trackQuality: true);
+
     }
 
     private PlaceGeographicInfo? BuildGeographicInfo(FSQ.FoursquarePlace place)
@@ -81,32 +83,11 @@ public class FoursquareMapper : FluentQualityMapper<FSQ.FoursquarePlace, Normali
         var allCategoryNames = categories.Select(c => c.Name).Where(n => !string.IsNullOrWhiteSpace(n)).ToList();
         var allCategoryIds = categories.Select(c => c.Id).ToList();
 
-        var categoryFlags = PlaceCategory.None;
-
-        if (allCategoryIds.Contains((int)FoursquareCategory.Restaurant))
-            categoryFlags |= PlaceCategory.Restaurant;
-
-        if (allCategoryIds.Contains((int)FoursquareCategory.Bar))
-            categoryFlags |= PlaceCategory.Bar;
-
-        if (allCategoryIds.Contains((int)FoursquareCategory.CoffeeShop))
-            categoryFlags |= PlaceCategory.CoffeeShop;
-
-        if (allCategoryIds.Contains((int)FoursquareCategory.Hotel))
-            categoryFlags |= PlaceCategory.Hotel;
-
-        if (allCategoryIds.Contains((int)FoursquareCategory.Landmark))
-            categoryFlags |= PlaceCategory.Landmark;
-
-        if (allCategoryIds.Contains((int)FoursquareCategory.Entertainment))
-            categoryFlags |= PlaceCategory.Entertainment;
-
         return new PlaceCategorizationInfo
         {
             PrimaryCategory = string.IsNullOrWhiteSpace(primaryCategory.Name) ? null : primaryCategory.Name,
             PrimaryCategoryId = primaryCategory.Id,
-            AllCategories = allCategoryNames.Any() ? allCategoryNames : null,
-            Categories = categoryFlags
+            AllCategories = allCategoryNames.Any() ? allCategoryNames : null,         
         };
     }
 

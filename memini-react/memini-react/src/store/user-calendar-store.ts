@@ -7,8 +7,6 @@ import {ICalendarDate, IUserSessionState, ICalendarDateState} from "../interface
 // Types
 // -------------------
 
-
-
 // -------------------
 // Utilities
 // -------------------

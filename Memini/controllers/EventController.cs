@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using Memini.dto;
 using Memini.managers;
-
+using Memini.dto.events;
 using Microsoft.AspNetCore.Authorization;
 
 using MeminiEventAPI.adapters;
@@ -14,9 +14,10 @@ using MeminiEventAPI.testing.configs.foursquare;
 using MeminiEventAPI.testing.configs.thenews;
 using MeminiEventAPI.testing.configs.weather;
 using MeminiEventAPI.testing.configs.ticketmaster;
-
+using MeminiEventAPI.structures.foursquare;
 using Memini.validators;
 using Memini.selectors;
+using Microsoft.EntityFrameworkCore;
 namespace Memini.Controllers;
 
 [Authorize]
@@ -58,15 +59,15 @@ public class EventController : ControllerBase
         try
         {
 
-            //var weatherconfig = OpenMeteoTestConfig.WeatherTestConfig();
-            //var ticketmasterconfig = new TicketmasterTestConfig().SimpleTestConfig();
-            //var foursquareconfig = new FourSquareTesting().CreateTestConfigs();
+            var weatherconfig = OpenMeteoTestConfig.WeatherTestConfig();
+            var ticketmasterconfig = new TicketmasterTestConfig().SimpleTestConfig();
+            var foursquareconfig = new FourSquareTesting().CreateTestConfigs();
             var thenewsconfig = new TheNewsTesting().ComprehensiveTestConfig();
 
             // Merge all dictionaries into one
             var allConfigs = new Dictionary<string, ICollection<IApiRequest>>();
 
-            foreach (var dict in new[] {/* weatherconfig, ticketmasterconfig, foursquareconfig, */thenewsconfig })
+            foreach (var dict in new[] { weatherconfig, ticketmasterconfig, foursquareconfig, thenewsconfig })
             {
                 foreach (var kvp in dict)
                 {
@@ -120,10 +121,58 @@ public class EventController : ControllerBase
     [Route("GetEvents")]
     public  IActionResult GetEvents()
     {
-        var res =  _context.CoreNodes.ByType(structures.CoreNodeTypes.Event).WithAllDetails();
+        var res =  _context.CoreNodes.ByType(structures.CoreNodeTypes.Event).WithFullEventInfo();
 
         return DtoResponse<object>.Ok(res, "fetched events").ToOkResult();
     }
+
+    [HttpPost]
+    [Authorize]
+    [Route("GetPointsOfInterest")]
+    public IActionResult GetPointsOfInterest()
+    {
+        var res = _context.CoreNodes.ByType(structures.CoreNodeTypes.PointOfInterest).WithFullPointOfInterest();
+
+        return DtoResponse<object>.Ok(res, "fetched points of interest").ToOkResult();
+    }
+
+    [HttpPost]
+    [Authorize]
+    [Route("GetNews")]
+    public IActionResult GetNews([FromBody] string countryCode)
+    {
+        var today = DateTime.UtcNow.Date;
+
+        var res = _context.CoreNodes.ByType(structures.CoreNodeTypes.News)
+              
+            .Include(cn => cn.NewsInfos);
+
+        return DtoResponse<object>.Ok(res.ToList(), "fetched news").ToOkResult();
+    }
+    [HttpPost]
+    [Authorize]
+    [Route("GetWeatherInformation")]
+    public IActionResult GetWeatherInformation([FromBody] string date)
+    {
+        var today = DateTime.UtcNow.Date;
+        var endDate = today.AddDays(7);
+
+        var res = _context.CoreNodes.ByType(structures.CoreNodeTypes.Weather).ByDateRange(today, endDate).ByCity("Stockholm").ByCountry("SE")
+            .Include(cn => cn.WeatherInfo);
+
+        return DtoResponse<object>.Ok(res.ToList(), "fetched news").ToOkResult();
+    }
+
+    [HttpGet]
+    [Authorize]
+    [Route("GetPointsOfInterestCategories")]
+    public async Task<IActionResult> GetPointsOfInterestCategories()
+    {
+        var em = new EventManager();
+        DtoCategoricalEnumResponse<FoursquareCategory> resp = await em.GetPointOfInterestMainCategories();
+        return DtoResponse<DtoCategoricalEnumResponse<FoursquareCategory>>.Ok(resp, "fetched poi categories").ToOkResult();
+    }
+
 
 }
 

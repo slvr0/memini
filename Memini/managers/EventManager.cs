@@ -3,6 +3,7 @@ using Memini.mapping.events;
 using Memini.validators;
 using Memini.entities;
 using Memini.services;
+using Memini.dto.events;
 
 using MeminiEventAPI.api_datamodels.ticketmaster;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,10 @@ using Memini.structures;
 using Memini.mapping.poi;
 using Memini.mapping.weather;
 using Memini.mapping.news;
+using MeminiEventAPI.structures.foursquare;
+
+
+
 namespace Memini.managers;
 
 public class EventManager
@@ -177,8 +182,7 @@ public class EventManager
                 newsCoreNode.NewsInfos = uniqueNewsInfos.ToList();
 
                 if (newsCoreNode.NewsInfos.Any())                
-                    await context.CoreNodes.AddAsync(newsCoreNode);
-                
+                    await context.CoreNodes.AddAsync(newsCoreNode);                
             }
             // Save changes - this will set all the foreign keys automatically
             await context.SaveChangesAsync();
@@ -208,6 +212,21 @@ public class EventManager
         {
             Console.WriteLine(e.Message);
         }
+    }
+
+    public async Task<DtoCategoricalEnumResponse<FoursquareCategory>> GetPointOfInterestMainCategories()
+    {
+        var categories = new DtoCategoricalEnumResponse<FoursquareCategory>();
+
+        foreach (FoursquareCategory category in Enum.GetValues(typeof(FoursquareCategory)))
+        {
+            categories.categoricalEnums.Add(new DtoCategoricalEnum<FoursquareCategory>
+            {
+                EnumValue = (int)category,
+                Description = FoursquareCategoryIds.GetDisplayName(category)
+            });
+        }
+        return await Task.FromResult(categories);
     }
 
 }

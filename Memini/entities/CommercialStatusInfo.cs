@@ -35,5 +35,7 @@ public partial class CommercialStatusInfo
 
     public bool? Verified { get; set; }
 
+    public string? WebsiteUrl { get; set; }
+
     public virtual CoreNode CoreNodeKeyNavigation { get; set; } = null!;
 }

@@ -20,3 +20,9 @@ export interface ICalendarDateState {
 export interface IUserSessionState {
   userSession: any | null; // replace 'any' with your session type
 }
+
+export interface IPositionState {
+  Country: string;
+  City: string;
+  CountryCode?: string;
+}

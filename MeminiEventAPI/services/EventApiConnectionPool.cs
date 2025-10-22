@@ -18,8 +18,8 @@ public static class MeminiEventApiConnectionSetup
      IConfiguration configuration)
     {
         // Register all adapters
-        RegisterApiAdapter<TicketmasterApiAdapter>(services, configuration, "Ticketmaster");
-        RegisterApiAdapter<PredictHqEventApiAdapter>(services, configuration, "PredictHQ");
+        //RegisterApiAdapter<TicketmasterApiAdapter>(services, configuration, "Ticketmaster");
+        //RegisterApiAdapter<PredictHqEventApiAdapter>(services, configuration, "PredictHQ");
         //RegisterApiAdapter<SeatGeekEventApiAdapter>(services, configuration, "SeatGeek");
         //RegisterApiAdapter<SongkickEventApiAdapter>(services, configuration, "SeatGeek"); // Note: uses SeatGeek key
 
@@ -27,8 +27,8 @@ public static class MeminiEventApiConnectionSetup
         //RegisterApiAdapter<EventfulEventApiAdapter>(services, configuration, null);
 
         RegisterApiAdapter<FourSquareApiAdapter>(services, configuration, "FourSquare");
-        RegisterApiAdapter<TheNewsApiAdapter>(services, configuration, "TheNews");
-        RegisterApiAdapter<OpenMeteoApiAdapter>(services, configuration, "OpenMeteo");
+        //RegisterApiAdapter<TheNewsApiAdapter>(services, configuration, "TheNews");
+        //RegisterApiAdapter<OpenMeteoApiAdapter>(services, configuration, "OpenMeteo");
 
         // Register the handler
         services.AddSingleton<ApiAdapterHandler>();

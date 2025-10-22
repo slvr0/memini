@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MeminiEventAPI.api_datamodels.foursquare;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +40,7 @@ public class NormalizedPlace
 
     // Quality tracking
     public double DataQuality { get; set; }
+    public structures.foursquare.FoursquareCategory SearchCategories { get; set; } = structures.foursquare.FoursquareCategory.Any; // stored variable from search request.
 }
 
 public class PlaceGeographicInfo
@@ -56,8 +58,7 @@ public class PlaceCategorizationInfo
 {
     public string? PrimaryCategory { get; set; }
     public int? PrimaryCategoryId { get; set; }
-    public List<string>? AllCategories { get; set; }
-    public PlaceCategory Categories { get; set; } = PlaceCategory.None;
+    public List<string>? AllCategories { get; set; }    
 }
 
 public class PlaceStatusInfo
@@ -77,15 +78,4 @@ public class PlaceMedia
     public int? Width { get; set; }
     public int? Height { get; set; }
     public bool IsPrimary { get; set; }
-}
-[Flags]
-public enum PlaceCategory
-{
-    None = 0,
-    Restaurant = 1 << 0,      // 1
-    Bar = 1 << 1,             // 2
-    CoffeeShop = 1 << 2,      // 4
-    Hotel = 1 << 3,           // 8
-    Landmark = 1 << 4,        // 16
-    Entertainment = 1 << 5    // 32
 }

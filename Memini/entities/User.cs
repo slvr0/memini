@@ -15,6 +15,16 @@ public partial class User
 
     public string LastName { get; set; } = null!;
 
+    /// <summary>
+    /// User country
+    /// </summary>
+    public string? Country { get; set; }
+
+    /// <summary>
+    /// User city location
+    /// </summary>
+    public string? City { get; set; }
+
     public virtual ICollection<StoredUserTask> StoredUserTasks { get; set; } = new List<StoredUserTask>();
 
     public virtual ICollection<UserTask> UserTasks { get; set; } = new List<UserTask>();

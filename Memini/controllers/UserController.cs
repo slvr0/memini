@@ -17,19 +17,20 @@ public class UserController : ControllerBase
 {
     private IConfiguration _configuration;
     private AuthorisationService _authorisationService;
-    public UserController(IConfiguration configuration, AuthorisationService authorisationService)
+    private MeminiDbContext _context;
+    public UserController(IConfiguration configuration, AuthorisationService authorisationService, MeminiDbContext context)
     {
         _configuration = configuration;
         _authorisationService = authorisationService;
+        _context = context;
     }
    
     [HttpPost]
     [Route("RegisterNewUser")]
     public IActionResult RegisterNewUser(dto.DtoUserRegistrationRequest userRegistrationRequest)
-    {
-        using var context = new MeminiDbContext();
+    {      
 
-        DtoUserLoginResponse loginResponse = new UserManager(_authorisationService).RegisterNewUser(userRegistrationRequest, context);
+        DtoUserLoginResponse loginResponse = new UserManager(_authorisationService).RegisterNewUser(userRegistrationRequest, _context);
 
         if(loginResponse.Success)
         {
@@ -45,9 +46,8 @@ public class UserController : ControllerBase
     [Route("LoginUser")]
     public IActionResult LoginUser(dto.DtoUserLoginRequest userLoginRequest)
     {
-        using var context = new MeminiDbContext();
 
-        DtoUserLoginResponse loginResponse = new UserManager(_authorisationService).LoginUser(userLoginRequest, context);
+        DtoUserLoginResponse loginResponse = new UserManager(_authorisationService).LoginUser(userLoginRequest, _context);
 
         if (loginResponse.Success)
         {
@@ -60,5 +60,38 @@ public class UserController : ControllerBase
         {
             return DtoResponse<DtoUserLoginResponse>.Fail(loginResponse.Details).ToBadRequestResult();
         }        
-    } 
+    }
+
+    [HttpPost]
+    [Authorize]
+    [Route("SetUserLocation")]
+    public IActionResult SetUserLocation(dto.DtoUserLocation userLocationUpdateRequest)
+    {
+        if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
+            return Unauthorized("Invalid user token: missing or invalid user info.");
+
+        DtoResponse<DtoUserUpdateInformationResponse> res = new UserManager(_authorisationService).SetUserLocation(userLocationUpdateRequest, userKey, _context);
+
+        if(res.Success) 
+            return res.ToOkResult();
+        else
+            return res.ToBadRequestResult();
+    }
+
+    [HttpPost]
+    [Authorize]
+    [Route("GetUserLocation")]
+    public IActionResult GetUserLocation()
+    {
+        if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
+            return Unauthorized("Invalid user token: missing or invalid user info.");
+
+        DtoResponse<DtoUserLocation> res = new UserManager(_authorisationService).GetUserLocation(userKey, _context);
+
+         if(res.Success) 
+            return res.ToOkResult();
+        else
+            return res.ToBadRequestResult();
+
+    }
 }

@@ -102,6 +102,7 @@ public static class EventConverters
             MaxPrice = normalizedEvent?.PricingInfo?.MaxPrice.ToString() ?? null,
             Currency = normalizedEvent?.PricingInfo?.Currency.ToString() ?? null,
             Free = normalizedEvent?.PricingInfo?.IsFree ?? null,
+            WebsiteUrl = normalizedEvent?.Url?.ToString() ?? null,
         };
     }
 }

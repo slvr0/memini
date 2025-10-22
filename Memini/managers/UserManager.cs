@@ -76,4 +76,46 @@ public class UserManager
             Email = user.Email,
         };
     }
+
+    public DtoResponse<DtoUserUpdateInformationResponse> SetUserLocation(dto.DtoUserLocation userLocationRequest, int userKey, MeminiDbContext context) 
+    {
+        User? user = context.Users.FirstOrDefault(user => user.Userkey == userKey);
+
+        if (user == null)
+            return new DtoResponse<DtoUserUpdateInformationResponse>() { Success = false, Response = "Invalid Email, does not exist in Memini" };
+
+        try
+        {
+            user.Country = userLocationRequest.Country;
+            user.City = userLocationRequest.City;
+            context.SaveChanges();
+            return new DtoResponse<DtoUserUpdateInformationResponse>() { Success = true, Response = "Updated user location" };
+        }
+        catch (Exception ex) 
+        {
+            return new DtoResponse<DtoUserUpdateInformationResponse>() { Success = false, Response = ex.Message };
+
+        }
+    }
+
+    public DtoResponse<DtoUserLocation> GetUserLocation(int userKey, MeminiDbContext context)
+    {
+        User? user = context.Users.FirstOrDefault(user => user.Userkey == userKey);      
+
+        if (user == null)
+            return new DtoResponse<DtoUserLocation>() { Success = false, ResponseObject = null, Response = "Invalid Email, does not exist in Memini" };
+
+        try
+        {          
+            return new DtoResponse<DtoUserLocation>() { Success = true, ResponseObject = new DtoUserLocation() 
+                { Country = user.Country, City = user.City}, Response = "fetched user location" };
+        }
+        catch (Exception ex)
+        {
+            return new DtoResponse<DtoUserLocation>() { Success = false, ResponseObject = null, Response = "Couldnt fetch user location" };
+
+        }
+    }
+
+
 }

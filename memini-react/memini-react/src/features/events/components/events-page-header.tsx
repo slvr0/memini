@@ -1,49 +1,41 @@
 import React from "react";
 import { Typography } from "@mui/material";
+import NewsFader
+ from "./display-components/news-cards/news-content";
+import WeatherWidget from "./display-components/weather-widget/weather-widget";
 
 interface  EventsPageHeaderProps {
-
+    news: Array<any>;
+    weather: any;
+    
 }
 
 const EventsPageHeader : React.FC<EventsPageHeaderProps> = (props) => {
     return (
     <>
-    <div className="scheduler-content-header h-20 border-b border-b-bg-gray-100">
-        <div className="grid grid-cols-6 items-center h-full mx-2">
-             <div className="flex col-span-2">
+    <div className="scheduler-content-header h-24">
+        <div className="grid grid-cols-12 items-center h-full mx-2">
+             <div className="flex col-span-6">
+                <NewsFader 
+                    newsNodes={props.news}
+                    titleFontVariant="h6"
+                    descriptionFontVariant="body1"
+                    titleFontSize={13}
+                    descriptionFontSize={11}
+                    containerPadding={{ px: 4, py: 3 }}
+                    transitionDuration={5000}
+                    fadeDuration={1500}
+                    borderOpacity={0.3}
+                    paletteProfile="warning"              />
                 
+            </div>          
+
+            <div className="flex col-span-4 items-center justify-center">
+                <WeatherWidget nodes={props.weather}/>                    
+         
             </div>
 
-             <div className="flex col-span-2">
-                <Typography variant="h4" className="font-semibold opacity-80">
-                    City, Country, State
-                </Typography>
-                
-            </div>
-
-            <div className="flex flex-col col-span-1">
-                <Typography variant="overline" className="font-semibold opacity-80">
-                    Members
-                </Typography>
-
-                <div className="flex">
-                <Typography variant="overline" className="font-semibold opacity-80">
-                    0
-                </Typography>
-                </div>
-            </div>
-
-            <div className="flex flex-col col-span-1">
-                <Typography variant="overline" className="font-semibold opacity-80">
-                    Friends
-                </Typography>
-
-                <div className="flex">
-                <Typography variant="overline" className="font-semibold opacity-80">
-                    0
-                </Typography>
-                </div>
-            </div>
+           
         </div>
     </div>
     </>) 

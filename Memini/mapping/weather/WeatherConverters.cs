@@ -20,8 +20,7 @@ public static class WeatherConverters
             City = normalizedWeather.LocationInfo ?.City ?? null
         };
 
-        /* The structure is collection because i had an idea to store a node with startdate - enddate range and collect a weatherforecast for lets say a week. implement soon mb */
-        node.WeatherInfos = new List<WeatherInfo>() { normalizedWeather.ConvertToWeatherInfo() };
+        node.WeatherInfo =  normalizedWeather.ConvertToWeatherInfo();
          
         return node;
     }

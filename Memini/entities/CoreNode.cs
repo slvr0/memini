@@ -41,5 +41,5 @@ public partial class CoreNode
 
     public virtual SpatialInfo? SpatialInfo { get; set; }
 
-    public virtual ICollection<WeatherInfo> WeatherInfos { get; set; } = new List<WeatherInfo>();
+    public virtual WeatherInfo? WeatherInfo { get; set; }
 }

@@ -146,21 +146,27 @@ export default function MainMenu () {
     return (
       <>  
         <div className="h-16 border border-gray-200 bg-white flex items-center gap-x-4 z-9999"> 
-          <Box
-          component="img"
-          src={logo}
-          alt="App Icon"
-            sx={{
-              width: 32,
-              height: 32,
-              ml:'0.5rem',          
-              zIndex: 9999          
-            }}
-          />
+
+
+          <div className="mx-0">
+             <Box
+                component="img"
+              
+                  src={logo}
+                  alt="App Icon"
+                    sx={{
+                      width: 42,
+                      height: 42,
+                      ml:'0.5rem',          
+                      zIndex: 9999          
+                    }}
+                  />
+          </div>
           
+         
           <div>
-            <Typography variant="subtitle1"> Memini </Typography>
-            <Typography variant="subtitle2"> Version 1.0.1, alpha </Typography>
+            <Typography variant="body1" fontSize={14} fontWeight={500}> Memini </Typography>
+          
           </div>
           
           <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
@@ -181,7 +187,7 @@ export default function MainMenu () {
           
           <LocationDisplay></LocationDisplay>
 
-          <Globe size={14}  style={{color:"#6ce699", opacity:0.75}} />
+          
           <Combine size={14} style={{opacity:0.75}}/>
          
           <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>

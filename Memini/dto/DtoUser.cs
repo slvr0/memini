@@ -18,6 +18,12 @@ public class DtoUserRegistrationRequest
     public string Password { get; set; } = String.Empty;
 
 }
+public class DtoUserLocation
+{
+    public string? Country { get; set; } 
+    public string? City { get; set; } 
+}
+
 
 public class DtoUserLoginRequest
 {
@@ -29,6 +35,12 @@ public class DtoUserLoginRequest
         Email = email;
         Password = password;
     }
+}
+
+public class DtoUserUpdateInformationResponse
+{
+    public bool Success { get; set; }
+    public string Message { get; set; } = string.Empty;
 }
 
 public class DtoUserRegistrationResponse

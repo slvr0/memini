@@ -27,8 +27,10 @@ public static class PoiConverters
     }
     public static PoiInfo ConvertToPoiInfo(this NormalizedPlace normalizedPlace)
     {
+        var contentMedia = normalizedPlace.ConvertToContentMedia();
+
         return new PoiInfo
-        {                     
+        {
             Address = normalizedPlace.GeographicInfo?.FormattedAddress
                       ?? normalizedPlace.GeographicInfo?.Address,
             PostalCode = normalizedPlace.GeographicInfo?.Postcode,
@@ -48,10 +50,12 @@ public static class PoiConverters
             Popularity = (float?)normalizedPlace.Popularity,
             Rating = (float?)normalizedPlace.Rating,
             TotalRatings = normalizedPlace.TotalRatings,
-            Category = normalizedPlace.CategorizationInfo?.PrimaryCategoryId,
+            Category = (int)normalizedPlace.SearchCategories,
             AllCategories = normalizedPlace.CategorizationInfo?.AllCategories != null
                 ? string.Join(", ", normalizedPlace.CategorizationInfo.AllCategories)
-                : null
+                : null,
+            ContentMedia = contentMedia
+
         };
     }
 

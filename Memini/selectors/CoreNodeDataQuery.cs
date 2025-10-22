@@ -76,13 +76,27 @@ public static class CoreNodeQueryExtensions
         return query.Include(cn => cn.CommercialStatusInfo);
     }
 
-    public static IQueryable<CoreNode> WithAllDetails(this IQueryable<CoreNode> query)
+    public static IQueryable<CoreNode> WithFullEventInfo(this IQueryable<CoreNode> query)
     {
         return query
             .Include(cn => cn.ContentInfo)
                 .ThenInclude(ci => ci.ContentMedia)
             .Include(cn => cn.SpatialInfo)
             .Include(cn => cn.CommercialStatusInfo);
+    }
+
+    public static IQueryable<CoreNode> WithFullPointOfInterest(this IQueryable<CoreNode> query)
+    {
+        return query
+            .Include(cn => cn.PoiInfo)
+                .ThenInclude(ci => ci.ContentMedia);           
+    }
+
+    public static IQueryable<CoreNode> WithFullNews(this IQueryable<CoreNode> query)
+    {
+        return query
+            .Include(cn => cn.NewsInfos);
+       
     }
 
     // Sorting

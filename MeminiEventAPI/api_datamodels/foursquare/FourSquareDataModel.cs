@@ -109,6 +109,8 @@ public class FoursquarePlace
 
     [JsonPropertyName("website")]
     public string? Website { get; set; }
+
+    public int? SearchCategory { get; set; } = 0;
 }
 
 public class FoursquareCategory
@@ -121,6 +123,7 @@ public class FoursquareCategory
 
     [JsonPropertyName("icon")]
     public FoursquareIcon? Icon { get; set; }
+    public int CategoryId { get; set; }    //this is set from storing the search categories
 }
 
 public class FoursquareIcon

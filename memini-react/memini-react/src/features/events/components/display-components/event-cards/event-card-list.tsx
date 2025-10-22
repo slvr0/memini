@@ -1,7 +1,8 @@
-import { Card, CardContent, CardMedia, Chip, Typography, Box } from '@mui/material';
+import { Card, CardContent, CardMedia, Chip, Typography, Box, Link } from '@mui/material';
 import { CalendarToday, LocationOn } from '@mui/icons-material';
 import SourceLogoDisplay, {SourceAttribution} from '../../source-logos';
-
+import MuiStyledButton from "../../../../../mui-wrappers/mui-button-wrapper";
+import logo from "../../../../../assets/images/memini-png.png";
 
 interface EventCardProps {
   source?: SourceAttribution['name'],
@@ -16,6 +17,7 @@ interface EventCardProps {
   venueName?: string;
   availability?: string;
   price?: number | string;
+  website?: string;
 }
 
 const EventCardDisplayList = ({
@@ -30,7 +32,8 @@ const EventCardDisplayList = ({
   address,
   venueName,
   availability,
-  price
+  price,
+  website
 }: EventCardProps) => {
   
   const formatDate = (timestamp?: string) => {
@@ -48,7 +51,7 @@ const EventCardDisplayList = ({
   const location = [city, country].filter(Boolean).join(', ');
 
   return (
-    <Card className="max-w-sm hover:shadow-lg transition-shadow">
+    <Card className="h-full transition-shadow">
       {/* Header: Category and Genre */}
       {(category || genre) && (
         <Box className="flex justify-between items-center px-4 pt-3 pb-2">
@@ -57,13 +60,13 @@ const EventCardDisplayList = ({
               {category}
             </Typography>
           )}
-          {genre && (
-            <Chip label={genre} size="small" variant="outlined" />
-          )}                     
-        </Box>
-        
-      )}
-      
+         
+
+          <div className="col-span-2 ml-auto">
+              <SourceLogoDisplay source={source} />
+          </div>                     
+        </Box>        
+      )}     
 
       {/* Image */}
       {imageUrl && (
@@ -72,7 +75,7 @@ const EventCardDisplayList = ({
           height="180"
           image={imageUrl}
           alt={label || 'Event'}
-          className="object-cover"
+          className="aspect-video w-full object-cover"
         />
       )}
 
@@ -91,13 +94,24 @@ const EventCardDisplayList = ({
             {/* Status Tags */}
             {(availability || price) && (
             <Box className="flex gap-2 flex-wrap">
-                {availability && (
-                <Chip 
-                    label={availability} 
-                    size="small" 
-                    color={availability.toLowerCase() === 'available' ? 'success' : 'default'}
-                />
-                )}
+                {availability && 
+                  <MuiStyledButton buttonSize='xs' borderType='rounded' highlightBackgroundOnHover={true} highlightBorderOnHover={true} 
+                      buttonVariant={availability.toLowerCase() === 'available' ? 'meminiThemeOutline' : 'harmonicRed'}>
+                      <Typography variant="subtitle2" fontSize={10}>
+                          <Link 
+                            href={website} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            variant="body2"
+                            className="text-sm truncate"
+                            underline="none"
+                          >
+                            {availability}
+                          </Link>
+                        
+                      </Typography>
+                    </MuiStyledButton>
+                }
                 {price && (
                 <Chip 
                     label={typeof price === 'number' ? `$${price}` : price}
@@ -109,8 +123,6 @@ const EventCardDisplayList = ({
           </Box>
             )}
         </div>
-
-
         <div className="flex flex-col col-span-8 mt-1">
                 {/* Date */}
                     {date && (
@@ -121,15 +133,8 @@ const EventCardDisplayList = ({
                         </Typography>
                     </Box>
                     )}
-        </div>       
-
-
-
+        </div>    
         </div>
-        
-
-        
-
         {/* Location */}
         {(location || venueName || address) && (
           <Box className="flex items-start gap-1 text-gray-600">
@@ -153,13 +158,42 @@ const EventCardDisplayList = ({
             </Box>
           </Box>
         )}
-        <div className="flex m-0 p-0">
-                <SourceLogoDisplay source={source} />
-        </div> 
-       
 
+   <div className="flex justify-between items-end mt-auto">
+  <div>
+    {genre && (
+      <MuiStyledButton buttonSize='xs' borderType='straight' highlightBackgroundOnHover={false} highlightBorderOnHover={false} className="hover:cursor-text">
+        <Typography variant="subtitle2" >
+          {genre}
+        </Typography>
+      </MuiStyledButton>            
+    )}
+  </div>
+  
+  <div>
+    <MuiStyledButton buttonSize='xs' borderType='rounded' highlightBackgroundOnHover={true} highlightBorderOnHover={true}>
+      <div className="mx-0">
+        <Box
+          component="img"
+          src={logo}
+          alt="App Icon"
+          sx={{
+            width: 18,
+            height: 18,
+            zIndex: 9999
+          }}
+        />
+      </div>
+      <Typography variant='subtitle2' fontSize={11}>
+        Add
+      </Typography>
+    </MuiStyledButton>
+  </div>
+</div>
        
       </CardContent>
+
+      
     </Card>
   );
 };

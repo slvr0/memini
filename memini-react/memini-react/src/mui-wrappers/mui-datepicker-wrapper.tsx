@@ -73,8 +73,8 @@ function ButtonDateField(props: ButtonDateFieldProps) {
       ? parsedFormat
       : pickerContext.value.format(pickerContext.fieldFormat);
 
-  const labelVariant = buttonSize === 'lg' ?  'body1' : 'caption';
-  const labelPixelSize = buttonSize === 'lg' ? '12px' : '12px';
+  const labelVariant = buttonSize === 'lg' ?  'body1' : 'subtitle2';
+  const labelPixelSize = buttonSize === 'lg' ? '11px' : '11px';
 
   return (
     <MuiStyledButton
@@ -98,7 +98,7 @@ function ButtonDateField(props: ButtonDateFieldProps) {
           {pickerContext.label ? `${pickerContext.label}: ${valueStr}` : valueStr}
         </Typography>
 
-        <CalendarDays size={14} style={{ opacity: 0.85 }} />
+        <CalendarDays size={12} style={{ opacity: 0.85 }} />
       </div>
     </MuiStyledButton>
   );

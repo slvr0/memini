@@ -107,6 +107,9 @@ public partial class MeminiDbContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("status_reason");
             entity.Property(e => e.Verified).HasColumnName("verified");
+            entity.Property(e => e.WebsiteUrl)
+                .HasMaxLength(600)
+                .HasColumnName("website_url");
 
             entity.HasOne(d => d.CoreNodeKeyNavigation).WithOne(p => p.CommercialStatusInfo)
                 .HasForeignKey<CommercialStatusInfo>(d => d.CoreNodeKey)
@@ -498,6 +501,12 @@ public partial class MeminiDbContext : DbContext
             entity.HasIndex(e => e.Email, "User_email_key").IsUnique();
 
             entity.Property(e => e.Userkey).HasColumnName("userkey");
+            entity.Property(e => e.City)
+                .HasComment("User city location")
+                .HasColumnName("city");
+            entity.Property(e => e.Country)
+                .HasComment("User country")
+                .HasColumnName("country");
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .HasColumnName("email");
@@ -550,6 +559,8 @@ public partial class MeminiDbContext : DbContext
 
             entity.HasIndex(e => e.WeatherDescription, "idx_weather_info_weather_description");
 
+            entity.HasIndex(e => e.CoreNodeKey, "weather_info_core_node_key_unique").IsUnique();
+
             entity.Property(e => e.WeatherInfoKey).HasColumnName("weather_info_key");
             entity.Property(e => e.CoreNodeKey).HasColumnName("core_node_key");
             entity.Property(e => e.PrecipitationSum).HasColumnName("precipitation_sum");
@@ -563,8 +574,8 @@ public partial class MeminiDbContext : DbContext
                 .HasColumnName("wind_direction");
             entity.Property(e => e.WindspeedMax).HasColumnName("windspeed_max");
 
-            entity.HasOne(d => d.CoreNodeKeyNavigation).WithMany(p => p.WeatherInfos)
-                .HasForeignKey(d => d.CoreNodeKey)
+            entity.HasOne(d => d.CoreNodeKeyNavigation).WithOne(p => p.WeatherInfo)
+                .HasForeignKey<WeatherInfo>(d => d.CoreNodeKey)
                 .HasConstraintName("weather_info_core_node_key_fkey");
         });
         modelBuilder.HasSequence<int>("seq_schema_version", "graphql").IsCyclic();
