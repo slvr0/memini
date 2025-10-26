@@ -4,6 +4,9 @@ using Memini.validators;
 using Memini.entities;
 using Memini.services;
 using Memini.dto.events;
+using Memini.dto.poi;
+using Memini.dto;
+
 
 using MeminiEventAPI.api_datamodels.ticketmaster;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +17,9 @@ using Memini.mapping.weather;
 using Memini.mapping.news;
 using MeminiEventAPI.structures.foursquare;
 
-
+using Memini.selectors;
+using MeminiEventAPI.services;
+using Memini.dto.general;
 
 namespace Memini.managers;
 
@@ -229,7 +234,84 @@ public class EventManager
         return await Task.FromResult(categories);
     }
 
+    public async Task<DtoPaginatedResponse<List<CoreNode>>> GetEventsFromSearchFilter(DtoEventSearchFilter searchFilter, MeminiDbContext context)
+    {
+        var cityInSwedish = CityTranslator.ToSwedish(searchFilter.City);
+        var today = DateTime.UtcNow;
+        var end = today.AddDays(searchFilter.EventTimespan);
+
+        // Build the query without executing it
+        var query = context.CoreNodes
+            .ByCountry(searchFilter.Country)
+            .ByDateRange(today, end)
+            //.ByCity(cityInSwedish)
+            .ByCategory(searchFilter.EventCategories)
+            .ByLabel(searchFilter.EventFreeSearch)
+            .ByTicketmasterFilter(searchFilter.EventSwitchShowTicketmaster)
+            .ByPredictHqFilter(searchFilter.EventSwitchShowPredictHq)
+            .WithContentInfoAndMedia()
+            .ByPerformer(searchFilter.EventCreatorSearch)
+            .WithCommercialStatus()
+            .ByAvailable(searchFilter.EventSwitchAvailableTickets)
+            .WithSpatialInfo();
+
+        // Get total count before pagination
+        var totalItems = await query.CountAsync();
+
+        // Calculate total pages
+        var totalPages = (int)Math.Ceiling((double)totalItems / searchFilter.Pagination.PageSize);
+
+        // Apply pagination
+        var results = await query
+            .Skip((searchFilter.Pagination.CurrentPage - 1) * searchFilter.Pagination.PageSize)
+            .Take(searchFilter.Pagination.PageSize)
+            .ToListAsync();
+
+        return new DtoPaginatedResponse<List<CoreNode>>
+        {
+            Data = results,
+            TotalItems = totalItems,
+            TotalPages = totalPages
+        };
+    }
+
+    public async Task<DtoPaginatedResponse<List<CoreNode>>> GetPointOfInterestFromSearchFilter(DtoPointOfInterestSearchFilter searchFilter, MeminiDbContext context)
+    {
+        var cityInSwedish = CityTranslator.ToSwedish(searchFilter.City);
+        var countryInCode = CountryCodeTranslator.ToCountryCode(searchFilter.Country);
+
+        // Build the query without executing it
+        var query = context.CoreNodes
+            .ByType(CoreNodeTypes.PointOfInterest)
+            .ByCountryOrCode(searchFilter.Country, countryInCode)
+            .ByCity(cityInSwedish)
+            .ByLabel(searchFilter.PlacesFreeSearch)
+            .WithFullPointOfInterest()
+            .ByPoiCategories(searchFilter.PlacesCategoriesEnumValue)
+            .ByMinRating(searchFilter.MinRating)
+            .ByMinTotalRatings(searchFilter.TotalRatings);
+
+        // Get total count before pagination
+        var totalItems = await query.CountAsync();
+
+        // Calculate total pages
+        var totalPages = (int)Math.Ceiling((double)totalItems / searchFilter.Pagination.PageSize);
+
+        // Apply pagination
+        var results = await query
+            .Skip((searchFilter.Pagination.CurrentPage - 1) * searchFilter.Pagination.PageSize)
+            .Take(searchFilter.Pagination.PageSize)
+            .ToListAsync();
+
+        return new DtoPaginatedResponse<List<CoreNode>>
+        {
+            Data = results,
+            TotalItems = totalItems,
+            TotalPages = totalPages
+        };
+    }
 }
+
 
 
 

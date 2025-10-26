@@ -15,25 +15,26 @@ const EventsPageHeader : React.FC<EventsPageHeaderProps> = (props) => {
     <>
     <div className="scheduler-content-header h-24">
         <div className="grid grid-cols-12 items-center h-full mx-2">
-             <div className="flex col-span-6">
+            <div className="flex col-span-6 items-center justify-center">
+                <WeatherWidget nodes={props.weather}/>      
+            </div>
+            
+            <div className="flex col-span-6">
                 <NewsFader 
                     newsNodes={props.news}
-                    titleFontVariant="h6"
-                    descriptionFontVariant="body1"
-                    titleFontSize={13}
-                    descriptionFontSize={11}
-                    containerPadding={{ px: 4, py: 3 }}
-                    transitionDuration={5000}
+                    titleFontVariant="body1"
+                    descriptionFontVariant="body2"
+                    titleFontSize={12}
+                    descriptionFontSize={10}
+                    containerPadding={{ px: 2, py: 2 }}
+                    transitionDuration={10000}
                     fadeDuration={1500}
-                    borderOpacity={0.3}
-                    paletteProfile="warning"              />
+                    borderOpacity={0}
+                    paletteProfile="main"  
+                />
                 
-            </div>          
+            </div> 
 
-            <div className="flex col-span-4 items-center justify-center">
-                <WeatherWidget nodes={props.weather}/>                    
-         
-            </div>
 
            
         </div>

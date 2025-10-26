@@ -64,7 +64,6 @@ public abstract class BaseAdapter
     {
         string url = GenerateApiRequestUrl(requestConfig);
         HttpResponseMessage? response = null;
-
         try
         {
             response = await _httpClient.GetAsync(url);
@@ -73,9 +72,14 @@ public abstract class BaseAdapter
             InvokeHttpResponse(url, (int)response.StatusCode, null);
             return content;
         }
+        catch (OperationCanceledException)
+        {
+            InvokeHttpResponse(url, 408, new Exception("Request timeout")); // 408 = Request Timeout
+            throw;
+        }
         catch (Exception e)
         {
-            InvokeHttpResponse(url, (int)response?.StatusCode, e);
+            InvokeHttpResponse(url, (int?)response?.StatusCode ?? 0, e);
             throw;
         }
     }
@@ -109,6 +113,7 @@ public abstract class EventApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapt
     {
         try
         {
+            int delayMilliseconds = 1000;
             foreach (IApiRequest requestConfig in requestconfigs)
             {
                 string jsonData = await this.FetchDataAsync(requestConfig);
@@ -119,8 +124,9 @@ public abstract class EventApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapt
                 InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
                 List<TDModelResult> resultData = await ApiDataModelResult(result);
                 AccumulatedData.AddRange(resultData);
+                await Task.Delay(delayMilliseconds);
             }
-        }
+        }       
         catch (Exception ex)
         {
             InvokeDataMetricsResponse(0, (int)0, ex);
@@ -141,6 +147,7 @@ public abstract class PlacesApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdap
     {
         try
         {
+            int delayMilliseconds = 1000;
             foreach (IApiRequest requestConfig in requestconfigs)
             {
                 string jsonData = await this.FetchDataAsync(requestConfig);
@@ -151,6 +158,7 @@ public abstract class PlacesApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdap
                 InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
                 List<TDModelResult> resultData = await ApiDataModelResult(result);
                 AccumulatedData.AddRange(resultData);
+                await Task.Delay(delayMilliseconds);
             }
         }
         catch (Exception ex)

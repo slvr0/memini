@@ -149,7 +149,6 @@ const NewsFader: React.FC<NewsFaderProps> = ({
           ),
           borderRadius: border.borderRadius,
           boxShadow: border.shadow,
-          minHeight: '100px',
           display: 'flex',
           flexDirection: 'row',
           position: 'relative',
@@ -165,8 +164,8 @@ const NewsFader: React.FC<NewsFaderProps> = ({
             src={displayImage}
             alt={currentNews.Title}
             sx={{
-              width: '90px',
-              height: '90px',
+              width: '64px',
+              height: '64px',
               objectFit: 'cover',
               borderRadius: '6px',
               flexShrink: 0,
@@ -353,20 +352,21 @@ const NewsFader: React.FC<NewsFaderProps> = ({
             <Box sx={{ mt: 2 }}>
               <Typography
                 component="a"
+                variant='subtitle2'
                 href={currentNews.Url}
                 target="_blank"
                 rel="noopener noreferrer"
+                fontSize={14}
                 sx={{
-                  color: palette.hover,
-                  textDecoration: 'none',
-                  fontWeight: 600,
-                  fontSize: 14,
+                  paddingLeft:'.5rem',
+                  color: palette.text,
+                  textDecoration: 'none',                  
                   '&:hover': {
                     textDecoration: 'underline',
                   }
                 }}
               >
-                Read full article →
+                Read full article
               </Typography>
             </Box>
           </Box>

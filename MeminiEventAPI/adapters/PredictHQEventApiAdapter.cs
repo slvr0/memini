@@ -12,7 +12,7 @@ using MeminiEventAPI.api_datamodels.predict_hq;
 using MeminiEventAPI.api_datamodels;
 namespace MeminiEventAPI.adapters;
 
-internal class PredictHqEventApiAdapter(HttpClient httpClient) : EventApiBaseAdapter<PredictHqDataModel, PredictHqEvent>(httpClient, "Ticketmaster")
+internal class PredictHqEventApiAdapter(HttpClient httpClient) : EventApiBaseAdapter<PredictHqDataModel, PredictHqEvent>(httpClient, "PredictHQ")
 {
     public readonly static string ConnectionString = "https://api.predicthq.com/v1/events/";
 

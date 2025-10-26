@@ -3,6 +3,9 @@ import { Box, Typography, Link, Chip } from '@mui/material';
 import logo from "../../../../../assets/images/memini-png.png";
 import foursquareLogo from "../../../assets/images/foursquare.png";
 import ticketmasterLogo from "../../../assets/images/ticketmaster.svg";
+import predictHQLogo from "../../../assets/images/predict-hq-cropped.svg"
+import openmeteoLogo from "../../../assets/images/open-meteo.png"
+import { DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_CREATE_ROOT_CONTAINERS } from 'react-dom/client';
 
 export interface SourceAttribution {
   name: 'Ticketmaster' | 'FourSquare' | 'PredictHq' | 'OpenMeteo' | 'TheNews';
@@ -11,6 +14,7 @@ export interface SourceAttribution {
   image?: any;
   width?: number;
   height?: number;
+  className?:string;
 }
 
 const sourceConfig: Record<string, SourceAttribution> = {
@@ -19,8 +23,8 @@ const sourceConfig: Record<string, SourceAttribution> = {
     label: 'Ticketmaster',
     url: 'https://www.ticketmaster.com',
     image: ticketmasterLogo,
-    width: 60,
-    height: 20,
+    width: 80,
+    height: 24,
   },
   FourSquare: {
     name: 'FourSquare',
@@ -33,13 +37,20 @@ const sourceConfig: Record<string, SourceAttribution> = {
   PredictHq: {
     name: 'PredictHq',
     label: 'PredictHQ',
+    image: predictHQLogo,
+    width: 80,
+    height: 24,
     url: 'https://www.predicthq.com',
     
   },
   OpenMeteo: {
     name: 'OpenMeteo',
     label: 'Open-Meteo',
+    image: openmeteoLogo,
+    width:36,
+    height:36,
     url: 'https://open-meteo.com/',
+    
   },
   TheNews: {
     name: 'TheNews',
@@ -50,9 +61,10 @@ const sourceConfig: Record<string, SourceAttribution> = {
 
 interface SourceLogoDisplayProps {
   source?: SourceAttribution['name'];
+  className?:string;
 }
 
-const SourceLogoDisplay = ({ source }: SourceLogoDisplayProps) => {
+const SourceLogoDisplay = ({ source, className = 'opacity-60' }: SourceLogoDisplayProps) => {
   if (!source) return null;
   
   return (
@@ -67,10 +79,11 @@ const SourceLogoDisplay = ({ source }: SourceLogoDisplayProps) => {
           <img 
             src={sourceConfig[source].image} 
             alt={sourceConfig[source].label}
-            className="opacity-60"
+            className={className}
             style={{ filter: 'grayscale(50%)' }}
             width={sourceConfig[source].width}
             height={sourceConfig[source].height}
+            
           />
         
         </>

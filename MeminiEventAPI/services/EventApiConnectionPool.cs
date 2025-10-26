@@ -26,8 +26,8 @@ public static class MeminiEventApiConnectionSetup
         // Eventful doesn't need an API key, its also not operational anymore no data response
         //RegisterApiAdapter<EventfulEventApiAdapter>(services, configuration, null);
 
-        RegisterApiAdapter<FourSquareApiAdapter>(services, configuration, "FourSquare");
-        //RegisterApiAdapter<TheNewsApiAdapter>(services, configuration, "TheNews");
+        //RegisterApiAdapter<FourSquareApiAdapter>(services, configuration, "FourSquare");
+        RegisterApiAdapter<TheNewsApiAdapter>(services, configuration, "TheNews");
         //RegisterApiAdapter<OpenMeteoApiAdapter>(services, configuration, "OpenMeteo");
 
         // Register the handler

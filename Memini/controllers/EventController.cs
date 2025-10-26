@@ -15,9 +15,13 @@ using MeminiEventAPI.testing.configs.thenews;
 using MeminiEventAPI.testing.configs.weather;
 using MeminiEventAPI.testing.configs.ticketmaster;
 using MeminiEventAPI.structures.foursquare;
+using MeminiEventAPI.testing.configs.predicthq;
+using Memini.dto.general;
+
 using Memini.validators;
 using Memini.selectors;
 using Microsoft.EntityFrameworkCore;
+using Memini.dto.poi;
 namespace Memini.Controllers;
 
 [Authorize]
@@ -58,16 +62,15 @@ public class EventController : ControllerBase
     {
         try
         {
-
-            var weatherconfig = OpenMeteoTestConfig.WeatherTestConfig();
-            var ticketmasterconfig = new TicketmasterTestConfig().SimpleTestConfig();
-            var foursquareconfig = new FourSquareTesting().CreateTestConfigs();
-            var thenewsconfig = new TheNewsTesting().ComprehensiveTestConfig();
-
+            var weatherconfig       = OpenMeteoTestConfig.WeatherTestConfig();
+            var ticketmasterconfig  = new TicketmasterTestConfig().SimpleTestConfig();
+            var foursquareconfig    = new FourSquareTesting().CreateTestConfigs();
+            var thenewsconfig       = new TheNewsTesting().ComprehensiveTestConfig();
+            var predicthqconfig     = new PredictHqTestConfig().CreateTestConfigs();
             // Merge all dictionaries into one
             var allConfigs = new Dictionary<string, ICollection<IApiRequest>>();
 
-            foreach (var dict in new[] { weatherconfig, ticketmasterconfig, foursquareconfig, thenewsconfig })
+            foreach (var dict in new[] { ticketmasterconfig, weatherconfig,  foursquareconfig, thenewsconfig, predicthqconfig })
             {
                 foreach (var kvp in dict)
                 {
@@ -77,12 +80,19 @@ public class EventController : ControllerBase
 
             // Now fetch with the merged dictionary
             var response = await _apiAdapterHandler.FetchDataFromApis(allConfigs);
-            //yeah fix this code.
+
             if (response.ApiResults.TryGetValue("Ticketmaster", out var resultTM)
             && resultTM is EventsApiResult eventsApiResponse)
             {
                 EventManager eventManager = new EventManager();
                 await eventManager.StoreUniqueEvents(eventsApiResponse, eventsApiResponse.AdapterId, _context);
+            }
+
+            if (response.ApiResults.TryGetValue("PredictHQ", out var resultPHQ)
+                && resultTM is EventsApiResult eventsApiResponsePHQ)
+              {
+                EventManager eventManager = new EventManager();
+                await eventManager.StoreUniqueEvents(eventsApiResponsePHQ, eventsApiResponsePHQ.AdapterId, _context);
             }
 
             if (response.ApiResults.TryGetValue("FourSquare", out var resultFSQ)
@@ -151,8 +161,8 @@ public class EventController : ControllerBase
     }
     [HttpPost]
     [Authorize]
-    [Route("GetWeatherInformation")]
-    public IActionResult GetWeatherInformation([FromBody] string date)
+    [Route("GetWeatherInformationWeekForecast")]
+    public IActionResult GetWeatherInformationWeekForecast()
     {
         var today = DateTime.UtcNow.Date;
         var endDate = today.AddDays(7);
@@ -172,6 +182,44 @@ public class EventController : ControllerBase
         DtoCategoricalEnumResponse<FoursquareCategory> resp = await em.GetPointOfInterestMainCategories();
         return DtoResponse<DtoCategoricalEnumResponse<FoursquareCategory>>.Ok(resp, "fetched poi categories").ToOkResult();
     }
+
+    [HttpPost]
+    [Authorize]
+    [Route("GetEventsFromFilter")]
+    public async Task<IActionResult> GetEventsFromFilter(DtoEventSearchFilter searchFilter)
+    {
+        try
+        {
+            var em = new EventManager();
+            var response = await em.GetEventsFromSearchFilter(searchFilter, _context);
+       
+            return DtoResponse<DtoPaginatedResponse<List<CoreNode>>>.Ok(response, "Successfully fetched events from filter").ToOkResult();
+        }
+        catch (Exception ex)
+        {
+            return DtoResponse<DtoPaginatedResponse<object>>.Fail(ex.Message).ToBadRequestResult();
+        }      
+    }
+
+    [HttpPost]
+    [Authorize]
+    [Route("GetPointsOfInterestFromFilter")]
+    public async Task<IActionResult> GetPointsOfInterestFromFilter(DtoPointOfInterestSearchFilter searchFilter)
+    {
+        try
+        {
+            var em = new EventManager();
+            var response = await em.GetPointOfInterestFromSearchFilter(searchFilter, _context);
+
+            return DtoResponse<DtoPaginatedResponse<List<CoreNode>>>.Ok(response, "Successfully fetched poi from filter").ToOkResult();
+        }
+        catch (Exception ex)
+        {
+            return DtoResponse<DtoPaginatedResponse<object>>.Fail(ex.Message).ToBadRequestResult();
+        }
+    }
+
+
 
 
 }

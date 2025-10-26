@@ -47,3 +47,12 @@ export const mninutesToHHMM_APM= (minutes) => {
     
     return `${displayHours}:${mins.toString().padStart(2, '0')} ${period}`;
 }
+
+
+
+export const formatTimestampz = (dateString) => {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', { month: 'long', day: '2-digit', year: 'numeric' })
+    .format(date)
+    .replace(',', ','); // keeps the comma after month
+}

@@ -26,3 +26,40 @@ export interface IPositionState {
   City: string;
   CountryCode?: string;
 }
+
+export interface IPaginationState {
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  totalItems: number;
+}
+
+export interface IEventSearchFilter extends IPositionState {  
+  eventFreeSearch: string;
+  eventCreatorSearch: string;
+  eventCategories: string[];
+  eventTimespan: number;
+  eventSwitchAvailableTickets: boolean;
+  eventSwitchShowTicketmaster: boolean;
+  eventSwitchShowPredictHq: boolean;
+  pagination: IPaginationState;
+}
+
+export interface IPointOfInterestFilter extends IPositionState{
+  placesFreeSearch: string;
+  placesCategories: string[];
+  placesCategoriesEnumValue: number;
+  minRating: number;
+  totalRatings: number;
+  pagination: IPaginationState;
+}
+
+export type EventSearchFilterInput = Omit<IEventSearchFilter, 'pagination'>;
+export type PointOfInterestSearchFilterInput = Omit<IPointOfInterestFilter, 'pagination'>;
+
+
+export interface IPaginatedSearchResponse<T> {
+  Data: T;
+  TotalItems?: number;
+  TotalPages?: number;
+}

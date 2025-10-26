@@ -1,7 +1,10 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { Air } from '@mui/icons-material';
-
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { formatTimestampz } from "../../../../tasks/computes/time-display-formatting"
+import SourceLogoDisplay, {SourceAttribution} from "../../source-logos";
 interface WeatherInfo {
   WeatherInfoKey: number;
   CoreNodeKey: number;
@@ -23,6 +26,8 @@ interface WeatherWidgetProps {
 }
 
 const WeatherWidget: React.FC<WeatherWidgetProps> = ({ nodes }) => {
+  const userLocation = useSelector((state: RootState) => state.location);
+
   const formatDay = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { weekday: 'short' });
@@ -44,7 +49,23 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ nodes }) => {
   }
 
   return (
-    <Box sx={{ width: '100%', py: 1, backgroundColor: '#fafafa' }}>
+    <>
+
+    <div className="flex flex-row gap-2 items-center px-2">
+      <Typography variant="subtitle2" fontSize={10}>
+      <i>{userLocation.City} Forecast by  </i>  
+      </Typography>
+
+      <Typography variant="caption" color="text.secondary" fontSize={10}>
+          <SourceLogoDisplay source={"OpenMeteo" as SourceAttribution["name"]} className="opacity-90" />
+      </Typography>
+      
+      <Typography variant="caption" fontSize={10} color="text.secondary">
+          {formatTimestampz(nodes[0].StartDate)} /  {formatTimestampz(nodes[nodes.length-1].StartDate)} 
+      </Typography>
+    </div>
+    
+    <Box sx={{ width: '100%',  }}>
       <Box
         sx={{
           display: 'flex',
@@ -95,7 +116,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ nodes }) => {
                   variant="caption"
                   sx={{
                     color: '#000',
-                    fontWeight: 700,
+                    fontWeight: 500,
                     fontSize: '0.65rem',
                   }}
                 >
@@ -180,6 +201,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ nodes }) => {
         })}
       </Box>
     </Box>
+    </>
   );
 };
 
