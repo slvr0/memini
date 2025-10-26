@@ -19,18 +19,57 @@ internal class TicketmasterApiAdapter(HttpClient httpClient) : EventApiBaseAdapt
         if (!(requestConfig is MeminiEventApiRequest eventRequestConfig))
             return "";
 
-        var queryParams = new Dictionary<string, string>()
+        var queryParams = new Dictionary<string, string?>();
+
+        // Always add apikey
+        queryParams["apikey"] = ApiKey;
+
+        // Always add locale
+        queryParams["locale"] = "*";
+
+        // Conditionally add other parameters
+        if (!string.IsNullOrWhiteSpace(eventRequestConfig.CountryCode))
         {
-            ["city"] = eventRequestConfig.City,
-            ["countryCode"] = eventRequestConfig.CountryCode,
-            ["apikey"] = ApiKey,
-            ["size"] = eventRequestConfig.SearchSize.ToString()
-        };
+            queryParams["countryCode"] = eventRequestConfig.CountryCode;
+        }
+
+        if (!string.IsNullOrWhiteSpace(eventRequestConfig.City))
+        {
+            queryParams["city"] = eventRequestConfig.City;
+        }
+
+        if (!string.IsNullOrWhiteSpace(eventRequestConfig.Location))
+        {
+            queryParams["latlong"] = eventRequestConfig.Location; // "lat,long"
+        }
+
+        if (!string.IsNullOrWhiteSpace(eventRequestConfig.Radius))
+        {
+            queryParams["radius"] = eventRequestConfig.Radius;
+        }
+
+        if (!string.IsNullOrWhiteSpace(eventRequestConfig.Unit))
+        {
+            queryParams["unit"] = eventRequestConfig.Unit; // "km" or "miles"
+        }
+
+        if (eventRequestConfig.PageSize > 0)
+        {
+            queryParams["size"] = eventRequestConfig.PageSize.ToString();
+        }
+
+        if (eventRequestConfig.PageNumber.HasValue)
+        {
+            queryParams["page"] = eventRequestConfig.PageNumber.Value.ToString();
+        }
+
+        if (!string.IsNullOrWhiteSpace(eventRequestConfig.Category))
+        {
+            queryParams["classificationName"] = eventRequestConfig.Category;
+        }
 
         var queryString = string.Join("&",
-        queryParams
-            .Where(kvp => !string.IsNullOrWhiteSpace(kvp.Value))
-            .Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
+            queryParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value!)}"));
 
         return $"events.json?{queryString}";
     }

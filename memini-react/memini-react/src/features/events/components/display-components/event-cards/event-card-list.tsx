@@ -1,8 +1,12 @@
-import { Card, CardContent, CardMedia, Chip, Typography, Box, Link } from '@mui/material';
+import { Card, CardContent, CardMedia, Chip, Typography, Box, Link, Tooltip } from '@mui/material';
 import { CalendarToday, LocationOn } from '@mui/icons-material';
 import SourceLogoDisplay, {SourceAttribution} from '../../source-logos';
 import MuiStyledButton from "../../../../../mui-wrappers/mui-button-wrapper";
 import logo from "../../../../../assets/images/memini-png.png";
+import LucidIconButton from "../../../../../lucid/lucid-button-icon"
+import { icons, NotebookPen, Ticket, Tickets } from 'lucide-react';
+import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
+import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 
 interface EventCardProps {
   source?: SourceAttribution['name'],
@@ -51,7 +55,7 @@ const EventCardDisplayList = ({
   const location = [city, country].filter(Boolean).join(', ');
 
   return (
-    <Card className="h-full transition-shadow">
+    <Card className="h-full transition-shadow flex flex-col">
       {/* Header: Category and Genre */}
       {(category || genre) && (
         <Box className="flex justify-between items-center px-4 pt-3 pb-2">
@@ -79,117 +83,147 @@ const EventCardDisplayList = ({
         />
       )}
 
-      <CardContent className="space-y-2">
-
-        <div className="grid grid-cols-12">
-            <div className="flex flex-col col-span-8">
-                {/* Label */}
-                {label && (
-                <Typography variant="h6" component="h3" className="font-bold line-clamp-2">
-                {label}
-                </Typography>
-                )}
-            </div>
-        <div className="flex flex-col col-span-4 ml-auto">
-            {/* Status Tags */}
-            {(availability || price) && (
-            <Box className="flex gap-2 flex-wrap">
-                {availability && 
-                  <MuiStyledButton buttonSize='xs' borderType='rounded' highlightBackgroundOnHover={true} highlightBorderOnHover={true} 
-                      buttonVariant={availability.toLowerCase() === 'available' ? 'meminiThemeOutline' : 'harmonicRed'}>
-                      <Typography variant="subtitle2" fontSize={10}>
-                          <Link 
-                            href={website} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            variant="body2"
-                            className="text-sm truncate"
-                            underline="none"
-                          >
-                            {availability}
-                          </Link>
-                        
-                      </Typography>
-                    </MuiStyledButton>
-                }
-                {price && (
-                <Chip 
-                    label={typeof price === 'number' ? `$${price}` : price}
-                    size="small" 
-                    color="primary"
-                    variant="outlined"
-                />
-                )}
-          </Box>
-            )}
-        </div>
-        <div className="flex flex-col col-span-8 mt-1">
-                {/* Date */}
-                    {date && (
-                    <Box className="flex items-center gap-1 text-gray-600">
-                        <CalendarToday fontSize="small" />
-                        <Typography variant="body2">
-                        {formatDate(date)}
-                        </Typography>
-                    </Box>
-                    )}
-        </div>    
-        </div>
-        {/* Location */}
-        {(location || venueName || address) && (
-          <Box className="flex items-start gap-1 text-gray-600">
-            <LocationOn fontSize="small" />
-            <Box>
-              {venueName && (
-                <Typography variant="body2" className="font-medium">
-                  {venueName}
-                </Typography>
-              )}
-              {address && (
-                <Typography variant="body2" className="text-sm">
-                  {address}
-                </Typography>
-              )}
-              {location && (
-                <Typography variant="body2" className="text-sm">
-                  {location}
-                </Typography>
-              )}
-            </Box>
-          </Box>
-        )}
-
-   <div className="flex justify-between items-end mt-auto">
-  <div>
-    {genre && (
-      <MuiStyledButton buttonSize='xs' borderType='straight' highlightBackgroundOnHover={false} highlightBorderOnHover={false} className="hover:cursor-text">
-        <Typography variant="subtitle2" >
-          {genre}
-        </Typography>
-      </MuiStyledButton>            
-    )}
-  </div>
+      <CardContent className="flex-grow flex flex-col">
+        <div className="space-y-2">
+          <div className="grid grid-cols-12">
+              <div className="flex flex-col col-span-12">
+                  {/* Label */}
+                  {label && (
+                  <Typography variant="h6" component="h3" className="font-bold line-clamp-2">
+                  {label}
+                  </Typography>
+                  )}
+              </div>
   
-  <div>
-    <MuiStyledButton buttonSize='xs' borderType='rounded' highlightBackgroundOnHover={true} highlightBorderOnHover={true}>
-      <div className="mx-0">
-        <Box
-          component="img"
-          src={logo}
-          alt="App Icon"
-          sx={{
-            width: 18,
-            height: 18,
-            zIndex: 9999
-          }}
-        />
-      </div>
-      <Typography variant='subtitle2' fontSize={11}>
-        Add
-      </Typography>
-    </MuiStyledButton>
-  </div>
-</div>
+          <div className="flex flex-col col-span-8 mt-1">
+                  {/* Date */}
+                      {date && (
+                      <Box className="flex items-center gap-1 text-gray-600">
+                          <CalendarToday fontSize="small" />
+                          <Typography variant="body2">
+                          {formatDate(date)}
+                          </Typography>
+                      </Box>
+                      )}
+          </div>    
+          </div>
+          {/* Location */}
+          {(location || venueName || address) && (
+            <Box className="flex items-start gap-1 text-gray-600">
+              <LocationOn fontSize="small" />
+              <Box>
+                {venueName && (
+                  <Typography variant="body2" className="font-medium">
+                    {venueName}
+                  </Typography>
+                )}
+                {address && (
+                  <Typography variant="body2" className="text-sm">
+                    {address}
+                  </Typography>
+                )}
+                {location && (
+                  <Typography variant="body2" className="text-sm">
+                    {location}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          )}
+
+
+          {genre && (
+          <MuiStyledButton buttonSize='xs' borderType='straight' highlightBackgroundOnHover={false} highlightBorderOnHover={false} className="hover:cursor-text">
+            <Typography variant="subtitle2" >
+              {genre}
+            </Typography>
+          </MuiStyledButton>            
+          )}
+
+        </div>
+
+      
+
+        {/* Spacer */}
+        <div className="flex-grow mt-2"></div>
+
+        {/* Bottom row - pushed to bottom */}
+        <div className="flex justify-between items-center pt-2">
+          
+
+           {(availability || price) && (
+              <Box className="flex gap-2 flex-wrap items-center">
+                  {availability && 
+
+                    
+                    <Tooltip title="Buy tickets">
+                    <MuiStyledButton className="flex items-center" buttonSize='xs' borderType='rounded' highlightBackgroundOnHover={true} highlightBorderOnHover={true} 
+                        buttonVariant={availability.toLowerCase() === 'available' ? 'meminiThemeOutline' : 'harmonicRed'}>
+                       
+                        <ConfirmationNumberOutlinedIcon 
+                          sx={{ 
+                            fontSize: 14, 
+                            mr: 0.5, 
+                            opacity: 0.75 
+                          }} 
+                        />
+                       
+
+                        <Typography variant="subtitle2" fontSize={10}>
+                            <Link 
+                              href={website} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              variant="body2"
+                              className="text-sm truncate"
+                              underline="none"
+                            >
+                            {availability}
+                            </Link>                          
+                        </Typography>
+                      </MuiStyledButton>
+                      </Tooltip>
+            
+                    
+                  }
+                  {price && (
+                  <Chip 
+                      label={typeof price === 'number' ? `$${price}` : price}
+                      size="small" 
+                      color="primary"
+                      variant="outlined"
+                  />
+                  )}
+            </Box>
+          )}
+          
+      
+
+            <Tooltip title="Add to schedule">
+            <MuiStyledButton className="flex items-center" buttonSize='xs' borderType='rounded' highlightBackgroundOnHover={true} highlightBorderOnHover={true} 
+                buttonVariant='meminiThemeOutline'  >
+                  
+                  <NotebookPen size={13} opacity={.5}
+                    className="mr-0.5 !opacity-75">
+                  </NotebookPen>
+               
+       
+                <Typography variant="subtitle2" fontSize={10}>
+                    <Link 
+                      href={website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      variant="subtitle2"
+                      className="text-sm truncate"
+                      underline="none"
+                    >
+                      Schedule
+                    </Link>                          
+                </Typography>
+              </MuiStyledButton>
+            </Tooltip>
+
+        </div>
        
       </CardContent>
 

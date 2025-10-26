@@ -49,7 +49,7 @@ namespace MeminiEventAPI.testing.configs.thenews
 
         public Dictionary<string, ICollection<IApiRequest>> ComprehensiveTestConfig()
         {
-            return  new Dictionary<string, ICollection<IApiRequest>>
+            return new Dictionary<string, ICollection<IApiRequest>>
             {
                 ["TheNews"] = new List<IApiRequest>
                 {
@@ -150,7 +150,47 @@ namespace MeminiEventAPI.testing.configs.thenews
                         Limit = 10
                     }
                 }
-            };           
+            };
+        }
+
+        public Dictionary<string, ICollection<IApiRequest>> SwedishDailyNewsConfig()
+        {
+            var today = DateTime.Now.AddDays(-1).Date; 
+
+            return new Dictionary<string, ICollection<IApiRequest>>
+            {
+                ["TheNews"] = new List<IApiRequest>
+        {
+            // Request 1: Just Swedish language, no categories (3 articles)
+            new TheNewsApiRequest
+            {
+                Endpoint = NewsApiEndpoint.All,
+                Language = "sv",
+                PublishedAfter = today,
+                Limit = 3
+            },
+            
+            // Request 2: Page 2 (3 more articles)
+            new TheNewsApiRequest
+            {
+                Endpoint = NewsApiEndpoint.All,
+                Language = "sv",
+                PublishedAfter = today,
+                Page = 2,
+                Limit = 3
+            },
+            
+            // Request 3: Page 3 (3 more articles)
+            new TheNewsApiRequest
+            {
+                Endpoint = NewsApiEndpoint.All,
+                Language = "sv",
+                PublishedAfter = today,
+                Page = 3,
+                Limit = 3
+            }
+        }
+            };
         }
     }
 }

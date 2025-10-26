@@ -15,7 +15,7 @@ internal class FourSquareApiAdapter(HttpClient httpClient) : PlacesApiBaseAdapte
     {
         dataModel.Results.ForEach(res => res.SearchCategory = (int)searchCategories);
         return Task.FromResult(dataModel.Results ?? new List<FoursquarePlace>());
-    } 
+    }
     public override string GenerateApiRequestUrl(IApiRequest requestConfig)
     {
         if (!(requestConfig is FoursquareApiRequest config))
@@ -40,16 +40,20 @@ internal class FourSquareApiAdapter(HttpClient httpClient) : PlacesApiBaseAdapte
             if (!string.IsNullOrWhiteSpace(config.Country))
                 near += $", {config.Country}";
             parts.Add($"near={Uri.EscapeDataString(near)}");
-            // Do NOT add radius when using "near"
         }
 
         // Categories
         if (config.Categories != structures.foursquare.FoursquareCategory.Any)
         {
-            var categoryIds = FoursquareCategoryIds.GetCategoryIds(config.Categories);        
+            var categoryIds = FoursquareCategoryIds.GetCategoryIds(config.Categories);
             parts.Add($"categories={categoryIds}");
-            searchCategories = config.Categories;
-        }           
+        }
+
+        // Offset for pagination
+        if (config.Offset.HasValue && config.Offset > 0)
+        {
+            parts.Add($"offset={config.Offset.Value}");
+        }
 
         // Query
         if (!string.IsNullOrWhiteSpace(config.Query))
@@ -62,6 +66,9 @@ internal class FourSquareApiAdapter(HttpClient httpClient) : PlacesApiBaseAdapte
         // Sort
         if (!string.IsNullOrWhiteSpace(config.SortBy))
             parts.Add($"sort={config.SortBy}");
+
+        // Fields (important for Foursquare v3)
+        parts.Add("fields=fsq_id,name,location,categories,rating,hours,website,verified,description");
 
         var queryString = string.Join("&", parts);
         return $"places/search?{queryString}";

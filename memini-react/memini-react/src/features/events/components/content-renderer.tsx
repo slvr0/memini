@@ -8,6 +8,8 @@ import { usePointOfInterestSearch } from "../hooks/poi-search-hook";
 import { Typography } from "@mui/material";
 import SourceLogoDisplay, {SourceAttribution} from "./source-logos";
 
+import MaterialUITheme1Profile from "../../../styling/mui_theme_1/theme-profile"
+
 type ContentType = 'events' | 'pointsOfInterest';
 
 interface ContentConfig {
@@ -90,7 +92,7 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({ type, className = ""}
         <div className={`flex flex-col ${className}`}>
             {/* Sticky Header Row */}
    
-            <div className="flex items-center sticky top-0 z-10 justify-between px-4  bg-white/80 backdrop-blur-sm rounded-md shadow-sm mb-4 transition-all duration-300 border border-gray-100">
+        <div className="flex items-center sticky top-0 z-10 justify-between px-4  bg-white/95 backdrop-blur-sm transition-all duration-300 border border-gray-100">
     {/* Left: Title and Pagination in one row */}
     <div className={`flex items-center gap-4 transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
         <div className="flex items-center gap-2">
@@ -115,6 +117,7 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({ type, className = ""}
             onChange={goToPage}
             variant="outlined"
             color="secondary"
+            customColor={MaterialUITheme1Profile.paletteProfiles["meminiThemeOutline"].light}
             size={config.paginationSize || 'medium'}
         />
     </div>
@@ -136,17 +139,7 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({ type, className = ""}
                             
             {/* Scrollable Content Container */}
             <div className="overflow-y-auto relative max-h-[calc(100vh-200px)] scrollbar-thin scrollbar-webkit">
-                {/* Loading Overlay */}
-                {loading && (
-                    <div className="relative inset-0 bg-white/60 backdrop-blur-sm z-20 flex items-center justify-center transition-all duration-1000">
-                        <div className="flex flex-col items-center gap-2">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <Typography variant="caption" color="text.secondary">
-                                Loading {config.title.toLowerCase()}...
-                            </Typography>
-                        </div>
-                    </div>
-                )}
+               
                 
                 {/* Content Grid with fade transition */}
                 <div className={`grid ${config.gridCols} gap-3 p-3 transition-opacity duration-500 ${loading ? 'opacity-30' : 'opacity-100'}`}>

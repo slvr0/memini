@@ -122,7 +122,7 @@ namespace MeminiEventAPI.handlers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);               
+                Console.WriteLine(ex.Message);                
             }
 
             return apiResult;

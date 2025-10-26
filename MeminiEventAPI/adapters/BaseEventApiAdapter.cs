@@ -66,6 +66,7 @@ public abstract class BaseAdapter
         HttpResponseMessage? response = null;
         try
         {
+            await Task.Delay(100);
             response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();

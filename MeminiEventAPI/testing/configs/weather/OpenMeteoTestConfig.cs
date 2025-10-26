@@ -52,7 +52,66 @@ namespace MeminiEventAPI.testing.configs.weather
                         Timezone = "Asia/Tokyo"
                     }
                 }
-            };            
+            };
+        }
+        public static Dictionary<string, ICollection<IApiRequest>> SwedishCitiesWeatherConfig()
+        {
+            var swedishCities = new[]
+            {
+                ("Stockholm", 59.3293, 18.0686),
+                ("Göteborg", 57.7089, 11.9746),
+                ("Malmö", 55.6050, 13.0038),
+                ("Uppsala", 59.8586, 17.6389),
+                ("Örebro", 59.2753, 15.2134),
+                ("Västerås", 59.6099, 16.5448),
+                ("Linköping", 58.4108, 15.6214),
+                ("Helsingborg", 56.0465, 12.6945),
+                ("Jönköping", 57.7826, 14.1618),
+                ("Norrköping", 58.5877, 16.1924),
+                ("Lund", 55.7047, 13.1910),
+                ("Umeå", 63.8258, 20.2630),
+                ("Gävle", 60.6749, 17.1413),
+                ("Borås", 57.7210, 12.9401)
+            };
+
+            var requests = new List<IApiRequest>();
+
+            foreach (var (city, lat, lng) in swedishCities)
+            {
+                requests.Add(new OpenMeteoRequest
+                {
+                    Latitude = lat,
+                    Longitude = lng,
+                    DailyVariables = new List<string>
+                    {
+                        "temperature_2m_max",
+                        "temperature_2m_min",
+                        "precipitation_sum",
+                        "precipitation_probability_max",
+                        "weathercode",
+                        "windspeed_10m_max",
+                        "winddirection_10m_dominant",
+                        "uv_index_max",
+                        "sunrise",
+                        "sunset"
+                    },
+                    TemperatureUnit = "celsius",
+                    WindSpeedUnit = "kmh",
+                    PrecipitationUnit = "mm",
+                    Timezone = "Europe/Stockholm",
+                    ForecastDays = 7
+                });
+            }
+
+            Console.WriteLine($"Weather forecasts for {swedishCities.Length} Swedish cities");
+            Console.WriteLine($"Total requests: {requests.Count}");
+
+            return new Dictionary<string, ICollection<IApiRequest>>
+            {
+                ["OpenMeteo"] = requests
+            };
         }
     }
+
+
 }

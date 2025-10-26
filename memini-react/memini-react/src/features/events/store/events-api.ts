@@ -28,8 +28,8 @@ export async function removeAllApiDataFromDb(): Promise<ApiResponse<any>> {
 export async function getNewsFromCountry(countryCode: string): Promise<ApiResponse<any>> {
   return await getNews(countryCode).then(response => response.data).catch(e => console.log(e));
 }
-export async function getWeatherInformationWeekForecastApi(): Promise<ApiResponse<any>> {
-  return await getWeatherInformationWeekForecast().then(response => response.data).catch(e => console.log(e));
+export async function getWeatherInformationWeekForecastApi(city: string): Promise<ApiResponse<any>> {
+  return await getWeatherInformationWeekForecast(city).then(response => response.data).catch(e => console.log(e));
 }
 export async function getPointsOfInterestCategoriesApi(): Promise<ApiResponse<any>> {
   return await getPointsOfInterestCategories().then(response => response.data).catch(e => console.log(e));

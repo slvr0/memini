@@ -108,6 +108,7 @@ public class MeminiEventApiRequest : IApiRequest
     public string? Location { get; set; } = string.Empty;// Format: "latitude,longitude" e.g. "40.7128,-74.0060"
     public string? Radius { get; set; } = string.Empty; // Format: "{value}{unit}" e.g. "10mi", "5km"
 
+    public string? Unit { get; set; } = string.Empty;
     /* Search chronologically filter */
     public DateTime? StartDate { get; set; } = null;
     public DateTime? EndDate { get; set; } = null;
@@ -120,6 +121,7 @@ public class MeminiEventApiRequest : IApiRequest
     /* Result control , Pageination / Max searchs , Sort by */
     public int? SearchSize { get; set; } = null;
     public int? PageSize { get; set; } = null;
+    public int? PageNumber { get;set; } = null;
     public int? PageOffset { get; set; } = null;
     public string? SortBy { get; set; } = null;// "rank", "-rank", "start", "-start", etc.
 

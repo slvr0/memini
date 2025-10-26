@@ -33,5 +33,16 @@ namespace MeminiEventAPI.services
                 ? swedish
                 : englishCity; // Return original if no mapping found
         }
+
+        public static string NormalizeSwedishChars(this string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            return input
+                .Replace("å", "a").Replace("Å", "A")
+                .Replace("ä", "a").Replace("Ä", "A")
+                .Replace("ö", "o").Replace("Ö", "O");
+        }
     }
 }

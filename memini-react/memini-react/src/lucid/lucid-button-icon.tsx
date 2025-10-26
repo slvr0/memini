@@ -40,7 +40,8 @@ const LucidIconButton = React.forwardRef<SVGSVGElement, LucidIconButtonProps>(
     const palette = MaterialUITheme1Profile.paletteProfiles[paletteKey];
     const border = MaterialUITheme1Profile.borderProfiles[borderKey];
 
-    return (
+    if(tooltip && tooltip != "")
+      return (
          <Tooltip title={tooltip} arrow>
             <Box
                 className={className}
@@ -68,6 +69,35 @@ const LucidIconButton = React.forwardRef<SVGSVGElement, LucidIconButtonProps>(
             </Box>
         </Tooltip>
     );
+    else 
+      return (        
+          <Box
+              className={className}
+              component="button"
+              onClick={onClick}
+              ref={ref as React.Ref<HTMLButtonElement>}
+              sx={{
+              borderRadius: border.borderRadius,
+              borderWidth: border.borderWidth,       
+              boxShadow: border.shadow,   
+              border: displayBorder ? `${border.borderWidth} solid ${palette.light.border}` : "none",          
+              cursor: "pointer",
+              color: palette.light.text,
+              transition: "all 0.2s ease",
+              opacity: opacity,              
+              "&:hover": {
+                  backgroundColor: highlightBackgroundOnHover ? palette.light.hover : undefined,
+                  borderColor: highlightBorderOnHover ? palette.light.borderHover : undefined,
+                  color: palette.light.text, 
+                  opacity : opacity * 1.25
+              },     
+              }}
+          >
+              <Icon size={size} />
+          </Box>
+      
+    );
+    
   }
 );
 

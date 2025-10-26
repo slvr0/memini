@@ -115,11 +115,11 @@ const MuiStyledSlider: React.FC<ThemedSliderProps> = ({
             },
           },
           '& .MuiSlider-track': {
-            backgroundColor: palette.hover,
+            backgroundColor: palette.border,
             border: 'none',
           },
           '& .MuiSlider-rail': {
-            backgroundColor: palette.border,
+            backgroundColor: palette.hover,
             opacity: 1,
           },
           '& .MuiSlider-mark': {

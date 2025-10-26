@@ -25,378 +25,168 @@ public class TicketmasterTestConfig
         { "Gävle", (60.6749, 17.1413) }
     };
 
-    public Dictionary<string, ICollection<IApiRequest>> SimpleTestConfig()
+    public Dictionary<string, ICollection<IApiRequest>> OptimizedSwedishCoverage()
     {
-        var today = DateTime.UtcNow.Date;
         var requests = new List<IApiRequest>();
+        int pageSize = 200; // Max allowed by Ticketmaster
+        int totalPages = 12; // 2262 ÷ 200 = 11.31, round up to 12
 
-        // === GÖTEBORG (PRIMARY TEST CITY) ===
-
-        // All categories - comprehensive date ranges
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Göteborg",
-            SearchSize = 200,
-            StartDate = today,
-            EndDate = today.AddDays(30),
-            SortBy = "date"
-        });
-
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Göteborg",
-            SearchSize = 200,
-            StartDate = today.AddDays(31),
-            EndDate = today.AddDays(90),
-            SortBy = "date"
-        });
-
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Göteborg",
-            SearchSize = 200,
-            StartDate = today.AddDays(91),
-            EndDate = today.AddDays(180),
-            SortBy = "date"
-        });
-
-        // Music - paginated
-        for (int page = 0; page < 3; page++)
+        for (int page = 0; page < totalPages; page++)
         {
             requests.Add(new MeminiEventApiRequest
             {
                 Country = "Sweden",
                 CountryCode = "SE",
-                City = "Göteborg",
-                Category = "Music",
-                SearchSize = 200,
-                PageSize = 200,
-                PageOffset = page * 200,
-                StartDate = today,
-                EndDate = today.AddMonths(6),
-                SortBy = "date"
+                PageSize = pageSize,
+                PageNumber = page,
             });
         }
 
-        // Sports
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Göteborg",
-            Category = "Sports",
-            SearchSize = 200,
-            StartDate = today,
-            EndDate = today.AddMonths(6),
-            SortBy = "date"
-        });
-
-        // Arts & Theatre
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Göteborg",
-            Category = "Arts & Theatre",
-            SearchSize = 150,
-            StartDate = today,
-            EndDate = today.AddMonths(6),
-            SortBy = "date"
-        });
-
-        // Family
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Göteborg",
-            Category = "Family",
-            SearchSize = 100,
-            StartDate = today,
-            EndDate = today.AddMonths(4),
-            SortBy = "date"
-        });
-
-        // Radius searches from Göteborg
-        requests.Add(new MeminiEventApiRequest
-        {
-            Location = "57.70887,11.97456",
-            Radius = "30km",
-            SearchSize = 200,
-            StartDate = today,
-            EndDate = today.AddMonths(3),
-            SortBy = "distance"
-        });
-
-        requests.Add(new MeminiEventApiRequest
-        {
-            Location = "57.70887,11.97456",
-            Radius = "75km",
-            Category = "Music",
-            SearchSize = 200,
-            StartDate = today,
-            EndDate = today.AddMonths(6),
-            SortBy = "distance"
-        });
-
-        // === STOCKHOLM ===
-
-        // All categories - comprehensive
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Stockholm",
-            SearchSize = 200,
-            StartDate = today,
-            EndDate = today.AddMonths(2),
-            SortBy = "date"
-        });
-
-        // Music - paginated
-        for (int page = 0; page < 2; page++)
-        {
-            requests.Add(new MeminiEventApiRequest
-            {
-                Country = "Sweden",
-                CountryCode = "SE",
-                City = "Stockholm",
-                Category = "Music",
-                SearchSize = 200,
-                PageSize = 200,
-                PageOffset = page * 200,
-                StartDate = today,
-                EndDate = today.AddMonths(6),
-                SortBy = "relevance"
-            });
-        }
-
-        // Sports
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Stockholm",
-            Category = "Sports",
-            SearchSize = 200,
-            StartDate = today,
-            EndDate = today.AddMonths(6),
-            SortBy = "date"
-        });
-
-        // Arts & Theatre
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Stockholm",
-            Category = "Arts & Theatre",
-            SearchSize = 150,
-            StartDate = today,
-            EndDate = today.AddMonths(4),
-            SortBy = "date"
-        });
-
-        // === MALMÖ ===
-
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Malmö",
-            SearchSize = 200,
-            StartDate = today,
-            EndDate = today.AddMonths(3),
-            SortBy = "date"
-        });
-
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            City = "Malmö",
-            Category = "Music",
-            SearchSize = 150,
-            StartDate = today,
-            EndDate = today.AddMonths(6),
-            SortBy = "date"
-        });
-
-        // === OTHER MAJOR CITIES ===
-
-        var otherCities = new[] { "Uppsala", "Linköping", "Västerås", "Örebro", "Norrköping", "Helsingborg" };
-        foreach (var city in otherCities)
-        {
-            requests.Add(new MeminiEventApiRequest
-            {
-                Country = "Sweden",
-                CountryCode = "SE",
-                City = city,
-                SearchSize = 100,
-                StartDate = today,
-                EndDate = today.AddMonths(4),
-                SortBy = "date"
-            });
-        }
-
-        // === SWEDEN-WIDE SEARCHES ===
-
-        // All events - paginated
-        for (int page = 0; page < 2; page++)
-        {
-            requests.Add(new MeminiEventApiRequest
-            {
-                Country = "Sweden",
-                CountryCode = "SE",
-                SearchSize = 200,
-                PageSize = 200,
-                PageOffset = page * 200,
-                StartDate = today,
-                EndDate = today.AddMonths(2),
-                SortBy = "date"
-            });
-        }
-
-        // Music nationwide
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            Category = "Music",
-            SearchSize = 200,
-            StartDate = today,
-            EndDate = today.AddMonths(3),
-            SortBy = "relevance"
-        });
-
-        // Sports nationwide
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            Category = "Sports",
-            SearchSize = 150,
-            StartDate = today,
-            EndDate = today.AddMonths(4),
-            SortBy = "date"
-        });
-
-        // Film
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            Category = "Film",
-            SearchSize = 100,
-            StartDate = today,
-            EndDate = today.AddMonths(3),
-            SortBy = "date"
-        });
-
-        // Miscellaneous
-        requests.Add(new MeminiEventApiRequest
-        {
-            Country = "Sweden",
-            CountryCode = "SE",
-            Category = "Miscellaneous",
-            SearchSize = 100,
-            StartDate = today,
-            EndDate = today.AddMonths(3),
-            SortBy = "date"
-        });
-
-        // === GENRE-SPECIFIC SEARCHES ===
-
-        var genres = new[] { "Rock", "Pop", "Classical", "Jazz", "Electronic", "Hip-Hop", "Metal" };
-        foreach (var genre in genres)
-        {
-            requests.Add(new MeminiEventApiRequest
-            {
-                Country = "Sweden",
-                CountryCode = "SE",
-                Labels = genre,
-                SearchSize = 50,
-                StartDate = today,
-                EndDate = today.AddMonths(6),
-                SortBy = "date"
-            });
-        }
-
-        // Sports genres
-        var sports = new[] { "Football", "Hockey", "Basketball", "Handball" };
-        foreach (var sport in sports)
-        {
-            requests.Add(new MeminiEventApiRequest
-            {
-                Country = "Sweden",
-                CountryCode = "SE",
-                Labels = sport,
-                SearchSize = 50,
-                StartDate = today,
-                EndDate = today.AddMonths(6),
-                SortBy = "date"
-            });
-        }
-
-        // === WEEKEND SEARCHES ===
-
-        var weekendDate = GetNextFriday(today);
-        for (int i = 0; i < 4; i++) // Next 4 weekends
-        {
-            requests.Add(new MeminiEventApiRequest
-            {
-                Country = "Sweden",
-                CountryCode = "SE",
-                SearchSize = 100,
-                StartDate = weekendDate.AddDays(i * 7),
-                EndDate = weekendDate.AddDays(i * 7 + 2), // Friday to Sunday
-                SortBy = "date"
-            });
-        }
-
-        // === SHORT-TERM HIGH-DENSITY SEARCHES ===
-
-        // This week - major cities
-        foreach (var city in new[] { "Göteborg", "Stockholm", "Malmö" })
-        {
-            requests.Add(new MeminiEventApiRequest
-            {
-                Country = "Sweden",
-                CountryCode = "SE",
-                City = city,
-                SearchSize = 100,
-                StartDate = today,
-                EndDate = today.AddDays(7),
-                SortBy = "date"
-            });
-        }
-
-        // === RADIUS SEARCHES FROM MULTIPLE CITIES ===
-
-        foreach (var kvp in CityCoordinates.Take(5))
-        {
-            requests.Add(new MeminiEventApiRequest
-            {
-                Location = $"{kvp.Value.Lat},{kvp.Value.Lng}",
-                Radius = "50km",
-                SearchSize = 100,
-                StartDate = today,
-                EndDate = today.AddMonths(3),
-                SortBy = "distance"
-            });
-        }
+        Console.WriteLine($"Total API requests: {requests.Count}");
+        Console.WriteLine($"Max results: {requests.Count * pageSize}");
 
         return new Dictionary<string, ICollection<IApiRequest>>
         {
             ["Ticketmaster"] = requests
         };
     }
+    public Dictionary<string, ICollection<IApiRequest>> CategoryBasedSweden()
+    {
+        var requests = new List<IApiRequest>();
+        int pageSize = 200;
+
+        var categories = new[] { "Music", "Sports", "Arts & Theatre", "Family", "Film", "Miscellaneous" };
+
+        foreach (var category in categories)
+        {
+            // Each category search can return up to 1000 results
+            for (int page = 0; page < 5; page++) // 5 pages × 200 = 1000 max per category
+            {
+                requests.Add(new MeminiEventApiRequest
+                {
+                    Country = "Sweden",
+                    CountryCode = "SE",
+                    Category = category,
+                    PageSize = pageSize,
+                    PageNumber = page
+                });
+            }
+        }
+
+        // Catch uncategorized events
+        for (int page = 0; page < 5; page++)
+        {
+            requests.Add(new MeminiEventApiRequest
+            {
+                Country = "Sweden",
+                CountryCode = "SE",
+                PageSize = pageSize,
+                PageNumber = page
+            });
+        }
+
+        Console.WriteLine($"Total requests: {requests.Count}"); // ~35 requests
+        return new Dictionary<string, ICollection<IApiRequest>>
+        {
+            ["Ticketmaster"] = requests
+        };
+    }
+    public Dictionary<string, ICollection<IApiRequest>> OrebroOnlyConfig()
+    {
+        var requests = new List<IApiRequest>();
+
+        requests.Add(new MeminiEventApiRequest
+        {
+            Country = "Sweden",
+            CountryCode = "SE",
+            City = "Örebro"
+            // Don't set PageSize, PageNumber, Category - let them be null/default
+        });
+
+        return new Dictionary<string, ICollection<IApiRequest>>
+        {
+            ["Ticketmaster"] = requests
+        };
+    }
+
+    public Dictionary<string, ICollection<IApiRequest>> GothenburgOnlyConfig()
+    {
+        var requests = new List<IApiRequest>();
+
+        requests.Add(new MeminiEventApiRequest
+        {
+            Country = "Sweden",
+            CountryCode = "SE",
+            City = "Göteborg",
+            PageSize = 200,
+            PageNumber = 0
+            
+            // Don't set PageSize, PageNumber, Category - let them be null/default
+        });
+
+        requests.Add(new MeminiEventApiRequest
+        {
+            Country = "Sweden",
+            CountryCode = "SE",
+            City = "Göteborg",
+            PageSize = 200,
+            PageNumber = 1
+
+            // Don't set PageSize, PageNumber, Category - let them be null/default
+        });
+
+        return new Dictionary<string, ICollection<IApiRequest>>
+        {
+            ["Ticketmaster"] = requests
+        };
+    }
+
+    public Dictionary<string, ICollection<IApiRequest>> RadiusBasedSwedenConfig()
+    {
+        var requests = new List<IApiRequest>();
+
+        // Strategic points across Sweden with 150km radius (covers most areas)
+        var searchPoints = new[]
+        {
+        ("Malmö (South)", "55.6050,13.0038", 150),
+        ("Göteborg (Southwest)", "57.7089,11.9746", 150),
+        ("Stockholm (East)", "59.3293,18.0686", 150),
+        ("Örebro (Central)", "59.2753,15.2134", 150),
+        ("Sundsvall (Mid-North)", "62.3908,17.3069", 150),
+        ("Umeå (North)", "63.8258,20.2630", 150),
+        ("Luleå (Far North)", "65.5848,22.1547", 150),
+        ("Karlstad (West)", "59.3793,13.5036", 150),
+        ("Östersund (Northwest)", "63.1792,14.6357", 150)
+        };
+
+        foreach (var (name, latlong, radius) in searchPoints)
+        {
+            // Paginate each radius search
+            for (int page = 0; page < 3; page++)
+            {
+                requests.Add(new MeminiEventApiRequest
+                {
+                    CountryCode = "SE",
+                    Location = latlong,
+                    Radius = radius.ToString(),
+                    Unit = "km",
+                    PageSize = 200,
+                    PageNumber = page
+                });
+            }
+
+            Console.WriteLine($"{name}: radius {radius}km around {latlong}");
+        }
+
+        Console.WriteLine($"Total requests: {requests.Count} (9 regions × 3 pages)");
+        // ~27 requests to cover all of Sweden
+
+        return new Dictionary<string, ICollection<IApiRequest>>
+        {
+            ["Ticketmaster"] = requests
+        };
+    }
+
 
     private static DateTime GetNextFriday(DateTime date)
     {

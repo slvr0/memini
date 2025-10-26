@@ -58,7 +58,7 @@ const MuiStyledSwitch: React.FC<ThemedSwitchProps> = ({
             },
           },
           '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-            backgroundColor: palette.hover,
+            backgroundColor: palette.borderHover,
           },
           '& .MuiSwitch-track': {
             backgroundColor: palette.border,

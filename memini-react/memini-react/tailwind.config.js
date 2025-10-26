@@ -10,12 +10,11 @@ export default {
       colors: {      
         miTask: '#e3f2fd',    
         miTaskHL: '#bbdefb',
-        miTaskHBR: '#42a5f5'      
+        miTaskHBR: '#42a5f5',    
+        miTheme: '#379f7f',
+        miThemeLight: '#f6fcfa'  
       },
 
-      fontFamily: {
-        title: ['"Pacifico"', 'cursive']
-      }, 
 
       screens: {
         '2xl' : '1536px',

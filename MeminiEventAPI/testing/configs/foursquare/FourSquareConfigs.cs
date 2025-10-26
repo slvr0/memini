@@ -135,41 +135,58 @@ public Dictionary<string, ICollection<IApiRequest>> CreateTestConfigs()
 
     return configs;
     }
-
-    public async Task<MeminiApiResponse> RunSimpleTest(ApiAdapterHandler handler)
+    public Dictionary<string, ICollection<IApiRequest>> EfficientFoursquareSweden()
     {
-        Console.WriteLine("=== Running Simple Foursquare Test ===\n");
+        var requests = new List<IApiRequest>();
 
-        var simpleConfig = new Dictionary<string, ICollection<IApiRequest>>
+        var coveragePoints = new[]
         {
-            ["FourSquare"] = new List<IApiRequest>
-            {
-                new FoursquareApiRequest
-                {
-                    City = "Stockholm",
-                    Radius = "3000",
-                    //Categories = ((int)FoursquareCategory.CoffeeShop).ToString(),
-                    SearchSize = 10
-                }
-            }
+        //("Malmö", "55.6050,13.0038"),
+        ("Göteborg", "57.7089,11.9746"),
+        //("Linköping", "58.4108,15.6214"),
+        //("Stockholm", "59.3293,18.0686"),
+        //("Västerås", "59.6099,16.5448"),
+        //("Sundsvall", "62.3908,17.3069"),
+        //("Umeå", "63.8258,20.2630"),
+        //("Luleå", "65.5848,22.1547")
         };
 
-        var exactConfig = new Dictionary<string, ICollection<IApiRequest>>
+        int pagesPerPoint = 20; // 10 pages × 50 = 500 POIs per point
+
+        foreach (var (city, latlong) in coveragePoints)
         {
-            ["FourSquare"] = new List<IApiRequest>
-        {
-            new FoursquareApiRequest
+            // Paginate through results
+            for (int page = 0; page < pagesPerPoint; page++)
             {
-                City = "Stockholm",
-                SearchSize = 5
-                // No other parameters - matches the PowerShell test exactly
+                requests.Add(new FoursquareApiRequest
+                {
+                    Country = "Sweden",
+                    CountryCode = "SE",
+                    City = city,
+                    Location = latlong,
+                    Radius = "100000",      // 100km
+                    SearchSize = 50,        // 50 per page
+                    Offset = page * 50,     // Foursquare uses offset, not page number!
+                    SortBy = "distance"
+                });
             }
         }
+
+        Console.WriteLine($"═══════════════════════════════════════");
+        Console.WriteLine($"Foursquare Sweden Coverage with Pagination");
+        Console.WriteLine($"═══════════════════════════════════════");
+        Console.WriteLine($"Coverage points: {coveragePoints.Length}");
+        Console.WriteLine($"Pages per point: {pagesPerPoint}");
+        Console.WriteLine($"Total requests: {requests.Count}");
+        Console.WriteLine($"Expected POIs: ~{requests.Count * 50}");
+        Console.WriteLine($"Free calls remaining: 9,761");
+        Console.WriteLine($"Calls used: {requests.Count} ({(requests.Count / 9761.0):P1})");
+        Console.WriteLine($"═══════════════════════════════════════");
+
+        return new Dictionary<string, ICollection<IApiRequest>>
+        {
+            ["FourSquare"] = requests
         };
-
-        var config = CreateTestConfigs();
-
-        return await handler.FetchDataFromApis(simpleConfig);
-       
     }
+
 }

@@ -10,10 +10,19 @@ interface PaginationControlProps {
   onPageSizeChange?: (pageSize: number) => void;
   variant?: 'text' | 'outlined';
   color?: 'primary' | 'secondary' | 'standard';
+  customColor?: CustomPalette;  
   disabled?: boolean;
   showPageSizeSelector?: boolean;
   className?: string;
   size?: 'small' | 'medium' | 'large';
+}
+
+interface CustomPalette {
+  main: string;
+  hover: string;
+  text: string;
+  border: string;
+  borderHover: string;
 }
 
 export const MuiStyledPagination: React.FC<PaginationControlProps> = ({
@@ -25,6 +34,7 @@ export const MuiStyledPagination: React.FC<PaginationControlProps> = ({
   onPageSizeChange,
   variant = 'outlined',
   color = 'primary',
+  customColor,
   disabled = false,
   showPageSizeSelector = false,
   className = '',
@@ -43,6 +53,14 @@ export const MuiStyledPagination: React.FC<PaginationControlProps> = ({
   if (totalItems === 0) {
     return null;
   }
+
+  // Convert hex to rgba for 30% opacity
+  const hexToRgba = (hex: string, alpha: number) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
   
   return (
     <div className={`flex justify-center items-center gap-4 py-4 ${className}`}>
@@ -51,11 +69,30 @@ export const MuiStyledPagination: React.FC<PaginationControlProps> = ({
         page={currentPage}
         onChange={handleChange}
         variant={variant}
-        color={color}
+        color={customColor ? 'standard' : color}
         size={size}
         disabled={disabled}
         showFirstButton
         showLastButton
+        sx={customColor ? {
+          '& .MuiPaginationItem-root': {
+            color: customColor.text,
+            borderColor: hexToRgba(customColor.text, 0.2),
+          },
+          '& .MuiPaginationItem-root.Mui-selected': {
+            backgroundColor: customColor.main,
+            color: customColor.text,
+            borderColor: customColor.border,
+            '&:hover': {
+              backgroundColor: customColor.hover,
+              borderColor: customColor.borderHover,
+            },
+          },
+          '& .MuiPaginationItem-root:hover:not(.Mui-selected)': {
+            backgroundColor: hexToRgba(customColor.hover, 0.1),
+            borderColor: hexToRgba(customColor.text, 0.5),
+          },
+        } : undefined}
       />
       
       {showPageSizeSelector && onPageSizeChange && (
@@ -74,15 +111,13 @@ export const MuiStyledPagination: React.FC<PaginationControlProps> = ({
         </FormControl>
       )}
 
-      { (totalItems && totalItems > 0) && 
+      {(totalItems && totalItems > 0) && 
         <Typography variant="subtitle2" color="text.secondary">
-            page {currentPage} of {totalPages} ({totalItems} total results)
+          page {currentPage} of {totalPages} ({totalItems} total results)
         </Typography>
       }
-   
-
-
     </div>
   );
 };
+
 export default MuiStyledPagination;

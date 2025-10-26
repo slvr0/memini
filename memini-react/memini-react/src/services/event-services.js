@@ -10,4 +10,4 @@ export const getPointsOfInterestFromFilter = (poiSearchFilter) => api.post(contr
 export const getPointsOfInterest = (request) => api.post(controllerSyntax + '/GetPointsOfInterest');
 export const getPointsOfInterestCategories = () => api.get(controllerSyntax + '/GetPointsOfInterestCategories');
 export const getNews = (request) => api.post(controllerSyntax + '/GetNews', request);
-export const getWeatherInformationWeekForecast = () => api.post(controllerSyntax + '/GetWeatherInformationWeekForecast');
+export const getWeatherInformationWeekForecast = (city) => api.post(controllerSyntax + '/GetWeatherInformationWeekForecast', city);

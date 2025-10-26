@@ -5,6 +5,8 @@ import EventsContentContainer from "./events-content-container";
 import { Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import MUI_StyledSegment from "../../../mui-wrappers/mui-segment-wrapper";
+
+
 import LucidIconButton from "../../../lucid/lucid-button-icon";
 import {
     getEventsFromAll, 
@@ -24,6 +26,7 @@ import { RootState } from "@/store";
 import { IEventSearchFilter, IPointOfInterestFilter } from "@/interfaces/common-interfaces";
 
 import moment from 'moment';
+import LocationSelector from "./location-selector-leaflet";
 
 interface GreenDotProps {
   size?: number; // size in pixels
@@ -71,25 +74,24 @@ function EventsPage() {
     }
 
     const onGetNews = async (countryCode: string) => {
-        const result  = await getNewsFromCountry(countryCode);
-        console.log(result);
+        const result  = await getNewsFromCountry(countryCode);     
         setNews(result.ResponseObject as any);
     }
 
-    const onGetWeather = async () => {
-        const result  = await getWeatherInformationWeekForecastApi();
-        console.log(result);
+    const onGetWeather = async (city: string) => {
+        console.log(userLocation.City);
+        const result  = await getWeatherInformationWeekForecastApi(city);      
         setWeatherInformation(result.ResponseObject as any);
     } 
 
     useEffect(() => {
         const initiateWeatherAndNews = async () => {
-            if (!userLocation) {
+            if (!userLocation || userLocation?.City === '' || userLocation?.Country === '') {
                 return;
             }  
 
             await onGetNews(userLocation.Country);
-            await onGetWeather();
+            await onGetWeather(userLocation.City);
         }
         initiateWeatherAndNews();
     }, [userLocation]);  
@@ -102,22 +104,9 @@ function EventsPage() {
             {/* Search pane */}
             <div className="grid grid-cols-6">
                 <div className="flex flex-row gap-4 col-span-6 justify-center items-center mt-4"> 
-    <LucidIconButton
-        icon={Earth}
-        className="p-2 !text-[#2e7b63]"
-        size={20}
-        opacity={.75}
-        palette="main"
-        borderProfile="semiStraight"
-        highlightBackgroundOnHover={true}
-        highlightBorderOnHover={true}
-        displayBorder={true}
-        tooltip="Change location"
-        onClick={() => console.log("Clicked Home")}
-    />   
-    <Typography variant="h6" fontSize={18} >
-        {userLocation.City}, {userLocation.Country}
-    </Typography>  
+
+    <LocationSelector></LocationSelector>
+ 
         </div>
 
             <div className="flex col-span-6 gap-16 p-2 justify-center items-center">
@@ -164,9 +153,7 @@ function EventsPage() {
             </MuiStyledButton>               
             </div>
             <div className="flex col-span-6 p-2 justify-end items-end">
-            <MuiStyledButton themeColor='light' buttonSize='xs' buttonVariant='main' borderType='rounded' opacity={.85} onClick={() => {onGetWeather()}}> 
-            <Typography variant="subtitle2"> Get Weather </Typography>
-            </MuiStyledButton>
+   
 
             <MuiStyledButton themeColor='light' buttonSize='xs' buttonVariant='main' borderType='rounded' opacity={.85} onClick={() => {onFetchEventApiData()}}> 
                 <Typography variant="subtitle2"> FETCH ALL  </Typography>

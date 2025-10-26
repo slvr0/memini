@@ -21,22 +21,20 @@ internal class TheNewsApiAdapter(HttpClient httpClient) : NewsApiBaseAdapter<The
         if (config == null)
             throw new ArgumentException("Invalid request config type");
 
-        //var endpoint = config.Endpoint switch
-        //{
-        //    NewsApiEndpoint.All => "all",
-        //    NewsApiEndpoint.Headlines => "headlines",
-        //    NewsApiEndpoint.Top => "top",
-        //    _ => "all"
-        //};
-
-        //all does not support locale search so this needs to be top for now.
-        var endpoint = "top";
+        var endpoint = config.Endpoint switch
+        {
+            NewsApiEndpoint.All => "all",
+            NewsApiEndpoint.Top => "top",
+            NewsApiEndpoint.Headlines => "headlines",
+            _ => "all"
+        };
 
         var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
 
         // Search parameters
         if (!string.IsNullOrEmpty(config.Search))
             query["search"] = config.Search;
+
         if (!string.IsNullOrEmpty(config.SearchFields))
             query["search_fields"] = config.SearchFields;
 
@@ -47,34 +45,43 @@ internal class TheNewsApiAdapter(HttpClient httpClient) : NewsApiBaseAdapter<The
         // Domains
         if (config.Domains?.Any() == true)
             query["domains"] = string.Join(",", config.Domains);
+
         if (config.ExcludeDomains?.Any() == true)
             query["exclude_domains"] = string.Join(",", config.ExcludeDomains);
 
         // Language and locale
         if (!string.IsNullOrEmpty(config.Language))
             query["language"] = config.Language;
-        if (!string.IsNullOrEmpty(config.Locale))
-            query["locale"] = config.Locale;    
 
-        // Date filtering
+        if (!string.IsNullOrEmpty(config.Locale))
+            query["locale"] = config.Locale;  // ← FIXED: Use "locale" not "country"
+
+        // Date filtering - FIXED: Use simple date format without time
         if (config.PublishedBefore.HasValue)
-            query["published_before"] = config.PublishedBefore.Value.ToString("yyyy-MM-ddTHH:mm:ss");
+            query["published_before"] = config.PublishedBefore.Value.ToString("yyyy-MM-dd");
+
         if (config.PublishedAfter.HasValue)
-            query["published_after"] = config.PublishedAfter.Value.ToString("yyyy-MM-ddTHH:mm:ss");
+            query["published_after"] = config.PublishedAfter.Value.ToString("yyyy-MM-dd");
+
         if (config.PublishedOn.HasValue)
             query["published_on"] = config.PublishedOn.Value.ToString("yyyy-MM-dd");
 
-        // Sorting
-        query["sort"] = config.Sort switch
+        // Sorting - FIXED: Only add if not default
+        if (config.Sort != NewsApiSort.PublishedAt)  // Don't add default sort
         {
-            NewsApiSort.PublishedAt => "published_at",
-            NewsApiSort.RelevanceScore => "relevance_score",
-            _ => "published_at"
-        };
+            query["sort"] = config.Sort switch
+            {
+                NewsApiSort.RelevanceScore => "relevance_score",
+                _ => "published_at"
+            };
+        }
 
-        // Pagination
-        query["limit"] = config.Limit.ToString();
-        query["page"] = config.Page.ToString();
+        // Pagination - FIXED: Only add if not default
+        if (config.Limit > 0)
+            query["limit"] = config.Limit.ToString();
+
+        if (config.Page > 1)  // Only add page if > 1
+            query["page"] = config.Page.ToString();
 
         var queryString = query.ToString();
         return string.IsNullOrEmpty(queryString) ? endpoint : $"{endpoint}?{queryString}";

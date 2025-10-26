@@ -21,7 +21,7 @@ export const usePointOfInterestSearch = () => {
       setCategoriesLoading(true);
       try {
         const response = await getPointsOfInterestCategoriesApi();
-        console.log(response);
+  
         setPoiCategories(response?.ResponseObject?.categoricalEnums || []);
       } catch (error) {
         console.error('Failed to fetch POI categories:', error);

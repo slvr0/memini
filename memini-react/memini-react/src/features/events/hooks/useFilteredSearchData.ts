@@ -61,7 +61,7 @@ export function createFilteredSearch<TFilter extends { pagination: IPaginationSt
     
     try {
       const response = await apiMethod(fullFilter);
-      console.log("response in hook" , response);
+
       if (response.Success && response.ResponseObject) {
         data = response.ResponseObject.Data;
         pagination = {

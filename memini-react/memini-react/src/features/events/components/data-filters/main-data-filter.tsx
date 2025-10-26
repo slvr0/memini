@@ -107,7 +107,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                             highlightBackgroundOnHover={true}
                             highlightBorderOnHover={true}
                             displayBorder={true}
-                            className={`p-2 !text-blue-600 transition-transform ${eventIsLoading ? 'animate-spin' : ''}`}
+                            className={`p-2 !border-miTheme !text-miTheme transition-transform ${eventIsLoading ? 'animate-spin' : ''}`}
                             tooltip="Refresh filter"
                             onClick={() => {onUpdateEventsSearchFilter()}}
                         />       
@@ -199,7 +199,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                 <div className="flex flex-col col-span-3 gap-2">
                     <MuiStyledSwitch 
                         label="Available tickets"
-                        paletteProfile="harmonicRed"
+                        paletteProfile="meminiThemeOutline"
                         labelFontSize={10}
                         labelFontVariant="subtitle2"
                         value={eventSwitchAvailableTickets}
@@ -208,7 +208,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
 
                     <MuiStyledSwitch 
                         label="Ticketmaster events"
-                        paletteProfile="harmonicRed"
+                        paletteProfile="meminiThemeOutline"
                         labelFontSize={10}
                         labelFontVariant="subtitle2"
                         value={eventSwitchShowTicketmaster}
@@ -217,7 +217,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
 
                     <MuiStyledSwitch 
                         label="Predict HQ events"
-                        paletteProfile="harmonicRed"
+                        paletteProfile="meminiThemeOutline"
                         labelFontSize={10}
                         labelFontVariant="subtitle2"
                         value={eventSwitchShowPredictHq}       
@@ -241,7 +241,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                             highlightBackgroundOnHover={true}
                             highlightBorderOnHover={true}
                             displayBorder={true}
-                            className={`p-2 !text-blue-600 transition-transform ${poiIsLoading ? 'animate-spin' : ''}`}
+                            className={`p-2 !border-miTheme !text-miTheme  transition-transform ${poiIsLoading ? 'animate-spin' : ''}`}
                             tooltip="Refresh filter"
                             onClick={() => {onUpdatePointOfInterestSearchFilter()}}
                         />       

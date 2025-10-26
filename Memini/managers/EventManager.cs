@@ -83,15 +83,14 @@ public class EventManager
     {
         try
         {
-            //use a reducer to extract unique events
             var uniqueEvents = eventsApiResult.Events?.ReduceCompare(
-               e => e.Result?.Name ?? "",                    // Field to compare (event name)
-               e => e.Result?.DataQuality ?? 0,             // Quality metric
-               similarityThreshold: 90,                    // similarity threshold
-               algorithm: SimilarityAlgorithm.TokenSetRatio
-            ).Select(mappingEvent => mappingEvent.Result); // select pure results, mapping wrapping no longer required
+                e => $"{e.Result?.Name ?? ""}|{e.Result?.TemporalInfo.StartDate:yyyy-MM-dd}", // Fixed: added closing }
+                e => e.Result?.DataQuality ?? 0,
+                similarityThreshold: 98,
+                algorithm: SimilarityAlgorithm.WeightedRatio
+            ).Select(mappingEvent => mappingEvent.Result);
 
-            if (uniqueEvents == null || uniqueEvents.Count() == 0)
+            if (uniqueEvents == null)
                 return;
 
             var coreNodes = uniqueEvents
@@ -102,7 +101,7 @@ public class EventManager
             var uniqueCoreNodes = await context.CoreNodes.GetItemsToInsertMultiField(coreNodes,
                 e => e.Label ?? string.Empty,
                 e => e.StartDate,
-                similarityThreshold: 90,
+                similarityThreshold: 98,
                 dateDifferenceThresholdDays: 1
                 );
 
@@ -125,10 +124,10 @@ public class EventManager
         {
             //use a reducer to extract unique events
             var uniquePointOfInterest = placeApiResult.Places?.ReduceCompare(
-               e => e.Result?.Name ?? "",             // Field to compare (event name)
-               e => e.Result?.DataQuality ?? 0,             // Quality metric
-               similarityThreshold: 90,                    // similarity threshold
-               algorithm: SimilarityAlgorithm.TokenSetRatio
+               e => $"{e.Result?.Name ?? ""}|{e.Result?.GeographicInfo?.City}",             // Field to compare (event name)
+               e => e.Result?.DataQuality ?? 0,       // Quality metric
+               similarityThreshold: 95,                    // similarity threshold
+               algorithm: SimilarityAlgorithm.WeightedRatio
             ).Select(mappingEvent => mappingEvent.Result); // select pure results, mapping wrapping no longer required
 
             if (uniquePointOfInterest == null || uniquePointOfInterest.Count() == 0)
@@ -140,13 +139,12 @@ public class EventManager
 
             //unique check versus datatable entries
             var uniqueCoreNodes = await context.CoreNodes.GetItemsToInsertMultiField(coreNodes,
-                e => e.Label ?? string.Empty,
+                e => $"{e.Label ?? ""}|{e.City ?? ""}",
                 e => e.StartDate,
-                similarityThreshold: 90,
+                similarityThreshold: 95,
                 dateDifferenceThresholdDays: 1
                 );
-
-            // Add all at once - EF Core will handle FK relationships
+           
             await context.CoreNodes.AddRangeAsync(uniqueCoreNodes);
 
             // Save changes - this will set all the foreign keys automatically
@@ -244,7 +242,7 @@ public class EventManager
         var query = context.CoreNodes
             .ByCountry(searchFilter.Country)
             .ByDateRange(today, end)
-            //.ByCity(cityInSwedish)
+            .ByCity(cityInSwedish)
             .ByCategory(searchFilter.EventCategories)
             .ByLabel(searchFilter.EventFreeSearch)
             .ByTicketmasterFilter(searchFilter.EventSwitchShowTicketmaster)

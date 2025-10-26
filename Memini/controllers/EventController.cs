@@ -19,9 +19,11 @@ using MeminiEventAPI.testing.configs.predicthq;
 using Memini.dto.general;
 
 using Memini.validators;
+using Memini.services;
 using Memini.selectors;
 using Microsoft.EntityFrameworkCore;
 using Memini.dto.poi;
+using MeminiEventAPI.services;
 namespace Memini.Controllers;
 
 [Authorize]
@@ -62,11 +64,12 @@ public class EventController : ControllerBase
     {
         try
         {
-            var weatherconfig       = OpenMeteoTestConfig.WeatherTestConfig();
-            var ticketmasterconfig  = new TicketmasterTestConfig().SimpleTestConfig();
-            var foursquareconfig    = new FourSquareTesting().CreateTestConfigs();
-            var thenewsconfig       = new TheNewsTesting().ComprehensiveTestConfig();
+            var weatherconfig       = OpenMeteoTestConfig.SwedishCitiesWeatherConfig();
+            var ticketmasterconfig  = new TicketmasterTestConfig().RadiusBasedSwedenConfig();
+            var foursquareconfig    = new FourSquareTesting().EfficientFoursquareSweden();
+            var thenewsconfig       = new TheNewsTesting().SwedishDailyNewsConfig();
             var predicthqconfig     = new PredictHqTestConfig().CreateTestConfigs();
+
             // Merge all dictionaries into one
             var allConfigs = new Dictionary<string, ICollection<IApiRequest>>();
 
@@ -162,12 +165,12 @@ public class EventController : ControllerBase
     [HttpPost]
     [Authorize]
     [Route("GetWeatherInformationWeekForecast")]
-    public IActionResult GetWeatherInformationWeekForecast()
+    public IActionResult GetWeatherInformationWeekForecast([FromBody] string city)
     {
         var today = DateTime.UtcNow.Date;
         var endDate = today.AddDays(7);
-
-        var res = _context.CoreNodes.ByType(structures.CoreNodeTypes.Weather).ByDateRange(today, endDate).ByCity("Stockholm").ByCountry("SE")
+        var cityInSwedish = CityTranslator.ToSwedish(city).NormalizeSwedishChars();
+        var res = _context.CoreNodes.ByType(structures.CoreNodeTypes.Weather).ByDateRange(today, endDate).ByCity(cityInSwedish).ByCountry("SE") // for now supporting SWEEEEDEN
             .Include(cn => cn.WeatherInfo);
 
         return DtoResponse<object>.Ok(res.ToList(), "fetched news").ToOkResult();
