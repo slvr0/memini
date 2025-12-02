@@ -18,7 +18,7 @@ internal class PredictHqEventApiAdapter(HttpClient httpClient) : EventApiBaseAda
 
     protected override int ApiDataModelTotalResult(PredictHqDataModel dataModel) => dataModel.Results?.Count ?? 0;
 
-    protected override Task<List<PredictHqEvent>> ApiDataModelResult(PredictHqDataModel dataModel) => Task.FromResult(dataModel.Results ?? []);
+    protected override Task<List<PredictHqEvent>> ApiDataModelResult(PredictHqDataModel dataModel, IApiRequest requestConfig) => Task.FromResult(dataModel.Results ?? []);
 
     #region generate request url
     public override string GenerateApiRequestUrl(IApiRequest requestConfig) 

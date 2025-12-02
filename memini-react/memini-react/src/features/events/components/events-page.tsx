@@ -142,27 +142,27 @@ function EventsPage() {
             </div>
         </div>
 
-        <div className="flex col-span-6 p-2 justify-end items-end">
-            {/* <MuiStyledButton themeColor='light' buttonSize='xs' buttonVariant='main' borderType='rounded' opacity={.85} onClick={() => {onGetEvents()}}> 
+        {/* <div className="flex col-span-6 p-2 justify-end items-end">
+            <MuiStyledButton themeColor='light' buttonSize='xs' buttonVariant='main' borderType='rounded' opacity={.85} onClick={() => {onGetEvents()}}> 
                 <Typography variant="subtitle2"> Get events </Typography>
-            </MuiStyledButton> */}
+            </MuiStyledButton>
 
 
             <MuiStyledButton themeColor='light' buttonSize='xs' buttonVariant='main' borderType='rounded' opacity={.85} onClick={() => {onGetNews("SE")}}> 
                 <Typography variant="subtitle2"> Get News </Typography>
             </MuiStyledButton>               
-            </div>
-            <div className="flex col-span-6 p-2 justify-end items-end">
+        </div>
+        <div className="flex col-span-6 p-2 justify-end items-end">
    
 
-            <MuiStyledButton themeColor='light' buttonSize='xs' buttonVariant='main' borderType='rounded' opacity={.85} onClick={() => {onFetchEventApiData()}}> 
-                <Typography variant="subtitle2"> FETCH ALL  </Typography>
-            </MuiStyledButton>
-            
-            <MuiStyledButton themeColor='light' buttonSize='xs' buttonVariant='main' borderType='rounded' opacity={.85} onClick={() => {onCleanupOldApiData()}}> 
-                <Typography variant="subtitle2"> REMOVE ALL  </Typography>
-            </MuiStyledButton>
-            </div>
+                <MuiStyl    edButton themeColor='light' buttonSize='xs' buttonVariant='main' borderType='rounded' opacity={.85} onClick={() => {onFetchEventApiData()}}> 
+                    <Typography variant="subtitle2"> FETCH ALL  </Typography>
+                </MuiStyledButton>
+                
+                <MuiStyledButton themeColor='light' buttonSize='xs' buttonVariant='main' borderType='rounded' opacity={.85} onClick={() => {onCleanupOldApiData()}}> 
+                    <Typography variant="subtitle2"> REMOVE ALL  </Typography>
+                </MuiStyledButton>
+        </div> */}
 				           
         </div>
 

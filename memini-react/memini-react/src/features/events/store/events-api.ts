@@ -1,7 +1,8 @@
 import { 
   fetchEventApiData, 
   cleanupOldApiData, 
-  getEvents, 
+  getEvents,
+  getNodeByKey,
   getEventsFromFilter, 
   getPointsOfInterest, 
   getPointsOfInterestFromFilter,
@@ -15,6 +16,9 @@ import { IPaginationState, IPaginatedSearchResponse, IEventSearchFilter, IPointO
 
 export async function getEventsFromAll(): Promise<ApiResponse<any>> {
     return await getEvents().then(response => response.data).catch(e => console.log(e));
+}
+export async function getNodeByKeyApi(nodeKey: number): Promise<ApiResponse<any>> {
+    return await getNodeByKey(nodeKey).then(response => response.data).catch(e => console.log(e));
 }
 export async function getPointsOfInterestFromAll(): Promise<ApiResponse<any>> {
     return await getPointsOfInterest().then(response => response.data).catch(e => console.log(e));

@@ -19,14 +19,11 @@ import { Link } from '@mui/icons-material';
 import MuiStyledButton from "../../../mui-wrappers/mui-button-wrapper";
 import MUI_StyledSegment from "../../../mui-wrappers/mui-segment-wrapper"
 import LucidIconButton from "../../../lucid/lucid-button-icon"
-
 import { Typography, Box } from "@mui/material";
 import { ConnectWithoutContact } from '@mui/icons-material';
-
-
 import SettingsInputCompositeIcon from '@mui/icons-material/SettingsInputComposite';
 import { Plug, ChevronUp, ChevronDown, Slash, ChevronsUpDown, Globe, Globe2, Boxes, Combine } from 'lucide-react';
-import { Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText } from "lucide-react";
+import { Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText, CircleUserRound, LogOut, AtSign } from "lucide-react";
 
 //name, selectedMenu, onClick
 const MenuItem = (props:any) => {
@@ -78,9 +75,7 @@ const UserNameArea = (props: any) => {
   );
 
   return <>
-    <span className="text-sm font-bold">{formattedFullName}</span>
-
-    <div className="bg-blue-500 bg-opacity-20 rounded-full w-8 h-8 flex justify-center items-center text-xs font-bold text-blue-500">
+    <div className="bg-miTheme2 bg-opacity-80 rounded-full w-9 h-9 flex justify-center items-center text-xs font-bold text-white">
       {initials}
     </div>
   </>
@@ -104,11 +99,21 @@ const UserProfileArea = (props: any) => {
           isLoggedIn && <>
             <UserNameArea firstName={authorisationToken.userSession.firstName} lastName={authorisationToken.userSession.lastName}>
               
-            </UserNameArea>            
+            </UserNameArea>    
 
-            <MeminiButton type="negative" size="small" onClick={() => {logout()}}>
-            Logout
-            </MeminiButton>
+            <LucidIconButton
+            className="p-2"
+            icon={LogOut}
+            size={16}
+            opacity={.75}
+            palette="harmonicRed"
+            borderProfile="rounded"
+            highlightBackgroundOnHover={true}
+            highlightBorderOnHover={true}
+            displayBorder={true}
+            tooltip="Logout"
+            onClick={() => {logout()}}
+            />
             </>
         }
         {
@@ -122,8 +127,6 @@ const UserProfileArea = (props: any) => {
     </>
   );
 }
-
-
 
 export default function MainMenu () {
     const navigate = useNavigate();
@@ -146,8 +149,6 @@ export default function MainMenu () {
     return (
       <>  
         <div className="h-16 border border-gray-200 bg-white flex items-center gap-x-4 z-9999"> 
-
-
           <div className="mx-0">
              <Box
                 component="img"
@@ -160,44 +161,32 @@ export default function MainMenu () {
                       ml:'0.5rem',          
                       zIndex: 9999          
                     }}
-                  />
-          </div>
-          
+              />
+
          
-          <div>
-            <Typography variant="body1" fontSize={14} fontWeight={500}> Memini </Typography>
-          
+              
           </div>
-          
-          <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
-          
-          <Boxes size={14} style={{opacity:0.5}} />
 
-          <Typography variant="subtitle1">          
-            Dan Johansson
-          </Typography>
+               <span className="flex items-center gap-2" style={{marginRight: '0.5rem'}}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: '#1a1a1a',
+                    fontWeight: 500,
+                    letterSpacing: '0.5px',
+                    fontSize:14
+                  }}
+                >
+                  Memini
+                </Typography>
+              </span >
 
-          <MuiStyledButton themeColor = 'light' buttonSize = 'xs' buttonVariant = 'main' borderType = 'rounded' opacity={.85}> 
-            <Typography variant="subtitle2"> Free </Typography>
-          </MuiStyledButton>
+              <AtSign size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
 
-          <ChevronsUpDown size={14} style={{opacity:0.5 }} />
 
-          <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
-          
-          <LocationDisplay></LocationDisplay>
-
-          
-          <Combine size={14} style={{opacity:0.75}}/>
-         
-          <Slash size={14} style={{transform: 'rotate(-10deg)', opacity:0.5 }}/>
-
-          <MuiStyledButton themeColor = 'light' buttonSize = 'sm' buttonVariant = 'main' borderType = 'rounded' 
-              opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={false}>
-              <Plug size={14} style={{ marginRight: '.25rem', transform: 'rotate(90deg)', opacity:0.75 }}/>
-              <Typography variant="subtitle2"> Connect with people </Typography>
-          </MuiStyledButton>
-            
+              <span className="flex items-center gap-2" style={{marginRight: '0.5rem'}}>
+                <LocationDisplay></LocationDisplay>
+              </span>
     
           <span className="ml-auto flex items-center gap-2" style={{marginRight: '0.5rem'}}>
             <MUI_StyledSegment spacing="segmentMedium" borderProfile="rounded">     
@@ -250,12 +239,12 @@ export default function MainMenu () {
                 onClick={() => console.log("Clicked Home")}
               />        
             </MUI_StyledSegment>
-              <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.95} highlightBorderOnHover={false} highlightBackgroundOnHover={true}>                
-                <Typography variant="subtitle2" color={'black'}> Feedback </Typography>
-              </MuiStyledButton>
-               
+            <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.95} highlightBorderOnHover={false} highlightBackgroundOnHover={true}>                
+              <Typography variant="subtitle2" color={'black'}> Feedback </Typography>
+            </MuiStyledButton>
+            
             <UserProfileArea></UserProfileArea>
-
+      
            
           </span>
 

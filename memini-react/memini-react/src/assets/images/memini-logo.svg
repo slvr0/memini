@@ -1,0 +1,7 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Arrow from your image: white on transparent background, tilted -->
+  <g transform="rotate(42 24 24)">
+    <path d="M10 19C10 16.2386 12.2386 14 15 14H22L18.5 10.5C16.5 8.5 16.5 5.5 18.5 3.5C20.5 1.5 23.5 1.5 25.5 3.5L38.5 16.5C40.5 18.5 40.5 21.5 38.5 23.5L25.5 36.5C23.5 38.5 20.5 38.5 18.5 36.5C16.5 34.5 16.5 31.5 18.5 29.5L22 26H15C12.2386 26 10 23.7614 10 21V19Z" 
+          fill="white"/>
+  </g>
+</svg>

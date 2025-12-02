@@ -4,6 +4,7 @@ const controllerSyntax = 'Event';
 export const fetchEventApiData = (data) =>  api.post(controllerSyntax + '/FetchEventApiData');
 export const cleanupOldApiData = (data) => api.post(controllerSyntax + '/CleanupOldApiData');
 export const getEvents = () => api.post(controllerSyntax + '/GetEvents');
+export const getNodeByKey = (nodeKey) => api.post(controllerSyntax + '/GetNodeByKey', nodeKey);
 
 export const getEventsFromFilter = (eventSearchFilter) => api.post(controllerSyntax + '/GetEventsFromFilter', eventSearchFilter);
 export const getPointsOfInterestFromFilter = (poiSearchFilter) => api.post(controllerSyntax + '/GetPointsOfInterestFromFilter', poiSearchFilter);

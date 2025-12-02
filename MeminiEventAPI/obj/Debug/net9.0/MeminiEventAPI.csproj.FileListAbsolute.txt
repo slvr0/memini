@@ -1,12 +1,12 @@
+C:\Users\johan\source\repos\Memini\MeminiEventAPI\bin\Debug\net9.0\MeminiEventAPI.deps.json
+C:\Users\johan\source\repos\Memini\MeminiEventAPI\bin\Debug\net9.0\MeminiEventAPI.dll
+C:\Users\johan\source\repos\Memini\MeminiEventAPI\bin\Debug\net9.0\MeminiEventAPI.pdb
 C:\Users\johan\source\repos\Memini\MeminiEventAPI\obj\Debug\net9.0\MeminiEventAPI.csproj.AssemblyReference.cache
 C:\Users\johan\source\repos\Memini\MeminiEventAPI\obj\Debug\net9.0\MeminiEventAPI.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\johan\source\repos\Memini\MeminiEventAPI\obj\Debug\net9.0\MeminiEventAPI.AssemblyInfoInputs.cache
 C:\Users\johan\source\repos\Memini\MeminiEventAPI\obj\Debug\net9.0\MeminiEventAPI.AssemblyInfo.cs
 C:\Users\johan\source\repos\Memini\MeminiEventAPI\obj\Debug\net9.0\MeminiEventAPI.csproj.CoreCompileInputs.cache
 C:\Users\johan\source\repos\Memini\MeminiEventAPI\obj\Debug\net9.0\MeminiEventAPI.sourcelink.json
-C:\Users\johan\source\repos\Memini\MeminiEventAPI\bin\Debug\net9.0\MeminiEventAPI.deps.json
-C:\Users\johan\source\repos\Memini\MeminiEventAPI\bin\Debug\net9.0\MeminiEventAPI.dll
-C:\Users\johan\source\repos\Memini\MeminiEventAPI\bin\Debug\net9.0\MeminiEventAPI.pdb
 C:\Users\johan\source\repos\Memini\MeminiEventAPI\obj\Debug\net9.0\MeminiEventAPI.dll
 C:\Users\johan\source\repos\Memini\MeminiEventAPI\obj\Debug\net9.0\refint\MeminiEventAPI.dll
 C:\Users\johan\source\repos\Memini\MeminiEventAPI\obj\Debug\net9.0\MeminiEventAPI.pdb

@@ -52,16 +52,18 @@ const MuiStyledSwitch: React.FC<ThemedSwitchProps> = ({
         onChange={handleChange}
         sx={{
           '& .MuiSwitch-switchBase.Mui-checked': {
-            color: palette.hover,
+            color: `${palette.main}`,   
             '&:hover': {
               backgroundColor: `${palette.hover}20`,
             },
           },
           '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-            backgroundColor: palette.borderHover,
+            backgroundColor: palette.border,
+            opacity:0.75,
           },
           '& .MuiSwitch-track': {
             backgroundColor: palette.border,
+             opacity:0.1,
           },
         }}
       />

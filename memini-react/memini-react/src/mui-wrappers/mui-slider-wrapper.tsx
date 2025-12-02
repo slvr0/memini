@@ -109,26 +109,30 @@ const MuiStyledSlider: React.FC<ThemedSliderProps> = ({
         sx={{
           color: palette.hover,
           '& .MuiSlider-thumb': {
-            backgroundColor: palette.hover,
+            backgroundColor: palette.main,
             '&:hover, &.Mui-focusVisible': {
               boxShadow: `0 0 0 8px ${palette.hover}30`,
+              
             },
           },
           '& .MuiSlider-track': {
             backgroundColor: palette.border,
             border: 'none',
+            
           },
           '& .MuiSlider-rail': {
             backgroundColor: palette.hover,
-            opacity: 1,
+            opacity: .25,
           },
           '& .MuiSlider-mark': {
             backgroundColor: palette.border,
             height: 8,
             width: 2,
+             opacity:0.3,
           },
           '& .MuiSlider-markActive': {
             backgroundColor: palette.hover,
+            opacity:.5
           },
           '& .MuiSlider-markLabel': {
             color: palette.text,

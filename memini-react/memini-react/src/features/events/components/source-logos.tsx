@@ -5,7 +5,7 @@ import foursquareLogo from "../../../assets/images/foursquare.png";
 import ticketmasterLogo from "../../../assets/images/ticketmaster.svg";
 import predictHQLogo from "../../../assets/images/predict-hq-cropped.svg"
 import openmeteoLogo from "../../../assets/images/open-meteo.png"
-import { DO_NOT_USE_OR_YOU_WILL_BE_FIRED_EXPERIMENTAL_CREATE_ROOT_CONTAINERS } from 'react-dom/client';
+
 
 export interface SourceAttribution {
   name: 'Ticketmaster' | 'FourSquare' | 'PredictHq' | 'OpenMeteo' | 'TheNews';

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { House, Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText, CalendarSync, CakeSlice, Contact, MessageSquare, NotebookPen } from "lucide-react";
+import { House, Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText, CalendarSync, CakeSlice, Contact, MessageSquare, NotebookPen, Gitlab } from "lucide-react";
 import SideMenuOption from "./side-menu-option"
 
 interface SideMenuPanelProps {   
@@ -31,13 +31,14 @@ const SideMenuPanel : React.FC<SideMenuPanelProps> = () => {
             onMouseLeave={() => {onHoverOut()}}
         >   
             <div className="row-span-10">
-                <SideMenuOption isExpanded={isExpanded} icon={Home} isActive={true} optionText={'Home'} onClick={() => {navigate('/home')}}></SideMenuOption> 
-                <SideMenuOption isExpanded={isExpanded} icon={NotebookPen} isActive={false} optionText={'Scheduler'} onClick={() => {navigate('/planning')}}></SideMenuOption> 
-                <SideMenuOption isExpanded={isExpanded} icon={CakeSlice} isActive={false} optionText={'Events'} onClick={() => {navigate('/events')}}></SideMenuOption>
+                <SideMenuOption isExpanded={isExpanded} icon={Home} isActive={location.pathname === '/home'} optionText={'Home'} onClick={() => {navigate('/home')}}></SideMenuOption> 
+                <SideMenuOption isExpanded={isExpanded} icon={NotebookPen} isActive={location.pathname === '/planning'} optionText={'Scheduler'} onClick={() => {navigate('/planning')}}></SideMenuOption> 
+                <SideMenuOption isExpanded={isExpanded} icon={CakeSlice} isActive={location.pathname === '/events'} optionText={'Events'} onClick={() => {navigate('/events')}}></SideMenuOption>
 
                 <div className="border-b-2 border-gray-100 w-1/2 mx-auto mt-6 md-6"></div>
                 <SideMenuOption isExpanded={isExpanded} icon={Contact} isActive={false} optionText={'Contacts'} onClick={() => {navigate('/home')}}></SideMenuOption>
                 <SideMenuOption isExpanded={isExpanded} icon={MessageSquare} isActive={false} optionText={'Messages'} onClick={() => {navigate('/home')}}></SideMenuOption>
+                <SideMenuOption isExpanded={isExpanded} icon={Gitlab} isActive={false} optionText={'Activity'} onClick={() => {navigate('/activity')}}></SideMenuOption>
             </div>
 
             <div className="row-span-2">

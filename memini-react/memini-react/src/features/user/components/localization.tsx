@@ -66,8 +66,7 @@ function LocationDisplay() {
   if (error) return <p>{error}</p>;
 
   return (
-    <>    
-    <Globe size={14}  style={{color:"#6ce699", opacity:0.75}} />
+    <>   
     <Typography variant="subtitle2"> {location.City} , {location.Country} </Typography>
     </>
   );

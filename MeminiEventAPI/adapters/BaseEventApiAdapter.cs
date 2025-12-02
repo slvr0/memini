@@ -8,11 +8,16 @@ using MeminiEventAPI.structures;
 using MeminiEventAPI.api_datamodels;
 using MeminiEventAPI.api_datamodels.ticketmaster;
 using MeminiEventAPI.mapping;
+using System.Net.Http.Headers;
 
 namespace MeminiEventAPI.adapters;
 
 public abstract class BaseAdapter
 {
+    private static readonly SemaphoreSlim _rateLimiter = new SemaphoreSlim(1, 1);
+    private static DateTime _lastRequestTime = DateTime.MinValue;
+    private static readonly TimeSpan _minTimeBetweenRequests = TimeSpan.FromMilliseconds(200);
+    
     protected readonly HttpClient _httpClient;
     public string AdapterId;
     public string ApiKey { get; set; } = string.Empty;
@@ -63,19 +68,48 @@ public abstract class BaseAdapter
     public virtual async Task<string> FetchDataAsync(IApiRequest requestConfig)
     {
         string url = GenerateApiRequestUrl(requestConfig);
+
+        var headers = _httpClient.DefaultRequestHeaders.ToString();
+
         HttpResponseMessage? response = null;
         try
         {
-            await Task.Delay(100);
+            // Rate limiting
+            await _rateLimiter.WaitAsync();
+            try
+            {
+                var timeSinceLastRequest = DateTime.UtcNow - _lastRequestTime;
+                if (timeSinceLastRequest < _minTimeBetweenRequests)
+                {
+                    await Task.Delay(_minTimeBetweenRequests - timeSinceLastRequest);
+                }
+                _lastRequestTime = DateTime.UtcNow;
+            }
+            finally
+            {
+                _rateLimiter.Release();
+            }
+
             response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
+
             var content = await response.Content.ReadAsStringAsync();
             InvokeHttpResponse(url, (int)response.StatusCode, null);
+
             return content;
+        }
+        catch (HttpRequestException e) when (e.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+        {
+            // Handle 429 specifically
+            InvokeHttpResponse(url, 429, e);
+
+            // Wait before retry
+            await Task.Delay(1000);
+            throw;
         }
         catch (OperationCanceledException)
         {
-            InvokeHttpResponse(url, 408, new Exception("Request timeout")); // 408 = Request Timeout
+            InvokeHttpResponse(url, 408, new Exception("Request timeout"));
             throw;
         }
         catch (Exception e)
@@ -96,8 +130,7 @@ public abstract class ApiBaseAdapter<TDModel, TDModelResult> : BaseAdapter where
 
     /* Requires implementation */
     protected abstract int ApiDataModelTotalResult(TDModel dataModel); // The datamodel tree varies, specific adapter points the nested total result
-    protected abstract Task<List<TDModelResult>> ApiDataModelResult(TDModel dataModel); // The datamodel tree varies, specific adapter points the nested result  
-    
+    protected abstract Task<List<TDModelResult>> ApiDataModelResult(TDModel dataModel, IApiRequest config); // The datamodel tree varies, specific adapter points the nested result  
     public void ClearAccumulatedData() => AccumulatedData.Clear();
 }
 
@@ -123,7 +156,7 @@ public abstract class EventApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapt
                 var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
                 int eventCount = ApiDataModelTotalResult(result);
                 InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
-                List<TDModelResult> resultData = await ApiDataModelResult(result);
+                List<TDModelResult> resultData = await ApiDataModelResult(result, requestConfig);
                 AccumulatedData.AddRange(resultData);
                 await Task.Delay(delayMilliseconds);
             }
@@ -157,7 +190,7 @@ public abstract class PlacesApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdap
                 var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
                 int eventCount = ApiDataModelTotalResult(result);
                 InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
-                List<TDModelResult> resultData = await ApiDataModelResult(result);
+                List<TDModelResult> resultData = await ApiDataModelResult(result, requestConfig);
                 AccumulatedData.AddRange(resultData);
                 await Task.Delay(delayMilliseconds);
             }
@@ -190,7 +223,7 @@ public abstract class NewsApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAdapte
                 var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
                 int eventCount = ApiDataModelTotalResult(result);
                 InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
-                List<TDModelResult> resultData = await ApiDataModelResult(result);
+                List<TDModelResult> resultData = await ApiDataModelResult(result, requestConfig);
                 AccumulatedData.AddRange(resultData);
             }
         }
@@ -222,7 +255,7 @@ public abstract class WeatherApiBaseAdapter<TDModel, TDModelResult> : ApiBaseAda
                 var result = await System.Text.Json.JsonSerializer.DeserializeAsync<TDModel>(stream, options);
                 int eventCount = ApiDataModelTotalResult(result);
                 InvokeDataMetricsResponse(eventCount, (int)responseSizeBytes, null);
-                List<TDModelResult> resultData = await ApiDataModelResult(result);
+                List<TDModelResult> resultData = await ApiDataModelResult(result, requestConfig);
                 AccumulatedData.AddRange(resultData);
             }
         }

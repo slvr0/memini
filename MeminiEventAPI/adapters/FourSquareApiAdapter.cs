@@ -11,9 +11,15 @@ internal class FourSquareApiAdapter(HttpClient httpClient) : PlacesApiBaseAdapte
     structures.foursquare.FoursquareCategory searchCategories = structures.foursquare.FoursquareCategory.Any;
     public readonly static string ConnectionString = "https://places-api.foursquare.com/";
     protected override int ApiDataModelTotalResult(FoursquareDatamodel dataModel) => dataModel.Results?.Count ?? 0;
-    protected override Task<List<FoursquarePlace>> ApiDataModelResult(FoursquareDatamodel dataModel) 
+    protected override Task<List<FoursquarePlace>> ApiDataModelResult(FoursquareDatamodel dataModel, IApiRequest requestConfig) 
     {
-        dataModel.Results.ForEach(res => res.SearchCategory = (int)searchCategories);
+        if (!(requestConfig is FoursquareApiRequest config))
+            return Task.FromResult(dataModel.Results ?? new List<FoursquarePlace>());
+
+        dataModel.Results.ForEach(res => {
+            res.SearchCategory = (int)searchCategories;
+            res.Location.Locality = config.City;     
+        });
         return Task.FromResult(dataModel.Results ?? new List<FoursquarePlace>());
     }
     public override string GenerateApiRequestUrl(IApiRequest requestConfig)
@@ -68,7 +74,7 @@ internal class FourSquareApiAdapter(HttpClient httpClient) : PlacesApiBaseAdapte
             parts.Add($"sort={config.SortBy}");
 
         // Fields (important for Foursquare v3)
-        parts.Add("fields=fsq_id,name,location,categories,rating,hours,website,verified,description");
+        //parts.Add("fields=fsq_id,name,location,categories,rating,hours,website,verified,description");
 
         var queryString = string.Join("&", parts);
         return $"places/search?{queryString}";

@@ -21,6 +21,7 @@ interface PoiCardProps {
   verified?: boolean;
   isOpen?: boolean; // true for open, false for closed
   website?: string;
+  onSelectActivity: (node: any) => void;
 }
 
 const PoiCardDisplayList = ({
@@ -35,7 +36,8 @@ const PoiCardDisplayList = ({
   totalRatings,
   verified,
   isOpen,
-  website
+  website,
+  onSelectActivity
 }: PoiCardProps) => {
 
   const location = [address, city, postalCode].filter(Boolean).join(', ');
@@ -104,7 +106,7 @@ const PoiCardDisplayList = ({
                   borderType='rounded' 
                   highlightBackgroundOnHover={false} 
                   highlightBorderOnHover={false}
-                  buttonVariant={isOpen ? 'meminiThemeOutline' : 'harmonicRed'}
+                  buttonVariant={isOpen ? 'meminiThemeProfile_2' : 'harmonicRed'}
                 >
                   <Schedule fontSize="small" className="mr-1" />
                   <Typography variant="caption">
@@ -173,7 +175,7 @@ const PoiCardDisplayList = ({
               highlightBackgroundOnHover={true}
               highlightBorderOnHover={true}
               displayBorder={true}
-              className={`p-2 !border-miTheme transition-transform`}
+              className={`p-2 !border-miTheme2 transition-transform`}
               tooltip="Add to schedule"
               onClick={() => {console.log("coming soon!")}}
             />

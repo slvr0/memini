@@ -107,7 +107,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                             highlightBackgroundOnHover={true}
                             highlightBorderOnHover={true}
                             displayBorder={true}
-                            className={`p-2 !border-miTheme !text-miTheme transition-transform ${eventIsLoading ? 'animate-spin' : ''}`}
+                            className={`p-2 !text-miTheme2 transition-transform ${eventIsLoading ? 'animate-spin' : ''}`}
                             tooltip="Refresh filter"
                             onClick={() => {onUpdateEventsSearchFilter()}}
                         />       
@@ -199,7 +199,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                 <div className="flex flex-col col-span-3 gap-2">
                     <MuiStyledSwitch 
                         label="Available tickets"
-                        paletteProfile="meminiThemeOutline"
+                        paletteProfile="meminiThemeProfile_2"
                         labelFontSize={10}
                         labelFontVariant="subtitle2"
                         value={eventSwitchAvailableTickets}
@@ -208,7 +208,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
 
                     <MuiStyledSwitch 
                         label="Ticketmaster events"
-                        paletteProfile="meminiThemeOutline"
+                        paletteProfile="meminiThemeProfile_2"
                         labelFontSize={10}
                         labelFontVariant="subtitle2"
                         value={eventSwitchShowTicketmaster}
@@ -217,7 +217,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
 
                     <MuiStyledSwitch 
                         label="Predict HQ events"
-                        paletteProfile="meminiThemeOutline"
+                        paletteProfile="meminiThemeProfile_2"
                         labelFontSize={10}
                         labelFontVariant="subtitle2"
                         value={eventSwitchShowPredictHq}       
@@ -241,7 +241,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                             highlightBackgroundOnHover={true}
                             highlightBorderOnHover={true}
                             displayBorder={true}
-                            className={`p-2 !border-miTheme !text-miTheme  transition-transform ${poiIsLoading ? 'animate-spin' : ''}`}
+                            className={`p-2  !text-miTheme2  transition-transform ${poiIsLoading ? 'animate-spin' : ''}`}
                             tooltip="Refresh filter"
                             onClick={() => {onUpdatePointOfInterestSearchFilter()}}
                         />       
@@ -302,7 +302,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                     labelFontSize={10}
                     labelFontVariant="subtitle2"
                     valueFontSize={10}
-                    paletteProfile="meminiThemeOutline"
+                    paletteProfile="meminiThemeProfile_2"
                     markerInterval={1}
                     value={minRating}
                     onChange={(newValue) => setMinRating(newValue)}
@@ -318,7 +318,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                     labelFontSize={10}
                     labelFontVariant="subtitle2"
                     valueFontSize={10}
-                    paletteProfile="meminiThemeOutline"
+                    paletteProfile="meminiThemeProfile_2"
                     markerInterval={500}
                     value={totalRatings}
                     onChange={(newValue) => setTotalRatings(newValue)}

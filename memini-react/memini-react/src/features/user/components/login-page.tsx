@@ -34,7 +34,7 @@ function LoginPage() {
         loginUser(loginRequestData).then(response => {
             if(response.data.Success) {         
                 onLoginSuccess(response.data.ResponseObject);
-                navigate('/planning');
+                navigate('/home');
             }
             else {
                 onLoginFail(response.data.ResponseObject);
@@ -135,7 +135,7 @@ function LoginPage() {
                                 <Typography variant="subtitle2"> Register account</Typography>
                             </MuiStyledButton>
 
-                            <MuiStyledButton themeColor = 'light' buttonSize = 'lg' buttonVariant = 'meminiThemeOutline' borderType = 'rounded' opacity={.85} onClick={() => {processLoginRequest()}}> 
+                            <MuiStyledButton themeColor = 'light' buttonSize = 'lg' buttonVariant = 'meminiThemeProfile_2' borderType = 'rounded' opacity={.85} onClick={() => {processLoginRequest()}}> 
                                 <Typography variant="subtitle2"> Login </Typography>
                             </MuiStyledButton>
                         </div>

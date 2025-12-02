@@ -77,12 +77,12 @@ export const MuiStyledPagination: React.FC<PaginationControlProps> = ({
         sx={customColor ? {
           '& .MuiPaginationItem-root': {
             color: customColor.text,
-            borderColor: hexToRgba(customColor.text, 0.2),
+            borderColor: hexToRgba(customColor.text, 0.1),
           },
           '& .MuiPaginationItem-root.Mui-selected': {
             backgroundColor: customColor.main,
             color: customColor.text,
-            borderColor: customColor.border,
+            borderColor: hexToRgba(customColor.border, 1.0),
             '&:hover': {
               backgroundColor: customColor.hover,
               borderColor: customColor.borderHover,

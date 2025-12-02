@@ -13,7 +13,7 @@ internal class TheNewsApiAdapter(HttpClient httpClient) : NewsApiBaseAdapter<The
 
     protected override int ApiDataModelTotalResult(TheNewsApiDataModel dataModel) => dataModel.Meta?.Returned ?? 0;
 
-    protected override Task<List<NewsArticle>> ApiDataModelResult(TheNewsApiDataModel dataModel) => Task.FromResult(dataModel?.Data ?? []);
+    protected override Task<List<NewsArticle>> ApiDataModelResult(TheNewsApiDataModel dataModel, IApiRequest requestConfig) => Task.FromResult(dataModel?.Data ?? []);
 
     public override string GenerateApiRequestUrl(IApiRequest requestConfig)
     {

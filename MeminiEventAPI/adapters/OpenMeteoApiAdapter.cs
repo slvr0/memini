@@ -13,7 +13,7 @@ namespace MeminiEventAPI.adapters
         public readonly static string ConnectionString = "https://api.open-meteo.com/v1/";
 
         protected override int ApiDataModelTotalResult(OpenMeteoDataModel dataModel) => dataModel.Daily?.Time?.Count ?? 0;
-        protected override async Task<List<DailyForecast>> ApiDataModelResult(OpenMeteoDataModel dataModel)
+        protected override async Task<List<DailyForecast>> ApiDataModelResult(OpenMeteoDataModel dataModel, IApiRequest requestConfig)
         {
             using var reverseGeocodingHttpClient = new HttpClient();        
             ReverseGeocoder reverseGeocoder = new ReverseGeocoder(reverseGeocodingHttpClient);

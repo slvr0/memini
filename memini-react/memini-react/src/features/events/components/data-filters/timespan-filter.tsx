@@ -22,7 +22,7 @@ const TimespanFilter: React.FC<TimespanFilterProps> = (props) => {
         <MuiStyledButton 
             themeColor='light' 
             buttonSize='xs' 
-            buttonVariant={isSelected(props.selectedTimespan, -7) ? 'meminiThemeOutline' : 'main'} 
+            buttonVariant={isSelected(props.selectedTimespan, -7) ? 'meminiThemeProfile_2' : 'main'} 
             borderType='square' opacity={.85} 
             onClick={() => props.onChange && props.onChange(-7)}>
             <Typography variant="caption" fontSize={10}> past week </Typography>
@@ -44,7 +44,7 @@ const TimespanFilter: React.FC<TimespanFilterProps> = (props) => {
         <MuiStyledButton         
             themeColor='light' 
             buttonSize='xs' 
-            buttonVariant={isSelected(props.selectedTimespan, 7) ? 'meminiThemeOutline' : 'main'} 
+            buttonVariant={isSelected(props.selectedTimespan, 7) ? 'meminiThemeProfile_2' : 'main'} 
             borderType='square' opacity={.85} 
             onClick={() => props.onChange && props.onChange(7)}> 
             <Typography variant="caption" fontSize={10}> 1 week </Typography>
@@ -53,7 +53,7 @@ const TimespanFilter: React.FC<TimespanFilterProps> = (props) => {
         <MuiStyledButton
             themeColor='light' 
             buttonSize='xs' 
-            buttonVariant={isSelected(props.selectedTimespan, 30) ? 'meminiThemeOutline' : 'main'} 
+            buttonVariant={isSelected(props.selectedTimespan, 30) ? 'meminiThemeProfile_2' : 'main'} 
             borderType='square' opacity={.85} 
             onClick={() => props.onChange && props.onChange(30)}> 
             <Typography variant="caption" fontSize={10}> 1 month </Typography>
@@ -62,7 +62,7 @@ const TimespanFilter: React.FC<TimespanFilterProps> = (props) => {
         <MuiStyledButton 
             themeColor='light' 
             buttonSize='xs' 
-            buttonVariant={isSelected(props.selectedTimespan, 90) ? 'meminiThemeOutline' : 'main'} 
+            buttonVariant={isSelected(props.selectedTimespan, 90) ? 'meminiThemeProfile_2' : 'main'} 
             borderType='square' opacity={.85} 
             onClick={() => props.onChange && props.onChange(90)}> 
             <Typography variant="caption" fontSize={10}> 3 months </Typography>
@@ -71,7 +71,7 @@ const TimespanFilter: React.FC<TimespanFilterProps> = (props) => {
         <MuiStyledButton 
             themeColor='light' 
             buttonSize='xs' 
-            buttonVariant={isSelected(props.selectedTimespan, 365) ? 'meminiThemeOutline' : 'main'} 
+            buttonVariant={isSelected(props.selectedTimespan, 365) ? 'meminiThemeProfile_2' : 'main'} 
             borderType='square' opacity={.85} 
             onClick={() => props.onChange && props.onChange(365)}> 
             <Typography variant="caption" fontSize={10}> all </Typography>

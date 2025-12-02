@@ -90,11 +90,11 @@ const LocationSelector: React.FC = () => {
       <Box className="flex items-center gap-2">
         <LucidIconButton
           icon={Earth}
-          className="p-2 !text-miTheme !border-miTheme"
+          className="p-2 !text-miTheme2 "
           size={20}
           opacity={.75}
           palette="main"
-          borderProfile="semiStraight"
+          borderProfile="rounded"
           highlightBackgroundOnHover={true}
           highlightBorderOnHover={true}
           displayBorder={true}
@@ -158,7 +158,7 @@ const LocationSelector: React.FC = () => {
                   click: () => handleCityClick(city),
                 }}
               >
-                <Popup>
+                <Popup>2
                   <div className="text-center">
                     <strong className="text-lg">{city.name}</strong>
                     <p className="text-sm text-gray-600">Click to select</p>
@@ -209,7 +209,7 @@ const LocationSelector: React.FC = () => {
                 borderType="rounded"
                 highlightBackgroundOnHover={true}
                 highlightBorderOnHover={true}
-                buttonVariant="meminiThemeOutline"
+                buttonVariant="meminiThemeProfile_2"
                 onClick={handleConfirmLocation}
               >
                 <Typography variant="subtitle1" fontWeight="bold">

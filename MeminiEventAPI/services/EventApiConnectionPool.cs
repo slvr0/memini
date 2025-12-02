@@ -14,51 +14,55 @@ namespace MeminiEventAPI.services;
 public static class MeminiEventApiConnectionSetup
 {
     public static IServiceCollection AddEventApiClients(
-     this IServiceCollection services,
-     IConfiguration configuration)
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        // Register all adapters
-        //RegisterApiAdapter<TicketmasterApiAdapter>(services, configuration, "Ticketmaster");
-        //RegisterApiAdapter<PredictHqEventApiAdapter>(services, configuration, "PredictHQ");
-        //RegisterApiAdapter<SeatGeekEventApiAdapter>(services, configuration, "SeatGeek");
-        //RegisterApiAdapter<SongkickEventApiAdapter>(services, configuration, "SeatGeek"); // Note: uses SeatGeek key
+        // Only register once
 
-        // Eventful doesn't need an API key, its also not operational anymore no data response
-        //RegisterApiAdapter<EventfulEventApiAdapter>(services, configuration, null);
-
+        RegisterApiAdapter<TicketmasterApiAdapter>(services, configuration, "Ticketmaster");
         RegisterApiAdapter<FourSquareApiAdapter>(services, configuration, "FourSquare");
-        //RegisterApiAdapter<TheNewsApiAdapter>(services, configuration, "TheNews");
-        //RegisterApiAdapter<OpenMeteoApiAdapter>(services, configuration, "OpenMeteo");
+        RegisterApiAdapter<TheNewsApiAdapter>(services, configuration, "TheNews");
+        RegisterApiAdapter<OpenMeteoApiAdapter>(services, configuration, "OpenMeteo");
 
-        // Register the handler
         services.AddSingleton<ApiAdapterHandler>();
-
         return services;
     }
 
     private static void RegisterApiAdapter<TAdapter>(
-           IServiceCollection services,
-           IConfiguration configuration,
-           string? configKey)
-           where TAdapter : BaseAdapter
+        IServiceCollection services,
+        IConfiguration configuration,
+        string? configKey)
+        where TAdapter : BaseAdapter
     {
         string apiKey = string.IsNullOrEmpty(configKey)
             ? ""
             : configuration[$"EventApis:{configKey}:ApiKey"] ?? "";
+
         var connectionString = GetConnectionString<TAdapter>();
+
+        // Check if already registered
+        var existingRegistration = services.FirstOrDefault(s =>
+            s.ServiceType == typeof(TAdapter));
+
+        if (existingRegistration != null)
+        {
+            Console.WriteLine($"{typeof(TAdapter).Name} already registered, skipping...");
+            return;
+        }
+
 
         services.AddHttpClient<TAdapter>(client =>
         {
             client.BaseAddress = new Uri(connectionString);
             client.Timeout = TimeSpan.FromSeconds(30);
 
-            //open meteo doesnt require api key so it wont set up the header.
             if (!string.IsNullOrEmpty(apiKey))
             {
-                // Special handling for Foursquare
+                // Special handling for Foursquare - FIXED
                 if (typeof(TAdapter).Name == nameof(FourSquareApiAdapter))
-                {
-                    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                {                    
+                    client.DefaultRequestHeaders.Authorization =
+                          new AuthenticationHeaderValue("Bearer", apiKey);
                     client.DefaultRequestHeaders.Add("X-Places-Api-Version", "2025-06-17");
                 }
                 else
@@ -67,12 +71,20 @@ public static class MeminiEventApiConnectionSetup
                         new AuthenticationHeaderValue("Bearer", apiKey);
                 }
             }
+
             client.DefaultRequestHeaders.Add("Accept", "application/json");
+        })
+        .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+        {
+            PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(1),
+            MaxConnectionsPerServer = 10
         });
 
         services.AddTransient<BaseAdapter>(sp =>
             sp.GetRequiredService<TAdapter>());
     }
+
     private static string GetConnectionString<TAdapter>() where TAdapter : BaseAdapter
     {
         return typeof(TAdapter).Name switch
@@ -81,8 +93,6 @@ public static class MeminiEventApiConnectionSetup
             nameof(FourSquareApiAdapter) => FourSquareApiAdapter.ConnectionString,
             nameof(TheNewsApiAdapter) => TheNewsApiAdapter.ConnectionString,
             nameof(OpenMeteoApiAdapter) => OpenMeteoApiAdapter.ConnectionString,
-            nameof(PredictHqEventApiAdapter) => PredictHqEventApiAdapter.ConnectionString,
-            //nameof(SeatGeekEventApiAdapter) => SeatGeekEventApiAdapter.ConnectionString,   STILL WAITING FOR APPROVAL KEY , GODAMN BASTARDS               
             _ => throw new InvalidOperationException($"Unknown adapter type: {typeof(TAdapter).Name}")
         };
     }

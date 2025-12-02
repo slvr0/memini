@@ -2,7 +2,7 @@ import React, { forwardRef, CSSProperties } from 'react';
 import { TextField, TextFieldProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MaterialUITheme1Profile from '../styling/mui_theme_1/theme-profile'; // adjust path
-import { Opacity } from '@mui/icons-material';
+import { Opacity, WidthFull } from '@mui/icons-material';
 
 // Define the theme input props interface
 interface ThemeInputProps {
@@ -13,11 +13,10 @@ interface ThemeInputProps {
   fontSize?: string;
   labelFontSize?: string;
   labelOpacity?: number;
-
-
   helperTextFontSize?: string;
   helperTextOpacity?: number;
   customStyle?: CSSProperties;
+  borderOpacity?: number;
 }
 
 interface StyledTextFieldProps extends Omit<TextFieldProps, 'ref'> {
@@ -37,11 +36,23 @@ const BaseStyledTextField = styled(TextField, {
   const spacing = MaterialUITheme1Profile.spacingProfiles[spacingProfile];
 
   const labelOpacity = themeProps?.labelOpacity || 0.7;
+  const borderOpacity = themeProps?.borderOpacity || 1;
+  
+  return { 
+    '& .MuiInput-root': {
+      '&:before': {
+        borderBottomColor: palette.border,
+        opacity: borderOpacity,
+      },
+      '&:hover:not(.Mui-disabled):before': {
+        borderBottomColor: palette.borderHover,
+        opacity: borderOpacity,
+      },
+      '&:after': {
+        borderBottomColor: palette.borderHover,
+      },
+    },
 
-  const helperTextFontSize = themeProps?.helperTextFontSize || '10px';
-  const helperTextOpacity = themeProps?.helperTextOpacity || 0.6;
-
-  return {    
     '& .MuiInputBase-input': {
       fontSize: themeProps?.fontSize || '14px',
       color: palette.text, 
@@ -53,14 +64,17 @@ const BaseStyledTextField = styled(TextField, {
       '& fieldset': {
         borderColor: palette.border,
         borderWidth: border.borderWidth,
+        opacity: borderOpacity,
         
       },
       '&:hover fieldset': {
         borderColor: palette.borderHover,
+        opacity: borderOpacity,
         
       },
       '&.Mui-focused fieldset': {
         borderColor: palette.borderHover,
+        opacity: borderOpacity,
       },
     },
     '& .MuiInputLabel-root': {
@@ -72,6 +86,7 @@ const BaseStyledTextField = styled(TextField, {
         fontSize: themeProps?.helperTextFontSize || '12px',
         opacity: themeProps?.helperTextOpacity || 0.7,
         color: palette.text,
+      
         '&.Mui-error': {
             opacity: 1, // full opacity for error messages
     },

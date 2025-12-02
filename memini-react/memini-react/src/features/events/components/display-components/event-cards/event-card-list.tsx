@@ -9,6 +9,7 @@ import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumb
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 
 interface EventCardProps {
+  nodeKey?: number;
   source?: SourceAttribution['name'],
   category?: string;
   genre?: string;
@@ -22,9 +23,11 @@ interface EventCardProps {
   availability?: string;
   price?: number | string;
   website?: string;
+  onSelectActivity?: (node:any) => void;
 }
 
 const EventCardDisplayList = ({
+  nodeKey,
   source,
   category,
   genre,
@@ -37,7 +40,8 @@ const EventCardDisplayList = ({
   venueName,
   availability,
   price,
-  website
+  website,
+  onSelectActivity
 }: EventCardProps) => {
   
   const formatDate = (timestamp?: string) => {
@@ -53,7 +57,7 @@ const EventCardDisplayList = ({
   };
 
   const location = [city, country].filter(Boolean).join(', ');
-
+  console.log(onSelectActivity);
   return (
     <Card className="h-full transition-shadow flex flex-col">
       {/* Header: Category and Genre */}
@@ -158,7 +162,7 @@ const EventCardDisplayList = ({
                     
                     <Tooltip title="Buy tickets">
                     <MuiStyledButton className="flex items-center" buttonSize='xs' borderType='rounded' highlightBackgroundOnHover={true} highlightBorderOnHover={true} 
-                        buttonVariant={availability.toLowerCase() === 'available' ? 'meminiThemeOutline' : 'harmonicRed'}>
+                        buttonVariant={availability.toLowerCase() === 'available' ? 'meminiThemeProfile_2' : 'harmonicRed'}>
                        
                         <ConfirmationNumberOutlinedIcon 
                           sx={{ 
@@ -196,12 +200,10 @@ const EventCardDisplayList = ({
                   )}
             </Box>
           )}
-          
-      
 
             <Tooltip title="Add to schedule">
-            <MuiStyledButton className="flex items-center" buttonSize='xs' borderType='rounded' highlightBackgroundOnHover={true} highlightBorderOnHover={true} 
-                buttonVariant='meminiThemeOutline'  >
+            <MuiStyledButton onClick={onSelectActivity} className="flex items-center" buttonSize='xs' borderType='rounded' highlightBackgroundOnHover={true} highlightBorderOnHover={true} 
+                buttonVariant='meminiThemeProfile_2'  >
                   
                   <NotebookPen size={13} opacity={.5}
                     className="mr-0.5 !opacity-75">
@@ -209,13 +211,13 @@ const EventCardDisplayList = ({
                
        
                 <Typography variant="subtitle2" fontSize={10}>
-                    <Link 
-                      href={website} 
+                    <Link                       
                       target="_blank" 
                       rel="noopener noreferrer"
                       variant="subtitle2"
                       className="text-sm truncate"
                       underline="none"
+                      
                     >
                       Schedule
                     </Link>                          

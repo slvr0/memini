@@ -188,6 +188,22 @@ namespace MeminiEventAPI.testing.configs.thenews
                 PublishedAfter = today,
                 Page = 3,
                 Limit = 3
+            },
+            new TheNewsApiRequest
+            {
+                Endpoint = NewsApiEndpoint.All,
+                Language = "sv",
+                PublishedAfter = today,
+                Page = 4,
+                Limit = 3
+            },
+            new TheNewsApiRequest
+            {
+                Endpoint = NewsApiEndpoint.All,
+                Language = "sv",
+                PublishedAfter = today,
+                Page = 5,
+                Limit = 3
             }
         }
             };

@@ -26,7 +26,7 @@ using Memini.dto.poi;
 using MeminiEventAPI.services;
 namespace Memini.Controllers;
 
-[Authorize]
+
 [Route("api/[controller]")]
 [ApiController]
 
@@ -43,6 +43,7 @@ public class EventController : ControllerBase
 
 
     [HttpPost]
+   
     [Route("CleanupOldApiData")]
     public async Task<IActionResult> CleanupOldApiData()
     {
@@ -59,21 +60,23 @@ public class EventController : ControllerBase
     }
 
     [HttpPost]
+  
     [Route("FetchEventApiData")]
     public async Task<IActionResult> FetchEventApiData()
     {
         try
-        {
+        {           
+
             var weatherconfig       = OpenMeteoTestConfig.SwedishCitiesWeatherConfig();
-            var ticketmasterconfig  = new TicketmasterTestConfig().RadiusBasedSwedenConfig();
-            var foursquareconfig    = new FourSquareTesting().EfficientFoursquareSweden();
+            //var ticketmasterconfig  = new TicketmasterTestConfig().RadiusBasedSwedenConfig();
+            //var foursquareconfig    = new FourSquareTesting().EfficientFoursquareSweden();
             var thenewsconfig       = new TheNewsTesting().SwedishDailyNewsConfig();
-            var predicthqconfig     = new PredictHqTestConfig().CreateTestConfigs();
+            //var predicthqconfig     = new PredictHqTestConfig().CreateTestConfigs();
 
             // Merge all dictionaries into one
             var allConfigs = new Dictionary<string, ICollection<IApiRequest>>();
 
-            foreach (var dict in new[] { ticketmasterconfig, weatherconfig,  foursquareconfig, thenewsconfig, predicthqconfig })
+            foreach (var dict in new[] { /*ticketmasterconfig,*/ weatherconfig, thenewsconfig })
             {
                 foreach (var kvp in dict)
                 {
@@ -85,7 +88,7 @@ public class EventController : ControllerBase
             var response = await _apiAdapterHandler.FetchDataFromApis(allConfigs);
 
             if (response.ApiResults.TryGetValue("Ticketmaster", out var resultTM)
-            && resultTM is EventsApiResult eventsApiResponse)
+                && resultTM is EventsApiResult eventsApiResponse)
             {
                 EventManager eventManager = new EventManager();
                 await eventManager.StoreUniqueEvents(eventsApiResponse, eventsApiResponse.AdapterId, _context);
@@ -119,7 +122,6 @@ public class EventController : ControllerBase
                 await eventManager.StoreWeatherInformation(openMateoWeatherResult, openMateoWeatherResult.AdapterId, _context);
             }
 
-            //object res = await _apiAdapterHandler.FetchDataFromAllApis(mockedConfig);
             return DtoResponse<object>.Ok(response, "Fetched new events successfully").ToOkResult();
         }
         catch (Exception e)
@@ -135,6 +137,17 @@ public class EventController : ControllerBase
     public  IActionResult GetEvents()
     {
         var res =  _context.CoreNodes.ByType(structures.CoreNodeTypes.Event).WithFullEventInfo();
+
+        return DtoResponse<object>.Ok(res, "fetched events").ToOkResult();
+    }
+
+
+    [HttpPost]
+    [Authorize]
+    [Route("GetNodeByKey")]
+    public IActionResult GetNodeByKey([FromBody] decimal key)
+    {
+        var res = _context.CoreNodes.Where(_e => _e.Key == key).WithFullEventInfo().WithFullPointOfInterest().FirstOrDefault();
 
         return DtoResponse<object>.Ok(res, "fetched events").ToOkResult();
     }

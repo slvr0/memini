@@ -65,7 +65,7 @@ public class EventManager
             var cutoffDate = DateTime.UtcNow.AddMonths(-olderThanMonths);
 
             var results = await context.CoreNodes
-                .Where(cn => cn.StartDate < cutoffDate)
+                .Where(cn => cn.StartDate < cutoffDate && cn.Type != (int)CoreNodeTypes.PointOfInterest)
                 .ToListAsync();
 
             context.CoreNodes.RemoveRange(results);
@@ -126,7 +126,7 @@ public class EventManager
             var uniquePointOfInterest = placeApiResult.Places?.ReduceCompare(
                e => $"{e.Result?.Name ?? ""}|{e.Result?.GeographicInfo?.City}",             // Field to compare (event name)
                e => e.Result?.DataQuality ?? 0,       // Quality metric
-               similarityThreshold: 95,                    // similarity threshold
+               similarityThreshold: 95,               // similarity threshold
                algorithm: SimilarityAlgorithm.WeightedRatio
             ).Select(mappingEvent => mappingEvent.Result); // select pure results, mapping wrapping no longer required
 

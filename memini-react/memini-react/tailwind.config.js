@@ -12,7 +12,11 @@ export default {
         miTaskHL: '#bbdefb',
         miTaskHBR: '#42a5f5',    
         miTheme: '#379f7f',
-        miThemeLight: '#f6fcfa'  
+        miThemeLight: '#f6fcfa',
+        miTheme2: '#8fbbdd',
+        miTheme2Light: '#66a2d0',
+        miInfoBoxBackground: '#fffdf6',  
+        miInfoBoxBackgroundStrong: '#fff5d9'
       },
 
 

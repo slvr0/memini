@@ -19,7 +19,7 @@ interface ContentConfig {
     gridCols: string;
     paginationSize?: 'small' | 'medium' | 'large';
     showPaginationInfo?: boolean;  
-    renderCard: (item: any, index: number) => React.ReactNode;
+    renderCard: (item: any, index: number, onSelectActivity: (node: any) => void) => React.ReactNode;
 }
 
 const contentConfigs: Record<ContentType, ContentConfig> = {
@@ -29,9 +29,10 @@ const contentConfigs: Record<ContentType, ContentConfig> = {
         sources: ["Ticketmaster", "PredictHq"],
         paginationSize: 'small',
         gridCols: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
-        renderCard: (event, index) => (
+        renderCard: (event, index, onSelectActivity) => (
             <EventCardDisplayList
                 key={index}
+                nodeKey={event.Key}
                 source={event.Source}
                 category={event.ContentInfo.Category}
                 genre={event.ContentInfo.Genre}
@@ -45,6 +46,7 @@ const contentConfigs: Record<ContentType, ContentConfig> = {
                 availability={event.CommercialStatusInfo.Availability}
                 price={event.CommercialStatusInfo.MinPrice}
                 website={event.CommercialStatusInfo.WebsiteUrl}
+                onSelectActivity={() => onSelectActivity(event) }
             />
         )
     },
@@ -54,10 +56,11 @@ const contentConfigs: Record<ContentType, ContentConfig> = {
         sources: ["FourSquare"],
         paginationSize: 'small', 
         gridCols: "grid-cols-1 md:grid-cols-2",
-        renderCard: (poi, index) => {
+        renderCard: (poi, index, onSelectActivity) => {
                     
         return (
             <PoiCardDisplayList
+
                 key={index}
                 label={poi.Label}   
                 description={poi.Description}
@@ -71,6 +74,7 @@ const contentConfigs: Record<ContentType, ContentConfig> = {
                 verified={poi.PoiInfo?.Verified}
                 isOpen={poi.PoiInfo?.Open}
                 website={poi.PoiInfo?.WebsiteUrl}
+                onSelectActivity={() => onSelectActivity(poi) }
             />
         );
         }
@@ -79,103 +83,101 @@ const contentConfigs: Record<ContentType, ContentConfig> = {
 
 interface ContentRendererProps {
     type: ContentType;
-    className?: string;    
+    className?: string;  
+    onSelectActivity: (node: any) => void;  
 }
 
-const ContentRenderer: React.FC<ContentRendererProps> = ({ type, className = ""}) => {
+const ContentRenderer: React.FC<ContentRendererProps> = ({ type, className = "", onSelectActivity}) => {
     const config = contentConfigs[type];
     const [{ data, loading, error, pagination }, { goToPage }] = config.hook(); 
 
-
-
+    console.log(onSelectActivity);
     return (
         <div className={`flex flex-col ${className}`}>
             {/* Sticky Header Row */}
    
         <div className="flex items-center sticky top-0 z-10 justify-between px-4  bg-white/95 backdrop-blur-sm transition-all duration-300 border border-gray-100">
-    {/* Left: Title and Pagination in one row */}
-    <div className={`flex items-center gap-4 transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
-        <div className="flex items-center gap-2">
-            <Typography variant="h6">
-                {config.title}
-            </Typography>
-            {data && data.length > 0 && (
-                <span className="px-2 bg-gray-100/70 rounded-full text-xs text-gray-600 transition-all duration-300">
+            {/* Left: Title and Pagination in one row */}
+            <div className={`flex items-center gap-4 transition-opacity duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
+                <div className="flex items-center gap-2">
+                    <Typography variant="h6">
+                        {config.title}
+                    </Typography>
+                    {data && data.length > 0 && (
+                        <span className="px-2 bg-gray-100/70 rounded-full text-xs text-gray-600 transition-all duration-300">
 
-                <Typography variant="body1" fontSize={12}>
-                {pagination.totalItems}
-                </Typography>
-                  
-                </span>
-            )}
-        </div>
-        
-        <MuiStyledPagination
-            totalPages={pagination.totalPages}
-            totalItems={config.showPaginationInfo ? pagination.totalItems : undefined}
-            currentPage={pagination.currentPage}
-            onChange={goToPage}
-            variant="outlined"
-            color="secondary"
-            customColor={MaterialUITheme1Profile.paletteProfiles["meminiThemeOutline"].light}
-            size={config.paginationSize || 'medium'}
-        />
-    </div>
-    
-    {/* Right: Powered by logos */}
-    <div className="flex items-center gap-2">
-        <Typography variant="caption" color="text.secondary" fontSize={10}>
-            <i>Powered by</i>
-        </Typography>
-        <div className="flex items-center gap-1.5">
-            {config.sources.map((source, idx) => (
-                <div key={idx} className="transition-all duration-300">
-                    <SourceLogoDisplay source={source as SourceAttribution["name"]} />
+                        <Typography variant="body1" fontSize={12}>
+                        {pagination.totalItems}
+                        </Typography>
+                        
+                        </span>
+                    )}
                 </div>
-            ))}
-        </div>
-    </div>
-    </div>
-                            
-            {/* Scrollable Content Container */}
-            <div className="overflow-y-auto relative max-h-[calc(100vh-200px)] scrollbar-thin scrollbar-webkit">
-               
                 
-                {/* Content Grid with fade transition */}
-                <div className={`grid ${config.gridCols} gap-3 p-3 transition-opacity duration-500 ${loading ? 'opacity-30' : 'opacity-100'}`}>
-                    {data && data.map((item: any, index: number) => (
-                        <div
-                            key={index}
-                            className="duration-500 transition-shadow"
-                        >
-                            {config.renderCard(item, index)}
+                <MuiStyledPagination
+                    totalPages={pagination.totalPages}
+                    totalItems={config.showPaginationInfo ? pagination.totalItems : undefined}
+                    currentPage={pagination.currentPage}
+                    onChange={goToPage}
+                    variant="outlined"
+                    color="secondary"
+                    customColor={MaterialUITheme1Profile.paletteProfiles["meminiThemeProfile_2"].light}
+                    size={config.paginationSize || 'medium'}
+                />
+            </div>
+            
+            {/* Right: Powered by logos */}
+            <div className="flex items-center gap-2">
+                <Typography variant="caption" color="text.secondary" fontSize={10}>
+                    <i>Powered by</i>
+                </Typography>
+                <div className="flex items-center gap-1.5">
+                    {config.sources.map((source, idx) => (
+                        <div key={idx} className="transition-all duration-300">
+                            <SourceLogoDisplay source={source as SourceAttribution["name"]} />
                         </div>
                     ))}
                 </div>
-                
-                {/* Empty State */}
-                {!loading && (!data || data.length === 0) && (
-                    <div className="flex flex-col items-center justify-center h-64 text-center py-12">
-                        <Typography variant="h6" color="text.secondary">
-                            No {config.title.toLowerCase()} found
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" className="mt-2">
-                            Try adjusting your search filters
-                        </Typography>
+            </div>
+        </div>
+                                    
+        {/* Scrollable Content Container */}
+        <div className="overflow-y-auto relative max-h-[calc(100vh-200px)] scrollbar-thin scrollbar-webkit">                
+            {/* Content Grid with fade transition */}
+            <div className={`grid ${config.gridCols} gap-3 p-3 transition-opacity duration-500 ${loading ? 'opacity-30' : 'opacity-100'}`}>
+                {data && data.map((item: any, index: number) => (
+                    <div
+                        key={index}
+                        className="duration-500 transition-shadow"                        
+                    >
+                        {config.renderCard(item, index, onSelectActivity)}
                     </div>
-                )}
-                
-                {/* Error State */}
-                {error && (
-                    <div className="flex flex-col items-center justify-center h-64 text-center py-12">
-                        <Typography variant="h6" color="error">
-                            Error loading {config.title.toLowerCase()}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary" className="mt-2">
-                            {error}
-                        </Typography>
-                    </div>
-                )}
+                ))}
+            </div>
+            
+            {/* Empty State */}
+            {!loading && (!data || data.length === 0) && (
+                <div className="flex flex-col items-center justify-center h-64 text-center py-12">
+                    <Typography variant="h6" color="text.secondary">
+                        No {config.title.toLowerCase()} found
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" className="mt-2">
+                        Try adjusting your search filters
+                    </Typography>
+                </div>
+            )}
+            
+            {/* Error State */}
+            {error && (
+                <div className="flex flex-col items-center justify-center h-64 text-center py-12">
+                    <Typography variant="h6" color="error">
+                        Error loading {config.title.toLowerCase()}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" className="mt-2">
+                        {error}
+                    </Typography>
+                </div>
+            )}
             </div>
         </div>
     );

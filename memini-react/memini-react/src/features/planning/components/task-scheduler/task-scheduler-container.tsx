@@ -12,6 +12,8 @@ import { getWeekDates } from "../../computes/task-scheduler-computations"
 import { IDisplayTask, ITask } from "../../../tasks/interfaces/task-interface";
 import {ICalendarDate} from "../../../../interfaces/common-interfaces"
 
+import { getWeek } from 'date-fns';
+
 interface TaskSchedulerContainerProps { 
     schedulerHeight: number;
     timeslotHeight: number;
@@ -19,7 +21,7 @@ interface TaskSchedulerContainerProps {
 
 //add a screen zoom listener to adjust overflow if user zooms in too much.
 const TaskSchedulerContainer = forwardRef<HTMLDivElement, TaskSchedulerContainerProps>((props, ref) => {
-    const [selectedWeek, setSelectedWeek] = useState<number>(40);
+    const [selectedWeek, setSelectedWeek] = useState<number>(getWeek(new Date()));
     
     const {  fetchTasksForDateAndStore  } = useTaskManager();
     const isValidSchedulerParentRef = (ref: React.RefObject<HTMLDivElement | null> ) =>  ref && typeof ref === 'object' && ref.current;  

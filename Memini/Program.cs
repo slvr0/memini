@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Newtonsoft.Json.Serialization;
 using Memini.Controllers;
 using Memini.services;
@@ -72,7 +72,7 @@ else
     {
         options.AddDefaultPolicy(policy =>
         {
-            policy.WithOrigins(                    
+            policy.WithOrigins(
                     "https://memini-launch-hmawcxg8cwa7f8c2.swedencentral-01.azurewebsites.net"
                 )
                 .AllowAnyHeader()
@@ -114,13 +114,13 @@ else
     app.UseHsts();
 }
 
-app.UseCors(); // This uses the default policy
-
-app.UseHttpsRedirection();
 
 app.UseDefaultFiles(); 
-
+app.UseStaticFiles();  
+app.UseCors();
+app.UseHttpsRedirection();
 app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
