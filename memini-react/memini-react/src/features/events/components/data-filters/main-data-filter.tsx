@@ -176,8 +176,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                     onChange={(newValues) => setEventCategories(newValues)}
                     
                 />
-            </div>            
-                
+            </div>          
 
             <div className="grid grid-cols-6 gap-2 w-full mt-4 px-2 items-center">
                 <div className="flex col-span-3">
@@ -204,6 +203,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                         labelFontVariant="subtitle2"
                         value={eventSwitchAvailableTickets}
                         onChange={(newValue) => setEventSwitchAvailableTickets(newValue)}
+                        
                     />
 
                     <MuiStyledSwitch 
@@ -212,7 +212,8 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                         labelFontSize={10}
                         labelFontVariant="subtitle2"
                         value={eventSwitchShowTicketmaster}
-                        onChange={(newValue) => setEventSwitchShowTicketmaster(newValue)}   
+                        onChange={(newValue) => setEventSwitchShowTicketmaster(newValue)}  
+                       
                     />
 
                     <MuiStyledSwitch 
@@ -222,6 +223,7 @@ const MainDataFilter: React.FC<MainDataFilterProps> = (props) => {
                         labelFontVariant="subtitle2"
                         value={eventSwitchShowPredictHq}       
                         onChange={(newValue) => setEventSwitchShowPredictHq(newValue)}  
+                 
                     />
                 </div>
             </div>

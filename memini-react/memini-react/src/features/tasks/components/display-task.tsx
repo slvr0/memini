@@ -67,8 +67,6 @@ const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {
       }),
     }), [props.displayTask]);
 
-  
-
     const startTimeDisplayFormat = minutesToHHMM(props.displayTask.StartTime);
     const endTimeDisplayFormat = minutesToHHMM(props.displayTask.EndTime);
   

@@ -55,7 +55,7 @@ public partial class MeminiDbContext : DbContext
             .HasPostgresEnum("auth", "one_time_token_type", new[] { "confirmation_token", "reauthentication_token", "recovery_token", "email_change_token_new", "email_change_token_current", "phone_change_token" })
             .HasPostgresEnum("realtime", "action", new[] { "INSERT", "UPDATE", "DELETE", "TRUNCATE", "ERROR" })
             .HasPostgresEnum("realtime", "equality_op", new[] { "eq", "neq", "lt", "lte", "gt", "gte", "in" })
-            .HasPostgresEnum("storage", "buckettype", new[] { "STANDARD", "ANALYTICS" })
+            .HasPostgresEnum("storage", "buckettype", new[] { "STANDARD", "ANALYTICS", "VECTOR" })
             .HasPostgresExtension("extensions", "pg_stat_statements")
             .HasPostgresExtension("extensions", "pgcrypto")
             .HasPostgresExtension("extensions", "uuid-ossp")
@@ -235,8 +235,6 @@ public partial class MeminiDbContext : DbContext
 
             entity.ToTable("core_node");
 
-            entity.HasIndex(e => e.Guid, "core_node_guid_key").IsUnique();
-
             entity.HasIndex(e => e.City, "idx_core_node_city_code");
 
             entity.HasIndex(e => e.CountryCode, "idx_core_node_country_code");
@@ -279,11 +277,17 @@ public partial class MeminiDbContext : DbContext
             entity.Property(e => e.Label)
                 .HasMaxLength(2000)
                 .HasColumnName("label");
+            entity.Property(e => e.OwnerUserId).HasColumnName("owner_user_id");
             entity.Property(e => e.Source)
                 .HasMaxLength(50)
                 .HasColumnName("source");
             entity.Property(e => e.StartDate).HasColumnName("start_date");
             entity.Property(e => e.Type).HasColumnName("type");
+
+            entity.HasOne(d => d.OwnerUser).WithMany(p => p.CoreNodes)
+                .HasForeignKey(d => d.OwnerUserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("core_node_owner_user_id_fkey");
         });
 
         modelBuilder.Entity<NewsInfo>(entity =>

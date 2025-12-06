@@ -3,6 +3,7 @@ import { Box, Switch, Typography } from '@mui/material';
 import MaterialUITheme1Profile from "../styling/mui_theme_1/theme-profile"; 
 
 interface ThemedSwitchProps {
+  enabled?: boolean;
   label?: string;
   paletteProfile?: keyof typeof MaterialUITheme1Profile.paletteProfiles;
   themeMode?: 'light' | 'dark';
@@ -14,6 +15,7 @@ interface ThemedSwitchProps {
 }
 
 const MuiStyledSwitch: React.FC<ThemedSwitchProps> = ({
+  enabled = true,
   label,
   paletteProfile = 'main',
   themeMode = 'light',
@@ -48,6 +50,7 @@ const MuiStyledSwitch: React.FC<ThemedSwitchProps> = ({
       }}
     >
       <Switch
+        disabled={!enabled}
         checked={checked}
         onChange={handleChange}
         sx={{

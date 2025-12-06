@@ -3,7 +3,7 @@ import React, {forwardRef, useImperativeHandle} from 'react';
 import { Typography } from '@mui/material';    
 import { useState } from 'react';   
 import {Modal, Box} from '@mui/material';
-import ActivityDisplayModal from './activity-display-data';
+import ActivityDisplayData from './activity-display-data';
 import { set } from 'lodash';
 
 import { X } from 'lucide-react';   
@@ -16,13 +16,14 @@ const enum ActivityDisplayModes {
 
 interface ActivityDisplayProps {
   displayMode?: ActivityDisplayModes;
+  canToggleActivityView?: boolean;
 }
 
 
 export interface ActivityDisplayRef {
   openModal: () => void;
   closeModal: () => void;
-  setActivityData: (nodeKey: number) => void;
+  setActivityData: (nodeKey: number) => void; 
 }
 
 const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplayProps>(
@@ -58,20 +59,11 @@ const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplay
     }
 
     return (  
-        <>      
-            <MuiStyledButton 
-                themeColor='light' 
-                buttonSize='xs' 
-                buttonVariant='main'
-                borderType='square' opacity={.85} 
-                onClick={() => {toggleModal()}}>
-                <Typography variant="caption" fontSize={10}> Show activity modal </Typography>
-            </MuiStyledButton>
-
-            <Modal
+        <>  
+          <Modal
                 open={open}
                 onClose={() => setOpen(false)}
-            
+
                 sx={{
                 backdropFilter: 'blur(2px)',
                 backgroundColor: 'transparent',
@@ -87,7 +79,7 @@ const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplay
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '80vw',
+                width: '60vw',
                 height: '80vh',
                 bgcolor: 'background.paper',
                 boxShadow: 24,
@@ -96,7 +88,7 @@ const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplay
                 overflow: 'hidden',
                 p: 4,
               }}>
-                <ActivityDisplayModal activityNode={activityNode}/>  
+                <ActivityDisplayData activityNode={activityNode} canToggleActivityView={props.canToggleActivityView}/>  
               </Box>
                      
             </Modal>

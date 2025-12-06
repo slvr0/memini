@@ -18,26 +18,18 @@ import CoreNodeDisplay, {CoreNodeRef} from './core-node-display';
 import { Plug, ChevronUp, ChevronDown, Slash, ChevronsUpDown, Globe, Globe2, Boxes, Combine } from 'lucide-react';
 import { Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText, CircleUserRound, LogOut, AtSign, Heart, UserRoundSearch, Check } from "lucide-react";
 
+import MuiStyledSwitch from "../../../mui-wrappers/mui-switch-wrapper";
+
 interface ActivityDisplayDataProps {
     activityNode?: any;
+    canToggleActivityView?: boolean;    
 }
 
 //have to set core node stuff also
-const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode}) => {  
-    
+const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode, canToggleActivityView = true}) => {  
+    const [isFullActivity, setIsFullActivity] = useState(canToggleActivityView);
     const activity = structuredClone(activityNode);
     const [activityTitle, setActivityTitle] = useState<string>(activity?.Label ?? "");
-
-    // useEffect(() => {
-    //      const fetchEvent = async () => {
-    //         const eventResponse: any =  await getNodeByKeyApi(12730); 
-    //         console.log(eventResponse);
-    //         setEvent(eventResponse?.ResponseObject); 
-    //         setActivityTitle(eventResponse?.ResponseObject?.Label ?? "");         
-    //     }
-    //     fetchEvent();
-        
-    // }, []); 
 
     const imageUrl = activity?.ContentInfo?.ContentMedia[0].Url ?? "";
     const spatialRef = useRef<FormattedIconFieldRef>(null);
@@ -101,9 +93,9 @@ const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode}
 
     return (
     <>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-8 gap-4 p-8">
            
-             <div className="flex flex-col col-span-3 items-center justify-center mx-auto  w-full px-16">
+             <div className="flex flex-col col-span-6 items-center justify-center mx-auto  w-full">
                     <MuiStyledTextField
                         fullWidth
                         required
@@ -131,7 +123,22 @@ const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode}
 
                 
             </div>
+
+            <div className="flex flex-col col-span-1 items-center justify-center mx-auto  w-full">
+                <MuiStyledSwitch 
+                    enabled={canToggleActivityView}
+                    label="Activity"
+                    paletteProfile="meminiThemeProfile_2"
+                    labelFontSize={10}
+                    labelFontVariant="subtitle2"
+                    value={isFullActivity}
+                    onChange={(newValue) => setIsFullActivity(newValue)}
+                />
+            </div>
+
              <div className="col-span-1 gap-1 items-center justify-center flex">
+                    
+
                     <LucidIconButton
                     className="p-2"
                     icon={Heart}
@@ -187,54 +194,71 @@ const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode}
                 
             </div>
         </div>
+        
+        {
+            isFullActivity &&
+            <>
+                <div className="grid grid-cols-9 gap-4 mt-4 h-full">
+                    <div className="col-span-3 w-full px-4">
+                    <CoreNodeDisplay ref={coreNodeRef}/>
+                    </div>
+                    <div className="col-span-3 w-full">
 
-        <div className="grid grid-cols-12 gap-4 mt-4 h-full">
-            <div className="col-span-3 w-full">
+                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
+                            <FormattedIconField ref={spatialRef} icon={MapPin} inputFields={spatialFields}/>                
+                        </div>
+                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
+                            <FormattedIconField ref={temporalRef} icon={ClockFading} inputFields={temporalFields}/>              
+                        </div>
 
-                <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                    <FormattedIconField ref={spatialRef} icon={MapPin} inputFields={spatialFields}/>                
+                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
+                            <FormattedIconField ref={contentRef} icon={Guitar} inputFields={contentFields}/>              
+                        </div>
+
+                        <div>
+                            {imageUrl && (
+                                <CardMedia
+                                component="img"
+                                height="180"
+                                image={imageUrl}
+                                alt={activity.ContentInfo.Genre || 'Event'}
+                                className="aspect-video w-full object-cover px-4"
+                                />
+                            )}
+                        </div>
+
+                    </div>
+
+                    <div className="col-span-3 w-full">
+                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
+                            <FormattedIconField ref={commercialRef} icon={ChartBarStacked} inputFields={commercialFields}/>                
+                        </div>
+
+                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
+                            <FormattedIconField ref={poiRef} icon={Store} inputFields={poiFields}/>                
+                        </div>
+
+                    </div>
                 </div>
-                <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                    <FormattedIconField ref={temporalRef} icon={ClockFading} inputFields={temporalFields}/>              
-                </div>
+            </>
+        }
+        {
+            !isFullActivity &&
+            <div className="grid grid-cols-9 gap-4 h-full justify-center mt-4">  
+                    
+                <div className="col-span-3 w-full px-4">
+                    <CoreNodeDisplay ref={coreNodeRef}/>
+                    </div>
+                    <div className="col-span-3">
 
-                <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                    <FormattedIconField ref={contentRef} icon={Guitar} inputFields={contentFields}/>              
-                </div>
+                    </div>
 
-                <div>
-                    {imageUrl && (
-                        <CardMedia
-                        component="img"
-                        height="180"
-                        image={imageUrl}
-                        alt={activity.ContentInfo.Genre || 'Event'}
-                        className="aspect-video w-full object-cover px-4"
-                        />
-                    )}
-                </div>
+                    <div className="col-span-3">
 
+                    </div>
             </div>
 
-            <div className="col-span-3 w-full">
-                <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                    <FormattedIconField ref={commercialRef} icon={ChartBarStacked} inputFields={commercialFields}/>                
-                </div>
-
-                <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                    <FormattedIconField ref={poiRef} icon={Store} inputFields={poiFields}/>                
-                </div>
-
-            </div>
-
-            <div className="col-span-3 w-full px-4">
-              <CoreNodeDisplay ref={coreNodeRef}/>
-            </div>
-
-            <div className="col-span-3 w-full items-center justify-center px-4">
-                
-            </div>
-        </div>
+        }        
 
     </>
     );  

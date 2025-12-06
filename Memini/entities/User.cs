@@ -25,6 +25,8 @@ public partial class User
     /// </summary>
     public string? City { get; set; }
 
+    public virtual ICollection<CoreNode> CoreNodes { get; set; } = new List<CoreNode>();
+
     public virtual ICollection<StoredUserTask> StoredUserTasks { get; set; } = new List<StoredUserTask>();
 
     public virtual ICollection<UserTask> UserTasks { get; set; } = new List<UserTask>();

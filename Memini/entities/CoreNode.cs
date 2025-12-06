@@ -31,11 +31,15 @@ public partial class CoreNode
 
     public string? Country { get; set; }
 
+    public int? OwnerUserId { get; set; }
+
     public virtual CommercialStatusInfo? CommercialStatusInfo { get; set; }
 
     public virtual ContentInfo? ContentInfo { get; set; }
 
     public virtual ICollection<NewsInfo> NewsInfos { get; set; } = new List<NewsInfo>();
+
+    public virtual User? OwnerUser { get; set; }
 
     public virtual PoiInfo? PoiInfo { get; set; }
 

@@ -36,298 +36,71 @@ import { useDrag } from 'react-dnd';
 import { DragItemType } from '../../tasks/components/display-task';
 import dayjs, { Dayjs } from 'dayjs';
 
-//now + 1 hour
-const defaultInterval = () : number[] => {
-  const now = new Date();
-  const start = now.getHours() * 60;
-  const end = (now.getHours() + 1) * 60;
-  return [start, end];
-}
+import ActivityDisplayContainer from "../../activity/components/activity-display-container";
 
-const taskDateToDayJs = (task: ITask | IDisplayTask | null): Dayjs => {  
-  if (!task) return dayjs();
-  
-  return dayjs()
-    .set('year', task.Year)
-    .set('month', task.Month)
-    .set('date', task.Day);
-};
+import { ActivityDisplayRef } from "../../activity/components/activity-display-container";
 
-const dayJsToTaskDate = (date: Dayjs): ISimpleDate => {
-  return {
-    year: date.year(),
-    month: date.month(),
-    day: date.date()
-  };
-};
-
-const intervalFromTask = (task : ITask | null) => {
-  if (task) {    
-  return [task.StartTime, task.EndTime];
-  } else 
-  return defaultInterval();
-};
-
-const dateFromTaskorNull = (task: ITask | null) : ISimpleDate | null => task ? {year: task.Year, month: task.Month, day: task.Day} : null;  
-
-const EditTaskForm = () => {
-  const createTaskFromFormData = (
-      taskTimeInterval: number[],
-      taskDateRef : any,
-      taskTitle: string,
-      taskDescription:string,
-    ) : Omit<ITask, 'UserKey'> | void => {
-    const StartTime : number = taskTimeInterval[0] ? taskTimeInterval[0]: 0;
-    const EndTime   : number = taskTimeInterval[1] ? taskTimeInterval[1]: 0;
-    const taskDate           = dayJsToTaskDate(selectedDate);
-    if(!taskDate) {
-      alert("Please select a valid date for the task.");
-      return;
-    }
-    const userTask : Omit<ITask, 'UserKey'> = { 
-      UserTaskKey: selectedTask?.UserTaskKey ?? 0,                      
-      Year: taskDate.year,
-      Month: taskDate.month,
-      Day: taskDate.day,
-      Title: taskTitle,
-      Description: taskDescription,
-      StartTime: StartTime,
-      EndTime: EndTime
-    };
-    return userTask;
-  }
-  const editTaskExist = () => selectedTask && selectedTask.UserTaskKey !== 0;
-
-  const onSaveTask = () => {  
-    const userTask : ITask | void = createTaskFromFormData(taskTimeInterval, selectedDate, taskTitle, taskDescription);
-    if(!userTask)
-      return;
-
-    if(userTask.UserTaskKey === 0) {
-      addTask(userTask);
-    } else {
-      updateTask(userTask);  
-    }          
-    cancelEditing();
-  } 
-
-  const cancelEditing = () => {
-    clearSelection();
-    setIsEditing(false);
-  }
-
-  const clearSelection = () => {
-    if(selectedTask === null) {
-      setTaskTitle("");
-      setTaskDescription("");
-      setTaskTimeInterval(intervalFromTask(null));
-      
-  } else 
-      dispatch(userTasksActions.clearSelectedTask());
-  }
-
-  const onDeleteUserTask = (userTask: ITask | null) => {
-    if(userTask === null)
-      return;
-
-    deleteTask(userTask);
-    cancelEditing();      
-  } 
-
-  const { updateTask, deleteTask, addTask } = useTaskManager();  
-  const selectedTask      = useSelector((state : RootState ) => state.tasks.selectedTask);    
-  const dispatch          = useDispatch(); 
-
-  const [taskTitle, setTaskTitle] = useState<string> ("");
-  const [taskDescription, setTaskDescription] = useState<string> ("");
-  const [taskTimeInterval, setTaskTimeInterval] = useState<number[]> (intervalFromTask(selectedTask));
-  const [selectedDate, setSelectedDate] = useState<Dayjs>(
-    taskDateToDayJs(selectedTask)
-  );
-  const [isEditing, setIsEditing] = useState<boolean> (false);
+const EditTaskForm = () => { 
+  const activityDisplayRef = useRef<ActivityDisplayRef>(null);
 
   /* useEffect, conditional re-render logic  */
   const [{ isDragging }, drag] = useDrag({
     type: DragItemType.TASK,
     item: () => {
-      const userTask = createTaskFromFormData(taskTimeInterval, selectedDate, taskTitle, taskDescription); 
-      if (!userTask) return null;      
-      return { displayTask: userTask as IDisplayTask };
+      //const userTask = createTaskFromFormData(taskTimeInterval, selectedDate, taskTitle, taskDescription); 
+      // if (!userTask) return null;      
+      return { displayTask: null };
     },
     canDrag: () => { 
-      return taskTitle.length > 0;
+      return true;
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),          
     }),
     end: (item, monitor) => {
       if (monitor.didDrop()) {   
-        cancelEditing();
+        //cancelEditing();
       }  
     },
   });
+  return (
+    <>
+     <ActivityDisplayContainer ref={activityDisplayRef} canToggleActivityView={true}/>
 
-  useEffect(() => {
-    setTaskTitle(selectedTask?.Title || "");
-    setTaskDescription(selectedTask?.Description || "");
-    setTaskTimeInterval(intervalFromTask(selectedTask));
-    setSelectedDate(taskDateToDayJs(selectedTask));
-
-    if(selectedTask)
-      setIsEditing(true);
-
-  }, [selectedTask]);  
-
-
-  return (<>
     <div className="grid grid-cols-6 transition-all duration-300 ease-in-out">
+
         <div className="col-span-3 flex items-center justify-start w-full overflow-hidden">
             <Typography variant="h5" className="break-words w-full">
                 Management
             </Typography>
         </div>
-        <div className="col-span-3 flex items-center justify-end">
-          { isEditing &&          
-            <div className="flex gap-2">
-               <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.85} 
-                  onClick={() => {cancelEditing()}} >                   
-                <Typography variant="subtitle2"> Cancel </Typography>     
-              </MuiStyledButton> 
 
-              <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'rounded' opacity={.85} disabled={taskTitle.length === 0}
-                onClick={() => {onSaveTask()}} >   
-                <Typography variant="subtitle2"> Save </Typography>     
-              </MuiStyledButton>
-            </div>     
-          } 
-          
-          { !isEditing && 
-            <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'harmonicBlue' borderType = 'semiStraight' 
-              opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={true} textOpacity={1.0}
-              onClick={() => {setIsEditing(true)}}
+        <div className="col-span-3 flex items-center justify-end">
+          <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'harmonicBlue' borderType = 'semiStraight' 
+              opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={true} textOpacity={1.0}        
+              onClick={() => {activityDisplayRef.current?.openModal()}}
               >
               <PackagePlus size={16} style={{ marginLeft: '0', marginRight: '.25rem', opacity:0.85 }}/>
               <Typography 
                     variant="body2" 
                     color="inherit"                     
                     > 
-                    Create Task 
+                    Create Activity 
                 </Typography>            
             </MuiStyledButton>
-          }
-
         </div>
 
         <div className="col-span-5 flex items-start mt-4">
             <Typography variant="body2" color="text.secondary">
-                Edit scheduled tasks or create new ones
+                Use the button above or drag a favorited/recent activity to the scheduler to create a new activity.
             </Typography>  
         </div>
 
-        { editTaskExist() && 
-          <div className="col-span-1 flex items-center justify-end mt-4">
-            <MuiStyledButton themeColor = 'light' buttonSize = 'xs' buttonVariant = 'harmonicRed' borderType = 'semiStraight' opacity={.85} onClick={() => {onDeleteUserTask(selectedTask)}}>                    
-              <Typography variant="subtitle2" fontSize={9}> Delete </Typography>
-            </MuiStyledButton> 
-          </div>
-        }
-
         <div className="col-span-6 border-t border-t-gray-200 w-3/4 mt-2">
-        </div>
-        
-         { isEditing && 
-            <>
-              <div className="col-span-6 flex items-start justify-start mb-4 mt-8">                         
-              <MuiStyledTextField
-                required
-                size='small'                     
-                id="outlined-basic"
-                label="Title"
-                placeholder="Whatsup?"
-                value={taskTitle}
-                onChange={(e) => setTaskTitle(e.currentTarget.value)}
-                variant="outlined"
-                className="w-3/4"
-                themeProps={{
-                    paletteProfile: 'main',
-                    borderProfile: 'semiStraight',
-                    spacingProfile: 'medium',
-                    mode: 'light',
-                    fontSize: '12px',
-                    labelFontSize: '12px',
-                    labelOpacity: 0.85,
-                    helperTextFontSize:'11px',
-                    helperTextOpacity:0.6                                 
-                }}
-                />
-              </div>
-
-              <div className="col-span-6 flex items-start justify-start mb-8">                         
-                    <MuiStyledTextField 
-                      multiline                           
-                      size='small'
-                      id="outlined-basic"
-                      label="Description"
-                      placeholder="Describe the event..."
-                      value={taskDescription}
-                      onChange={(e) => setTaskDescription(e.currentTarget.value)}
-                      variant="outlined"
-                      className="w-3/4"
-                      themeProps={{
-                          paletteProfile: 'main',
-                          borderProfile: 'semiStraight',
-                          spacingProfile: 'roomy',
-                          mode: 'light',
-                          fontSize: '12px',
-                          labelFontSize: '12px',
-                          labelOpacity: 0.85,
-                          helperTextFontSize:'11px',
-                          helperTextOpacity:0.6                                 
-                      }}
-                      />
-              </div> 
-        
-              <div className="col-span-4 flex items-start justify-start">
-                <MuiStyledDatePicker
-                  value={selectedDate}
-                  onChange={setSelectedDate}
-                  buttonSize="md"
-                  buttonVariant="main"
-                  borderType="semiStraight"              
-                  label="Start date"
-                />
-              </div>
-
-              <div className="col-span-2 flex items-center justify-center my-auto">
-                <Typography variant='caption'>                    
-                @ {' '}             
-                {minutesToHHMM(taskTimeInterval[0])} →{" "}
-                {minutesToHHMM(taskTimeInterval[1])}             
-                </Typography>
-              </div>
-
-              <div className="col-span-6 mt-2">
-                <DiscreteDoubleTimeSlider       
-                  value={taskTimeInterval}
-                  onChange={setTaskTimeInterval}  />
-              </div>             
-
-              {
-                taskTitle.length > 0 && (
-                  <div ref={drag as any} className="col-span-6 flex items-center justify-center mt-2 gap-2">
-                    <MuiStyledButton themeColor='light' buttonSize='lg' buttonVariant='main' borderType='rounded' opacity={.85}> 
-                      <Typography variant="subtitle2"> Drop in schedule </Typography>
-                      <DragIndicator direction="right" animationStyle="chevrons" size={24} color="#2196F3" className="ml-4 mr-4"/>
-                    </MuiStyledButton>                     
-                  </div>
-                )
-              }
-
-            </>
-          }
-      
-      </div>
-  </>)
+        </div>  
+    </div>
+    </>
+  )
 }
 
 export default EditTaskForm;

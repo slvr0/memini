@@ -224,7 +224,6 @@ const EventCardDisplayList = ({
                 </Typography>
               </MuiStyledButton>
             </Tooltip>
-
         </div>
        
       </CardContent>

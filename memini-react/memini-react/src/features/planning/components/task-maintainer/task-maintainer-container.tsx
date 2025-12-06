@@ -30,8 +30,6 @@ interface TaskMaintainerContainerProps {
 }
 
 const TaskMaintainerContainer: React.FC<TaskMaintainerContainerProps> = (props) => {
-
-
     return (
     <div className="">
       {/* Header Section with Create Task Button */}
