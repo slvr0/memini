@@ -57,7 +57,7 @@ const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplay
     const toggleModal  = () => {
         setOpen(!open)
     }
-
+    
     return (  
         <>  
           <Modal

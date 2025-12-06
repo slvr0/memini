@@ -5,8 +5,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { Typography} from "@mui/material";
 
 const TaskLayoutMini : React.FC<TaskLayoutProps> = (
-    {
-        displayOptions = true,
+    {     
         ...props
     }
 ) => {    
@@ -37,17 +36,7 @@ const TaskLayoutMini : React.FC<TaskLayoutProps> = (
                     >
                     {props.taskTitle}
                 </Typography>
-
-                 {
-                displayOptions && 
-                <div className="flex flex-row gap-0.5 ml-1 flex-shrink-0">
-                    <TaskLayoutOptionPanel                                                  
-                        borderProfile="rounded"
-                        iconSize={11}  
-                        iconOpacity={.8}                  
-                    />           
-                </div>
-                }
+                 
             </div>
    
     )

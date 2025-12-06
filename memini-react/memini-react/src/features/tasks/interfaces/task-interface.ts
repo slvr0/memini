@@ -18,36 +18,20 @@ export type TaskId = number;
 
 export type DateKey = string;
 
-export interface UpdateTaskPayloadAction {
-  oldTask: ITask;
-  newTask: ITask;
-}
-
 export interface TaskLayoutProps {
     taskTitle: string;
-    taskDescription?: string;
-    status: StatusType;
-    displayOptions?: boolean;
+    taskDescription?: string; 
     displayTime? : string;
 }
 
 export interface TaskLayoutOptionPanelProps {
   borderProfile?: keyof typeof MaterialUITheme1Profile.borderProfiles;
   iconSize?: number;
-  iconOpacity?: number;
-  showEdit?: boolean;
-  showDelete?: boolean;
-  showStar?: boolean;
-  showShare?: boolean;
-  onEditClick?: (e: any) => void;
-  onDeleteClick?: (e: any) => void;
-  onStarClick?: (e: any) => void;
-  onShareClick?: (e: any) => void;
+  iconOpacity?: number;  
 }
 
 //Interface Task for Display with calculated metrix and slot information.
-export interface IDisplayTask extends Omit<ITask, 'UserKey'> {
-    status?: StatusType;
+export interface IDisplayTask extends Omit<ITask, 'UserKey'> {    
     height?:number;
     yPosition?:number;
     slotIndex: number; // horizontal alignment

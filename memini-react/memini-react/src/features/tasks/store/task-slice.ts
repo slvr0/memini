@@ -1,5 +1,5 @@
 import { createSlice, createEntityAdapter, PayloadAction } from "@reduxjs/toolkit";
-import type { ITask, IDisplayTask, DateKey, TaskId, UpdateTaskPayloadAction } from "../interfaces/task-interface";
+import type { ITask, IDisplayTask, DateKey, TaskId } from "../interfaces/task-interface";
 import { toDateKey } from "../utils/date-utils";
 import { endsWith } from "lodash";
 

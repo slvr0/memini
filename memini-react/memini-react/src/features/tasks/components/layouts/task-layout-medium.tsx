@@ -21,11 +21,7 @@ const TaskLayoutMedium: React.FC<TaskLayoutProps> = (props) => {
                   }}
                   >
                   {props.displayTime}
-                </Typography>
-              <TaskLayoutOptionPanel 
-                borderProfile="rounded"
-                iconSize={12}  
-                iconOpacity={.8}  />   
+                </Typography>        
             </div> 
         </div>
 

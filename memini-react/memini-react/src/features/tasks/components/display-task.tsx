@@ -29,9 +29,9 @@ const getTaskLayout = (height: number, slotCount: number, props: TaskLayoutProps
   
   switch(category) {
     case 'compact':
-      return <TaskLayoutCompact displayOptions={slotCount === 1}  {...props} />;
+      return <TaskLayoutCompact {...props} />;
     case 'mini':
-      return <TaskLayoutMini displayOptions={slotCount === 1} {...props} />;
+      return <TaskLayoutMini  {...props} />;
     case 'medium':
       return <TaskLayoutMedium {...props} />;
     default:
@@ -100,8 +100,7 @@ const DisplayTask : React.FC<IDisplayTaskCompositionProps> = (props) => {
                   props.displayTask.slotCount,                          
                   { 
                   taskTitle: props.displayTask.Title, 
-                  taskDescription: props.displayTask.Description, 
-                  status: props.displayTask.status ?? TaskStatus.PASSED,  
+                  taskDescription: props.displayTask.Description,   
                   displayTime: mninutesToHHMM_APM(props.displayTask.StartTime)                            
               })}
           

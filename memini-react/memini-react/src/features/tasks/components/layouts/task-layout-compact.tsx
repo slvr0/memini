@@ -4,8 +4,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { Typography } from "@mui/material";
 
 const TaskLayoutCompact : React.FC<TaskLayoutProps> = (
-    {
-        displayOptions = true,        
+    {                
         ...props
     }
 
@@ -24,18 +23,7 @@ const TaskLayoutCompact : React.FC<TaskLayoutProps> = (
                     }}
                 > 
                 {props.taskTitle  +  (props.taskDescription ? ' - ' + props.taskDescription : '' )}
-                </Typography>
-
-                {
-                displayOptions && 
-                <div className="flex flex-row gap-0.5 ml-1 flex-shrink-0">
-                    <TaskLayoutOptionPanel                                                  
-                        borderProfile="rounded"
-                        iconSize={10}  
-                        iconOpacity={.8}                  
-                    />           
-                </div>
-                }
+                </Typography>                
             </div>
      
     )
