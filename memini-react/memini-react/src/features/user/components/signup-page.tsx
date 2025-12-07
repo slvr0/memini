@@ -1,5 +1,5 @@
 import { meminiUserActions } from "../../../store/user-calendar-store";
-import GeneralForm from "../../general/components/general-form"
+
 import { useDispatch, useSelector } from 'react-redux';
 import { registerNewUser } from "../../../services/login-service.js";
 import { useNavigate } from "react-router-dom";

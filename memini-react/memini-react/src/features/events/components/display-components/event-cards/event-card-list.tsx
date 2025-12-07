@@ -26,7 +26,7 @@ interface EventCardProps {
   onSelectActivity?: (node:any) => void;
 }
 
-const EventCardDisplayList = ({
+const EventCardDisplayList = ({   
   nodeKey,
   source,
   category,
@@ -57,7 +57,7 @@ const EventCardDisplayList = ({
   };
 
   const location = [city, country].filter(Boolean).join(', ');
-  console.log(onSelectActivity);
+
   return (
     <Card className="h-full transition-shadow flex flex-col">
       {/* Header: Category and Genre */}

@@ -8,10 +8,14 @@ import { useDrag } from 'react-dnd';
 import { useRef, useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 
-import { minutesToHHMM, mninutesToHHMM_APM  } from "../../../tasks/computes/time-display-formatting";
+import { minutesToHHMM, mninutesToHHMM_APM  } from "../../computes/time-display-formatting";
 import { IDisplayActivity } from '../../interface/activity';
 
+import { CoreNodeSource, CoreNodeType } from '@/interfaces/core-node-interface';
+import { ElectricalServices } from '@mui/icons-material';
 export interface DisplayLayoutProps {
+    location : string;
+    category: string;
     label: string;
     description?: string; 
     displaytime? : string;
@@ -25,7 +29,7 @@ const getHeightCategory = (height: number) => {
 }
 
 export const DragItemType = {
-  TASK: 'displaytask',
+  TASK: 'displaytask', //OLD REMOVE
   ACTIVITY: 'displayactivity'
 } as const;
 
@@ -55,6 +59,39 @@ const DisplayActivity : React.FC<IDisplayActivityCompositionProps> = (props) => 
     const [tooltipOpen, setTooltipOpen] = useState(false);
     const taskWidth = `${(props.activity.slotSpan || 1) / props.activity.slotCount * 100}`;
     const taskLeft = `${props.activity.slotIndex / props.activity.slotCount * 100}`; 
+
+
+    const formatAddress = (displayActivity: IDisplayActivity) => {
+      console.log("activity when trying to format address data", displayActivity);
+
+      let address = "";
+      if(displayActivity.SpatialInfo?.Address)
+        address =  displayActivity.SpatialInfo?.Address;
+
+      if(displayActivity.PoiInfo?.address)
+        address = displayActivity.PoiInfo?.address;
+
+      return address ? address + ", " : address;
+    }
+
+    const formatCategory = (displayActivity: IDisplayActivity) => {
+    
+      if(displayActivity.ContentInfo?.Category)
+        return displayActivity.ContentInfo?.Category;
+      else 
+        return "";
+    }
+
+    const formatLocation = (displayActivity : IDisplayActivity) : string | "" => {
+      if(displayActivity.City || displayActivity.Country || displayActivity.PoiInfo?.address || displayActivity.SpatialInfo?.Address) {
+        let address = formatAddress(displayActivity);
+    
+        return address + displayActivity.City + " " + displayActivity.Country;
+      }
+
+      else 
+        return "";
+    }
     
     const onEditTask = () => {
     //   setSelectedTask(props.activity as IDisplayActivity);
@@ -86,8 +123,7 @@ const DisplayActivity : React.FC<IDisplayActivityCompositionProps> = (props) => 
               onClose={() => setTooltipOpen(false)}
               disableHoverListener={isDragging}              
             >
-        <div className="absolute h-full min-w-0 overflow-hidden border-dashed rounded-md transition-all duration-800 ease-in-out  bg-white border-miTaskHBR
-            hover:border-solid !hover:border-2 hover:animate-pulse hover:shadow-lg hover:bg-miTaskHL" 
+        <div className="absolute h-full min-w-0 overflow-hidden  transition-all duration-800 ease-in-out  hover:border-miTheme2Light hover:bg-miTheme2/25 border border-miTheme2/75" 
             
             onClick={() => onEditTask()}
             ref={drag as any}
@@ -103,10 +139,12 @@ const DisplayActivity : React.FC<IDisplayActivityCompositionProps> = (props) => 
                   props.activity.height ?? 0, 
                   props.activity.slotCount,                          
                   { 
-                  label: props.activity.Label, 
-                  description: props.activity.Description,   
-                  displaytime: mninutesToHHMM_APM(props.activity.StartTime)                            
-              })}
+                    label: props.activity.Label, 
+                    description: props.activity.Description,   
+                    displaytime: mninutesToHHMM_APM(props.activity.StartTime),
+                    location: formatLocation(props.activity),
+                    category: formatCategory(props.activity)                            
+                  })}
           
         </div> 
           </Tooltip>   

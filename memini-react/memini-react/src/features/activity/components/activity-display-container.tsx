@@ -45,20 +45,16 @@ const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplay
             setActivityData: async (node: any) => {            
               setActivityNode(node);
             },
-            setActivityDataFromNodeKey: async (nodeKey: number) => {
-              console.log("Fetching activity data for nodeKey:", nodeKey);
+            setActivityDataFromNodeKey: async (nodeKey: number) => {            
               const response : any =  await getNodeByKeyApi(nodeKey); 
               setActivityNode(response?.ResponseObject ?? null);
             }
         };
     });
 
-    const onSave = (activity: any) => {
-      console.log("activity props", activity);
+    const onSave = (activity: any) => {   
       const activityInstance = Activity.create(activity);
       useActivityStore.getState().addActivity(activityInstance);
-      //addActivity(activityInstance);
-      // Implement save logic here
     }
 
 

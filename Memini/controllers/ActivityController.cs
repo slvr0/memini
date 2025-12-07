@@ -171,6 +171,8 @@ public class ActivityController : ControllerBase
     [Authorize]
     [HttpPost]
     [Route("AddActivity")]
+
+    //this should really be a general node manager that handles saving, should have to re write this for an activity.
     public IActionResult AddActivity([FromBody] DtoActivityNode request)
     {
         if (!int.TryParse(User.FindFirst("UserKey")?.Value, out int userKey))
@@ -194,6 +196,22 @@ public class ActivityController : ControllerBase
                 City = request.City,
                 Type = (int)CoreNodeTypes.Activity
             };
+
+            if(request.SpatialInfo != null)
+                activity.SpatialInfo = request.SpatialInfo.ToEntity();
+
+            if (request.ContentInfo != null)
+                activity.ContentInfo = request.ContentInfo.ToEntity();
+
+            if (request.PoiInfo != null)
+                activity.PoiInfo = request.PoiInfo as PoiInfo;
+
+            if (request.CommercialStatusInfo != null)
+                activity.PoiInfo = request.PoiInfo as PoiInfo;
+
+            if (request.PoiInfo != null)
+                activity.PoiInfo = request.PoiInfo as PoiInfo;
+
 
             _context.CoreNodes.Add(activity);
             _context.SaveChanges();

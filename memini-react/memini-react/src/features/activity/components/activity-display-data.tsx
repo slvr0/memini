@@ -91,20 +91,16 @@ const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode,
         const poiData = poiRef.current?.getValues(); 
 
         const coreNodeData = coreNodeRef.current?.getValues();  
-
-        // console.log("pre spread fields", spatialData, temporalData, contentData, commercialData, poiData, coreNodeData);
         
         const allData = {
-        label: activityTitle,
-        ...coreNodeData     || {},
-        ...spatialData      || {},       
-        ...contentData      || {},
-        ...commercialData   || {},
-        ...poiData          || {},       
+            label: activityTitle,
+            ...spatialData || {},
+            ...coreNodeData     || {},
+            spatialInfo : spatialData, 
+            contentInfo: contentData, 
+            commercialStatusInfo: commercialData,
+            poiInfo: poiData,   
         };
-
-        // console.log("all fields spread", allData);
-
         onSave(allData);        
     }
 
@@ -169,7 +165,7 @@ const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode,
 
                  <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'harmonicBlue' borderType = 'semiStraight' 
                     opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={true} textOpacity={1.0}        
-                    onClick={() => {console.log("clicked")}}
+                    onClick={() => {collectFields()}}
                     >
                     <FileBox size={16} style={{ marginLeft: '0', marginRight: '.25rem', opacity:0.85 }}/>
                     <Typography 

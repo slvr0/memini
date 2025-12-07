@@ -1,5 +1,5 @@
 import { ICalendarDate, ISimpleDate } from "../../../interfaces/common-interfaces";
-import { ICoreNode, CoreNodeSource, CoreNodeType, IContentInfo, IContentMedia, IPointOfInterest, ICommercialInfo } from "../../tasks/interfaces/core-node-interface";
+import { ICoreNode, CoreNodeSource, CoreNodeType, IContentInfo, IContentMedia, IPoiInfo, ICommercialStatusInfo, ISpatialInfo } from "../../../interfaces/core-node-interface";
 
 import { toMinutes } from "../../planning/computes/task-scheduler-computations";
 
@@ -36,17 +36,19 @@ export class Activity implements ICoreNode {
     Description?: string;
     StartDate: dayjs.Dayjs;
     EndDate: dayjs.Dayjs;
-    DateAdded: dayjs.Dayjs;
+    Created: dayjs.Dayjs;
     Country: string;
     CountryCode: string;
     City?: string;
     Type: CoreNodeType;
+    SpatialInfo?: ISpatialInfo;
     ContentInfo?: IContentInfo;
     ContentMedia?: IContentMedia;
-    PointOfInterest?: IPointOfInterest;
-    CommercialInfo?: ICommercialInfo;
+    PoiInfo?: IPoiInfo;
+    CommercialStatusInfo?: ICommercialStatusInfo;
     StartTime: number;
     EndTime: number;
+    
 
     /**
      * Primary constructor - use static factory methods instead
@@ -60,15 +62,15 @@ export class Activity implements ICoreNode {
         this.Description = data.Description;
         this.StartDate = data.StartDate;
         this.EndDate = data.EndDate;
-        this.DateAdded = data.DateAdded;
+        this.Created = data.Created;
         this.Country = data.Country;
         this.CountryCode = data.CountryCode;
         this.City = data.City;
         this.Type = data.Type;
+        this.SpatialInfo = data.SpatialInfo;
         this.ContentInfo = data.ContentInfo;
-        this.ContentMedia = data.ContentMedia;
-        this.PointOfInterest = data.PointOfInterest;
-        this.CommercialInfo = data.CommercialInfo;
+        this.PoiInfo = data.PoiInfo;
+        this.CommercialStatusInfo = data.CommercialStatusInfo;
         this.StartTime = toMinutes(dayjs(data.StartDate));
         this.EndTime = toMinutes(dayjs(data.EndDate));
     }
@@ -94,15 +96,15 @@ export class Activity implements ICoreNode {
             Description: json.Description,
             StartDate: dayjs(json.StartDate),
             EndDate: dayjs(json.EndDate),
-            DateAdded: dayjs(json.DateAdded),
+            Created: dayjs(json.Created),
             Country: json.Country,
             CountryCode: json.CountryCode,
             City: json.City,
             Type: json.Type,
             ContentInfo: json.ContentInfo,
-            ContentMedia: json.ContentMedia,
-            PointOfInterest: json.PointOfInterest,
-            CommercialInfo: json.CommercialInfo,
+            SpatialInfo: json.SpatialInfo,
+            PoiInfo: json.PoiInfo,
+            CommercialStatusInfo: json.CommercialStatusInfo,
             StartTime: toMinutes(dayjs(json.StartDate)),
             EndTime: toMinutes(dayjs(json.EndDate)),
         });
@@ -122,12 +124,11 @@ export class Activity implements ICoreNode {
         city?: string;
         type: CoreNodeType;
         contentInfo?: IContentInfo;
+        spatialInfo?: ISpatialInfo;
         contentMedia?: IContentMedia;
-        pointOfInterest?: IPointOfInterest;
-        commercialInfo?: ICommercialInfo;
+        poiInfo?: IPoiInfo;
+        commercialStatusInfo?: ICommercialStatusInfo;
     }): Activity {
-
-        console.log("PARAMS",params);
         return new Activity({
             Key: 0, // Will be set by database
             OwnerUserkey: params.ownerUserKey,
@@ -141,15 +142,15 @@ export class Activity implements ICoreNode {
             EndDate: typeof params.endDate === 'string' 
                 ? dayjs(params.endDate) 
                 : params.endDate,
-            DateAdded: dayjs(),
+            Created: dayjs(),
             Country: params.country,
             CountryCode: params.countryCode,
             City: params.city,
             Type: params.type,
-            ContentInfo: params.contentInfo,
-            ContentMedia: params.contentMedia,
-            PointOfInterest: params.pointOfInterest,
-            CommercialInfo: params.commercialInfo,
+            ContentInfo: params.contentInfo,   
+            SpatialInfo: params.spatialInfo,
+            PoiInfo: params.poiInfo,
+            CommercialStatusInfo: params.commercialStatusInfo,
             StartTime: toMinutes(dayjs(params.startDate)),
             EndTime: toMinutes(dayjs(params.endDate)),
         });
@@ -293,15 +294,15 @@ export class Activity implements ICoreNode {
             Description: this.Description,
             StartDate: this.StartDate,
             EndDate: this.EndDate,
-            DateAdded: this.DateAdded,
+            Created: this.Created,
             Country: this.Country,
             CountryCode: this.CountryCode,
             City: this.City,
             Type: this.Type,
+            SpatialInfo: this.SpatialInfo,
             ContentInfo: this.ContentInfo,
-            ContentMedia: this.ContentMedia,
-            PointOfInterest: this.PointOfInterest,
-            CommercialInfo: this.CommercialInfo,
+            PoiInfo: this.PoiInfo,
+            CommercialStatusInfo: this.CommercialStatusInfo,
             StartTime: this.StartTime,
             EndTime: this.EndTime,
         };
@@ -320,15 +321,16 @@ export class Activity implements ICoreNode {
             description: this.Description,
             startDate: this.StartDate.toISOString(),
             endDate: this.EndDate.toISOString(),
-            dateAdded: this.DateAdded.toISOString(),
+            Created: this.Created.toISOString(),
             country: this.Country,
             countryCode: this.CountryCode,
             city: this.City,
             type: this.Type,
+            spatialInfo: this.SpatialInfo,
             contentInfo: this.ContentInfo,
             contentMedia: this.ContentMedia,
-            pointOfInterest: this.PointOfInterest,
-            commercialInfo: this.CommercialInfo,
+            poiInfo: this.PoiInfo,
+            commercialStatusInfo: this.CommercialStatusInfo,
             startTime: this.StartTime,
             endTime: this.EndTime,
         };

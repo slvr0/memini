@@ -19,9 +19,7 @@ interface EventsContentContainerProps {
 const EventsContentContainer : React.FC<EventsContentContainerProps> = (props) => {
     const activityDisplayRef = useRef<ActivityDisplayRef>(null);
 
-    const onSelectActivity  = async (node: any) => {
-
-        console.log("Selected activity with nodeKey:", node);    
+    const onSelectActivity  = async (node: any) => {   
         await activityDisplayRef.current?.setActivityData(node);
         activityDisplayRef.current?.openModal();
     }

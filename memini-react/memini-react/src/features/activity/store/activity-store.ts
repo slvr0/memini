@@ -2,9 +2,10 @@
 // stores/activityStore.ts
 // ============================================
 import { create } from 'zustand';
-import { Activity } from '../interface/activity';
+import { Activity, IDisplayActivity } from '../interface/activity';
 import * as activityApi from './activity-api';
 import dayjs from 'dayjs';
+import { ICalendarDate } from '@/interfaces/common-interfaces';
 
 interface ActivityStore {
     activities: Activity[];
@@ -18,6 +19,7 @@ interface ActivityStore {
     addActivity: (activity: Activity) => Promise<Activity | null>;
     updateActivity: (activity: Activity) => Promise<Activity | null>;
     deleteActivity: (activity: Activity) => Promise<void>;
+    updateActivityFromDragEvent: (activity: IDisplayActivity, weekday: ICalendarDate, relativeY: number, containerHeight: number) => void;
 }
 
 export const useActivityStore = create<ActivityStore>((set, get) => ({
@@ -94,6 +96,10 @@ export const useActivityStore = create<ActivityStore>((set, get) => ({
             set({ error: response.Message, loading: false });
             return null;
         }
+    },
+
+    updateActivityFromDragEvent: (activity: IDisplayActivity, weekday: ICalendarDate, relativeY: number, containerHeight: number) : void => {
+
     },
 
     deleteActivity: async (activity: Activity) => {

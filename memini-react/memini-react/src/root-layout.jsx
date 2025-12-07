@@ -1,23 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
-
-import MainMenuBar from './features/general/components/main-menu-bar';
-import DateSelector from './features/planning/components/date-selector';
-import CalendarMonthDisplay from './features/planning/components/calendar-month-display';
+import MainMenuBar from './features/homepage/components/main-menu-bar';
 import LoginPage from './features/user/components/login-page';
-
 import { useSelector } from 'react-redux';
-
-import { Typography, Box } from "@mui/material";
-
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
-
 import { ThemeProvider } from '@mui/material/styles';
-
 import theme from './theme';
-import { Plug, ChevronUp, ChevronDown, Slash, ChevronsUpDown, Globe, Globe2, Boxes, Combine } from 'lucide-react';
-import { Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText } from "lucide-react";
-import LucidIconButton from "./lucid/lucid-button-icon"
-import SideMenuPanel from './features/general/components/side-menu-panel';
+import SideMenuPanel from './features/homepage/components/side-menu-panel';
 
 const RootLayout = () => {
   const userSession = useSelector((state) => state.meminiUser.userSession);

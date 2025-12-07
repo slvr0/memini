@@ -20,9 +20,9 @@ public class DtoCoreNode
     public string Country { get; set; } = string.Empty;
 
     public object? CommercialStatusInfo { get; set; } = null!;
-    public object? ContentInfo { get; set; } = null!;
+    public DtoContentInfo? ContentInfo { get; set; } = null!;
     public object? PoiInfo { get; set; } = null!;
-    public object? SpatialInfo { get; set; } = null!;
+    public DtoSpatialInfo? SpatialInfo { get; set; } = null!;
     public object? WeatherInfo { get; set; } = null!;
 }   
 
@@ -46,9 +46,9 @@ public static class CoreNodeExtension {
             Country = node.Country,
             OwnerUserkey = node.OwnerUserkey,
             CommercialStatusInfo = node.CommercialStatusInfo,
-            ContentInfo = node.ContentInfo,
+            ContentInfo = node.ContentInfo?.ToDto(),
             PoiInfo = node.PoiInfo,
-            SpatialInfo = node.SpatialInfo,
+            SpatialInfo = node.SpatialInfo?.ToDto(),
             WeatherInfo = node.WeatherInfo
         };
     }    

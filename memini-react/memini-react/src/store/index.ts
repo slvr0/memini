@@ -1,12 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import tasksReducer from "../features/tasks/store/task-slice";
 import { calendarSlices  } from "./user-calendar-store";
 import { positionSlice } from "./position-store";
 // Add more reducers as you modularize
 const store = configureStore({
   reducer: {    
     ...calendarSlices,
-    tasks: tasksReducer,
     location: positionSlice.reducer,
   },
 });

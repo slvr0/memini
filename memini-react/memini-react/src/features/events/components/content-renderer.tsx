@@ -91,7 +91,6 @@ const ContentRenderer: React.FC<ContentRendererProps> = ({ type, className = "",
     const config = contentConfigs[type];
     const [{ data, loading, error, pagination }, { goToPage }] = config.hook(); 
 
-    console.log(onSelectActivity);
     return (
         <div className={`flex flex-col ${className}`}>
             {/* Sticky Header Row */}

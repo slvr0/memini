@@ -13,28 +13,29 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import DiscreteDoubleTimeSlider from "../../../mui-wrappers/mui-double-time-slider-wrapper"
 import type {TimeSliderRef, DiscreteDoubleTimeSliderProps,MuiDatePickerRef} from "../../../mui-wrappers/interfaces/mui-interfaces";
-import { minutesToHHMM } from "../../tasks/computes/time-display-formatting";
+import { minutesToHHMM } from "../computes/time-display-formatting";
 import MuiStyledButton from "../../../mui-wrappers/mui-button-wrapper";
 import MuiStyledTextField from "../../../mui-wrappers/mui-textfield-wrapper";
 import { PackagePlus} from "lucide-react";
 
 import MuiStyledDatePicker from "../../../mui-wrappers/mui-datepicker-wrapper";
 
-import { IDisplayTask, ITask } from "../../tasks/interfaces/task-interface";
+
 import { useEffect, useRef } from 'react';
 import {DragIndicator} from "../../../lucid/lucid-anim-demo-2";
 import {LoadingSpinner, SparklingIcon, BouncingArrow} from "../../../lucid/lucid-animated-button-icon";
 import LucidIconButton from "../../../lucid/lucid-button-icon"
 import { CircleX } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTaskManager } from "../../tasks/utils/task-manager";
+
 import { RootState } from "../../../store/index";
-import { userTasksActions } from "../../tasks/store/task-slice";
+
 import { ISimpleDate } from '@/interfaces/common-interfaces';
 import { AddTask } from '@mui/icons-material';
 import { useDrag } from 'react-dnd';
-import { DragItemType } from '../../tasks/components/display-task';
+
 import dayjs, { Dayjs } from 'dayjs';
+import { Activity } from '../interface/activity';
 
 //now + 1 hour
 const defaultInterval = () : number[] => {
@@ -44,15 +45,6 @@ const defaultInterval = () : number[] => {
   return [start, end];
 }
 
-const taskDateToDayJs = (task: ITask | IDisplayTask | null): Dayjs => {  
-  if (!task) return dayjs();
-  
-  return dayjs()
-    .set('year', task.Year)
-    .set('month', task.Month)
-    .set('date', task.Day);
-};
-
 const dayJsToTaskDate = (date: Dayjs): ISimpleDate => {
   return {
     year: date.year(),
@@ -61,25 +53,28 @@ const dayJsToTaskDate = (date: Dayjs): ISimpleDate => {
   };
 };
 
-const intervalFromTask = (task : ITask | null) => {
-  if (task) {    
-  return [task.StartTime, task.EndTime];
+
+
+const intervalFromActivity = (activity?: Activity | null) => {
+  if (activity) {    
+  return [activity.StartTime, activity.EndTime];
   } else 
   return defaultInterval();
 };
 
-const dateFromTaskorNull = (task: ITask | null) : ISimpleDate | null => task ? {year: task.Year, month: task.Month, day: task.Day} : null;  
+const dayJsFromActivity = (activity?: Activity | null): Dayjs => activity?.StartDate ?? dayjs();
 
 interface CoreNodeEditFormProps {
-  //
+  activity?:Activity;
 }
 
 export interface CoreNodeRef {
     getValues: () => void;  
 }
 
+const CoreNodeEditForm = forwardRef<CoreNodeRef, CoreNodeEditFormProps>((props, ref) => {
 
-const CoreNodeEditForm = forwardRef<CoreNodeRef, CoreNodeEditFormProps>((props,ref) => {
+  
 
   useImperativeHandle(ref, () => {
     return {
@@ -90,8 +85,6 @@ const CoreNodeEditForm = forwardRef<CoreNodeRef, CoreNodeEditFormProps>((props,r
   });
 
   const getCoreNodeData = () => { 
-    const StartTime : number = taskTimeInterval[0] ? taskTimeInterval[0]: 0;
-    const EndTime   : number = taskTimeInterval[1] ? taskTimeInterval[1]: 0;
     const taskDate           = dayJsToTaskDate(selectedDate);
     if(!taskDate) {
       alert("Please select a valid date for the task.");
@@ -122,73 +115,18 @@ const CoreNodeEditForm = forwardRef<CoreNodeRef, CoreNodeEditFormProps>((props,r
 
   }
 
-
-  const createTaskFromFormData = (
-      taskTimeInterval: number[],
-      taskDateRef : any,
-      taskTitle: string,
-      taskDescription:string,
-    ) : Omit<ITask, 'UserKey'> | void => {
-    const StartTime : number = taskTimeInterval[0] ? taskTimeInterval[0]: 0;
-    const EndTime   : number = taskTimeInterval[1] ? taskTimeInterval[1]: 0;
-    const taskDate           = dayJsToTaskDate(selectedDate);
-    if(!taskDate) {
-      alert("Please select a valid date for the task.");
-      return;
-    }
-    const userTask : Omit<ITask, 'UserKey'> = { 
-      UserTaskKey: selectedTask?.UserTaskKey ?? 0,                      
-      Year: taskDate.year,
-      Month: taskDate.month,
-      Day: taskDate.day,
-      Title: taskTitle,
-      Description: taskDescription,
-      StartTime: StartTime,
-      EndTime: EndTime
-    };
-    return userTask;
-  }
-  const editTaskExist = () => selectedTask && selectedTask.UserTaskKey !== 0;  
-  const cancelEditing = () => {
-    clearSelection();    
-  }
-
-  const clearSelection = () => {
-    if(selectedTask === null) {
-      setTaskTitle("");
-      setTaskDescription("");
-      setTaskTimeInterval(intervalFromTask(null));
-      
-  } else 
-      dispatch(userTasksActions.clearSelectedTask());
-  }
-
-  const onDeleteUserTask = (userTask: ITask | null) => {
-    if(userTask === null)
-      return;
-
-    deleteTask(userTask);
-    cancelEditing();      
-  } 
-
-  const { updateTask, deleteTask, addTask } = useTaskManager();  
-  const selectedTask      = useSelector((state : RootState ) => state.tasks.selectedTask);    
-  const dispatch          = useDispatch(); 
-
   const [taskTitle, setTaskTitle] = useState<string> ("");
   const [taskDescription, setTaskDescription] = useState<string> ("");
-  const [taskTimeInterval, setTaskTimeInterval] = useState<number[]> (intervalFromTask(selectedTask));
+  const [taskTimeInterval, setTaskTimeInterval] = useState<number[]> (intervalFromActivity(props.activity));
   const [selectedDate, setSelectedDate] = useState<Dayjs>(
-    taskDateToDayJs(selectedTask)
+    dayJsFromActivity(props.activity)
   );
 
   useEffect(() => {
-    setTaskTitle(selectedTask?.Title || "");
-    setTaskDescription(selectedTask?.Description || "");
-    setTaskTimeInterval(intervalFromTask(selectedTask));
-    setSelectedDate(taskDateToDayJs(selectedTask));
-
-  }, [selectedTask]);  
+    setTaskTitle(props.activity?.Label || "");
+    setTaskDescription(props.activity?.Description || "");
+    setTaskTimeInterval(intervalFromActivity(props.activity));
+  }, [props.activity]);  
 
 
   return (<>
@@ -200,14 +138,6 @@ const CoreNodeEditForm = forwardRef<CoreNodeRef, CoreNodeEditFormProps>((props,r
                 Schedule details
             </Typography>  
         </div>
-
-        { editTaskExist() && 
-          <div className="col-span-1 flex items-center justify-end mt-4">
-            <MuiStyledButton themeColor = 'light' buttonSize = 'xs' buttonVariant = 'harmonicRed' borderType = 'semiStraight' opacity={.85} onClick={() => {onDeleteUserTask(selectedTask)}}>                    
-              <Typography variant="subtitle2" fontSize={9}> Delete </Typography>
-            </MuiStyledButton> 
-          </div>
-        }
 
         <div className="col-span-6 border-t border-t-gray-200 w-3/4 mt-2">
         </div>

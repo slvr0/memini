@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { Air } from '@mui/icons-material';
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { formatTimestampz } from "../../../../tasks/computes/time-display-formatting"
+import { formatTimestampz } from "../../../../activity/computes/time-display-formatting"
 import SourceLogoDisplay, {SourceAttribution} from "../../source-logos";
 interface WeatherInfo {
   WeatherInfoKey: number;

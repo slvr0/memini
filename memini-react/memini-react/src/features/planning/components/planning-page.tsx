@@ -1,8 +1,8 @@
 import React, { Fragment, useEffect, createRef,useState, useRef } from "react";
-import QuoteSegment from "../../general/components/quote-segment";
-import TaskSchedulerContainer from "./task-scheduler/task-scheduler-container";
-import TaskMaintainerContainer from "./task-maintainer/task-maintainer-container"
-import MuiModal from "../../general/components/mui-modal";
+
+import PlanningScheduleContainer from "./planning-schedule/planning-schedule-container";
+import PlanningManagementContainer from "./planning-management/planning-management-container"
+
 
 import { Typography, Box } from "@mui/material";
 import { Plug, ChevronUp, ChevronDown, Slash, ChevronsUpDown, Globe, Globe2, Boxes, Combine } from 'lucide-react';
@@ -15,7 +15,7 @@ function PlanningPage() {
      
     const schedulerParentRef = useRef(null); //clear name convention, this is to calculate if scroll is needed, not to be used for imperative handling.
 
-    const SCHEDULER_CONTAINER_STATIC_HEIGHT = 750;
+    const SCHEDULER_CONTAINER_STATIC_HEIGHT = window.innerHeight * .85;
     const TIME_SLOT_STATIC_HEIGHT = SCHEDULER_CONTAINER_STATIC_HEIGHT * 0.0416666666666667; 
 
     return <> 
@@ -34,13 +34,13 @@ function PlanningPage() {
             <div className="grid grid-cols-12 h-full">
                 <div className="col-span-2 border-r border-r-gray-200 h-full">
                      <DndProvider backend={HTML5Backend}>
-                        <TaskMaintainerContainer/>
+                        <PlanningManagementContainer/>
                     </DndProvider>
                 </div>
 
                 <div className="col-span-10 border-r border-r-gray-200 h-full ">                        
                         <div ref={schedulerParentRef}>
-                            <TaskSchedulerContainer   
+                            <PlanningScheduleContainer   
                                 schedulerHeight={SCHEDULER_CONTAINER_STATIC_HEIGHT}
                                 timeslotHeight={TIME_SLOT_STATIC_HEIGHT}
                                 ref={schedulerParentRef}/>
