@@ -2,7 +2,7 @@ import React, { useRef, forwardRef, useImperativeHandle, useState, useEffect } f
 
 import MUI_StyledSegment from '../../../mui-wrappers/mui-segment-wrapper';
 import LucidIconButton from '../../../lucid/lucid-button-icon';
-import { Bell, HelpCircle, MessageSquareText, Settings, Codepen, MapPin } from 'lucide-react';
+import { Bell, HelpCircle, MessageSquareText, Settings, Codepen, MapPin, CircleDotDashed } from 'lucide-react';
 import { Typography } from '@mui/material';
 
 import {Modal, Box} from '@mui/material';
@@ -10,8 +10,6 @@ import {Modal, Box} from '@mui/material';
 import MuiStyledTextField from "../../../mui-wrappers/mui-textfield-wrapper";
 import MuiStyledDatePicker from "../../../mui-wrappers/mui-datepicker-wrapper";
 import { LucideProps } from "lucide-react";
-
-
 
 const FORMFIELD_PRESETS_1 =  {
     paletteProfile: 'main',
@@ -29,6 +27,7 @@ const FORMFIELD_PRESETS_1 =  {
 
 
 interface fieldInput {
+    variable: string;
     label: string;
     value: string | number | boolean | Date;
     editable?: boolean;
@@ -39,11 +38,13 @@ interface FormattedIconFieldProps {
         Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
     >;
     label? : string;
+    fixedHeight? : string; //input as tailwind class height
     inputFields : fieldInput[]
+    
 }
 
 export interface FormattedIconFieldRef {
-    getValues: () => void;  
+    getValues: () => any;  
 }
 
 const FormattedIconField = forwardRef<FormattedIconFieldRef, FormattedIconFieldProps>(
@@ -59,8 +60,8 @@ const FormattedIconField = forwardRef<FormattedIconFieldRef, FormattedIconFieldP
             return {
                 getValues() {
                     return Object.fromEntries(
-                        values.map(field => [field.label, field.value])
-                    ) as Record<string, string | number | boolean | Date>;                 
+                        values.map(field => [field.variable, field.value])
+                    ) as any;                 
                 }
             };
         });
@@ -77,13 +78,25 @@ const FormattedIconField = forwardRef<FormattedIconFieldRef, FormattedIconFieldP
             else
                 return value.toString();            
         }   
+        let containerClassName = `grid grid-cols-4 gap-2 ${props.fixedHeight ?? ""}`
 
         return (            
-            <div className="grid grid-cols-4 gap-4">  
+            <div className={containerClassName}>  
+                {
+                    props.label &&
+                    <div className="flex col-span-4 gap-4 items-center justify-center">
+
+                        
+                        <Typography variant="overline" className="text-black opacity-75 break-words overflow-wrap" fontSize={11}>
+                            {props.label}                
+                        </Typography>
+                    </div>
+                }
+
                 <div className="flex col-span-1 items-center justify-center">
-                <div className="bg-miInfoBoxBackgroundStrong rounded-xl p-3">
-                    <Icon size={24} className="text-black opacity-50" />
-                </div>
+                    <div className="bg-miInfoBoxBackgroundStrong rounded-xl p-3">
+                        <Icon size={24} className="text-black opacity-50" />
+                    </div>
                 </div>
                 <div className="flex flex-col col-span-3 justify-center">                
                     {
@@ -96,7 +109,7 @@ const FormattedIconField = forwardRef<FormattedIconFieldRef, FormattedIconFieldP
                                         size='small'
                                         id="outlined"
                                         label={field.label}
-                                        placeholder="Place to go"
+                                        placeholder={field.label}
                                         value={formatOutput(field.value)}
                                         onChange={(e) => {onUpdateFieldValue(index, e.target.value)}}
                                         variant="standard"
@@ -106,9 +119,12 @@ const FormattedIconField = forwardRef<FormattedIconFieldRef, FormattedIconFieldP
 
                                 {
                                     !field.editable && 
-                                    <Typography variant="subtitle2" className="text-black opacity-75 break-words overflow-wrap">
-                                        <strong>{field.label}:</strong> {field.value.toString()}
-                                    </Typography>
+                                    <div className="mt-1">
+                                        <Typography variant="subtitle2" className="text-black opacity-75 break-words overflow-wrap" fontSize={11}>
+                                            {field.label}: {field.value.toString()}
+                                        </Typography>
+                                    </div>
+                                  
                                 }
                             
                             </div> 

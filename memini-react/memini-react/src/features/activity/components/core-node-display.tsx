@@ -117,7 +117,7 @@ const CoreNodeEditForm = forwardRef<CoreNodeRef, CoreNodeEditFormProps>((props,r
     return {
       startDate,
       endDate,
-      taskDescription
+      description: taskDescription
     }
 
   }

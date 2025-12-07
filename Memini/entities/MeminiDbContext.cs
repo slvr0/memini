@@ -245,6 +245,8 @@ public partial class MeminiDbContext : DbContext
 
             entity.HasIndex(e => e.Label, "idx_core_node_label");
 
+            entity.HasIndex(e => e.OwnerUserkey, "idx_core_node_owner_userkey");
+
             entity.HasIndex(e => e.Source, "idx_core_node_source");
 
             entity.HasIndex(e => e.StartDate, "idx_core_node_start");
@@ -277,15 +279,15 @@ public partial class MeminiDbContext : DbContext
             entity.Property(e => e.Label)
                 .HasMaxLength(2000)
                 .HasColumnName("label");
-            entity.Property(e => e.OwnerUserId).HasColumnName("owner_user_id");
+            entity.Property(e => e.OwnerUserkey).HasColumnName("owner_userkey");
             entity.Property(e => e.Source)
                 .HasMaxLength(50)
                 .HasColumnName("source");
             entity.Property(e => e.StartDate).HasColumnName("start_date");
             entity.Property(e => e.Type).HasColumnName("type");
 
-            entity.HasOne(d => d.OwnerUser).WithMany(p => p.CoreNodes)
-                .HasForeignKey(d => d.OwnerUserId)
+            entity.HasOne(d => d.OwnerUserkeyNavigation).WithMany(p => p.CoreNodes)
+                .HasForeignKey(d => d.OwnerUserkey)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("core_node_owner_user_id_fkey");
         });

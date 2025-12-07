@@ -9,6 +9,9 @@ import { set } from 'lodash';
 import { X } from 'lucide-react';   
 import {getEventsFromAll, getNodeByKeyApi} from '../../events/store/events-api';
 
+import { Activity } from '../interface/activity';
+import { useActivityStore } from "../store/activity-store"
+
 const enum ActivityDisplayModes {
   MODAL,
   PAGE
@@ -16,9 +19,8 @@ const enum ActivityDisplayModes {
 
 interface ActivityDisplayProps {
   displayMode?: ActivityDisplayModes;
-  canToggleActivityView?: boolean;
-}
 
+}
 
 export interface ActivityDisplayRef {
   openModal: () => void;
@@ -30,6 +32,7 @@ const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplay
     (props, ref) => { 
     
     const [activityNode, setActivityNode] = useState<any>(null);
+    const { loading, error, addActivity } = useActivityStore();
 
     useImperativeHandle(ref, () => {
         return {
@@ -49,6 +52,15 @@ const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplay
             }
         };
     });
+
+    const onSave = (activity: any) => {
+      console.log("activity props", activity);
+      const activityInstance = Activity.create(activity);
+      useActivityStore.getState().addActivity(activityInstance);
+      //addActivity(activityInstance);
+      // Implement save logic here
+    }
+
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -79,7 +91,7 @@ const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplay
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '60vw',
+                width: '40vw',
                 height: '80vh',
                 bgcolor: 'background.paper',
                 boxShadow: 24,
@@ -88,7 +100,7 @@ const ActivityDisplayContainer  = forwardRef<ActivityDisplayRef, ActivityDisplay
                 overflow: 'hidden',
                 p: 4,
               }}>
-                <ActivityDisplayData activityNode={activityNode} canToggleActivityView={props.canToggleActivityView}/>  
+                <ActivityDisplayData activityNode={activityNode} onSave={(data:any) => {onSave(data)}}/>  
               </Box>
                      
             </Modal>

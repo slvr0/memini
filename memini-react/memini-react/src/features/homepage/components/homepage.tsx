@@ -39,14 +39,14 @@ const HomePage = () => {
       sx={{
         bgcolor: '#fff',
         maxHeight: '100vh',
-        overflowY: 'auto',
+        overflowY: 'none',
       }}
     >
       {/* Main Content */}
       <Container
         maxWidth="lg"
         sx={{
-          py: { xs: 6, md: 10 },
+          py: { xs: 6, md: 10 },overflowX: 'hidden',
         }}
       >
         {/* Logo/Brand Section */}
@@ -60,7 +60,7 @@ const HomePage = () => {
                width: 80,
               height: 80,
               borderRadius: '20px',
-             
+             overflowX: 'hidden',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -360,6 +360,7 @@ const HomePage = () => {
                   minWidth: 140,
                   height: 60,
                   display: 'flex',
+                  overflowX: 'hidden',
                   alignItems: 'center',
                   justifyContent: 'center',
                   filter: 'grayscale(100%)',

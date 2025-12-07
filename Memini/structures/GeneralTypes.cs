@@ -3,7 +3,7 @@
 
 public enum CoreNodeTypes
 {
-    Internal = 0, // you can base the node on anything
+    Activity = 0, // you can base the node on anything
     Event = 1,
     PointOfInterest = 2,
     News = 3,

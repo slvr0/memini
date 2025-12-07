@@ -1,5 +1,7 @@
+import { ICalendarDate, ISimpleDate } from "../../../interfaces/common-interfaces";
+import { ICoreNode, CoreNodeSource, CoreNodeType, IContentInfo, IContentMedia, IPointOfInterest, ICommercialInfo } from "../../tasks/interfaces/core-node-interface";
 
-import { ICalendarDate, ISimpleDate } from "../../interfaces/common-interfaces";
+import { toMinutes } from "../../planning/computes/task-scheduler-computations";
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -8,9 +10,7 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-import { ICoreNode, CoreNodeSource, CoreNodeType, IContentInfo, IContentMedia, IPointOfInterest, ICommercialInfo } from "../tasks/interfaces/core-node-interface";
-
-export interface IDisplayNode extends Omit<ICoreNode, 'Key'> {    
+export interface IDisplayActivity extends Omit<ICoreNode, 'Key'> {    
     height?:number;
     yPosition?:number;
     slotIndex: number; // horizontal alignment
@@ -25,11 +25,11 @@ export interface IExtractedDateTime {
 }
 
 // ============================================
-// CoreNode Class (implements ICoreNode)
+// Activity Class (implements ICoreNode) to create user activities with core node structures that can be scheduled alsor.
 // ============================================
-export class CoreNode implements ICoreNode {
+export class Activity implements ICoreNode {
     Key: number;
-    OwnerKey?: number;
+    OwnerUserkey?: number;
     Source: CoreNodeSource;
     Guid: string;
     Label: string;
@@ -45,13 +45,15 @@ export class CoreNode implements ICoreNode {
     ContentMedia?: IContentMedia;
     PointOfInterest?: IPointOfInterest;
     CommercialInfo?: ICommercialInfo;
+    StartTime: number;
+    EndTime: number;
 
     /**
      * Primary constructor - use static factory methods instead
      */
     private constructor(data: ICoreNode) {
         this.Key = data.Key;
-        this.OwnerKey = data.OwnerKey;
+        this.OwnerUserkey = data.OwnerUserkey;
         this.Source = data.Source;
         this.Guid = data.Guid;
         this.Label = data.Label;
@@ -67,19 +69,25 @@ export class CoreNode implements ICoreNode {
         this.ContentMedia = data.ContentMedia;
         this.PointOfInterest = data.PointOfInterest;
         this.CommercialInfo = data.CommercialInfo;
+        this.StartTime = toMinutes(dayjs(data.StartDate));
+        this.EndTime = toMinutes(dayjs(data.EndDate));
     }
 
     // ============================================
     // Static Factory Methods
     // ============================================
 
+    static fromJsonArray(jsonArray: any[]): Activity[] {
+        return jsonArray.map(json => Activity.fromJson(json));
+    }
+
     /**
      * Create from database row (most common)
      */
-    static fromJson(json: any): CoreNode {
-        return new CoreNode({
+    static fromJson(json: any): Activity {
+        return new Activity({
             Key: json.Key,
-            OwnerKey: json.OwnerKey,
+            OwnerUserkey: json.OwnerUserkey,
             Source: json.Source,
             Guid: json.Guid,
             Label: json.Label,
@@ -95,18 +103,20 @@ export class CoreNode implements ICoreNode {
             ContentMedia: json.ContentMedia,
             PointOfInterest: json.PointOfInterest,
             CommercialInfo: json.CommercialInfo,
+            StartTime: toMinutes(dayjs(json.StartDate)),
+            EndTime: toMinutes(dayjs(json.EndDate)),
         });
     }
     /**
      * Create new node (for user-created entries)
      */
     static create(params: {
-        ownerKey: number;
+        ownerUserKey: number;
         source: CoreNodeSource;
         label: string;
         description?: string;
-        startDate: dayjs.Dayjs;
-        endDate: dayjs.Dayjs;
+        startDate: dayjs.Dayjs | string;
+        endDate: dayjs.Dayjs | string;
         country: string;
         countryCode: string;
         city?: string;
@@ -115,16 +125,22 @@ export class CoreNode implements ICoreNode {
         contentMedia?: IContentMedia;
         pointOfInterest?: IPointOfInterest;
         commercialInfo?: ICommercialInfo;
-    }): CoreNode {
-        return new CoreNode({
+    }): Activity {
+
+        console.log("PARAMS",params);
+        return new Activity({
             Key: 0, // Will be set by database
-            OwnerKey: params.ownerKey,
+            OwnerUserkey: params.ownerUserKey,
             Source: params.source,
             Guid: crypto.randomUUID(), // Generate new GUID
             Label: params.label,
             Description: params.description,
-            StartDate: params.startDate,
-            EndDate: params.endDate,
+            StartDate: typeof params.startDate === 'string' 
+                ? dayjs(params.startDate) 
+                : params.startDate,
+            EndDate: typeof params.endDate === 'string' 
+                ? dayjs(params.endDate) 
+                : params.endDate,
             DateAdded: dayjs(),
             Country: params.country,
             CountryCode: params.countryCode,
@@ -134,36 +150,16 @@ export class CoreNode implements ICoreNode {
             ContentMedia: params.contentMedia,
             PointOfInterest: params.pointOfInterest,
             CommercialInfo: params.commercialInfo,
+            StartTime: toMinutes(dayjs(params.startDate)),
+            EndTime: toMinutes(dayjs(params.endDate)),
         });
-    }
-
-    /**
-     * Create from API response (e.g., Ticketmaster)
-     */
-    static fromApi(apiData: any, source: CoreNodeSource): CoreNode {
-        // Adapt based on your API structure
-        return new CoreNode({
-            Key: 0,
-            Source: source,
-            Guid: apiData.id || crypto.randomUUID(),
-            Label: apiData.name || apiData.title,
-            Description: apiData.description,
-            StartDate: dayjs(apiData.dates?.start?.dateTime),
-            EndDate: dayjs(apiData.dates?.end?.dateTime || apiData.dates?.start?.dateTime),
-            DateAdded: dayjs(),
-            Country: apiData._embedded?.venues?.[0]?.country?.name || '',
-            CountryCode: apiData._embedded?.venues?.[0]?.country?.countryCode || '',
-            City: apiData._embedded?.venues?.[0]?.city?.name,
-            Type: CoreNodeType.Event, // Adjust based on API
-            // Map additional fields...
-        });
-    }
+    }   
 
     /**
      * Clone with modifications
      */
-    clone(modifications?: Partial<ICoreNode>): CoreNode {
-        return new CoreNode({
+    clone(modifications?: Partial<ICoreNode>): Activity {
+        return new Activity({
             ...this.toInterface(),
             ...modifications,
         });
@@ -290,7 +286,7 @@ export class CoreNode implements ICoreNode {
     toInterface(): ICoreNode {
         return {
             Key: this.Key,
-            OwnerKey: this.OwnerKey,
+            OwnerUserkey: this.OwnerUserkey,
             Source: this.Source,
             Guid: this.Guid,
             Label: this.Label,
@@ -306,6 +302,8 @@ export class CoreNode implements ICoreNode {
             ContentMedia: this.ContentMedia,
             PointOfInterest: this.PointOfInterest,
             CommercialInfo: this.CommercialInfo,
+            StartTime: this.StartTime,
+            EndTime: this.EndTime,
         };
     }
 
@@ -315,7 +313,7 @@ export class CoreNode implements ICoreNode {
     toJSON(): any {
         return {
             key: this.Key,
-            ownerKey: this.OwnerKey,
+            ownerKey: this.OwnerUserkey,
             source: this.Source,
             guid: this.Guid,
             label: this.Label,
@@ -331,6 +329,8 @@ export class CoreNode implements ICoreNode {
             contentMedia: this.ContentMedia,
             pointOfInterest: this.PointOfInterest,
             commercialInfo: this.CommercialInfo,
+            startTime: this.StartTime,
+            endTime: this.EndTime,
         };
     }
 }

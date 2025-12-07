@@ -31,7 +31,7 @@ public partial class CoreNode
 
     public string? Country { get; set; }
 
-    public int? OwnerUserId { get; set; }
+    public int? OwnerUserkey { get; set; }
 
     public virtual CommercialStatusInfo? CommercialStatusInfo { get; set; }
 
@@ -39,7 +39,7 @@ public partial class CoreNode
 
     public virtual ICollection<NewsInfo> NewsInfos { get; set; } = new List<NewsInfo>();
 
-    public virtual User? OwnerUser { get; set; }
+    public virtual User? OwnerUserkeyNavigation { get; set; }
 
     public virtual PoiInfo? PoiInfo { get; set; }
 

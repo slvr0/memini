@@ -59,6 +59,15 @@ namespace MeminiEventAPI.structures
         public int FilledFields { get; set; }
     }
 
+    public enum ApiSources
+    {
+        Ticketmaster,
+        FourSquare,
+        PredictHQ,
+        TheNewsApi,
+        OpenMeteo
+    }
+
     public interface IMapper<TSource, TResult>
     {
         MappingResult<TResult> Map(TSource source);

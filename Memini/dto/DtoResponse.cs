@@ -51,4 +51,9 @@ public static class DtoResponseExtensions
     {
         return new NotFoundObjectResult(response);
     }
+
+    public static IActionResult ToNotAuthorizedResult<T>(this DtoResponse<T> response)
+    {
+        return new UnauthorizedObjectResult(response);
+    }
 }

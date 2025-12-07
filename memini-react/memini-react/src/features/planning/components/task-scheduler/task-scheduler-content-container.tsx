@@ -11,13 +11,14 @@ import {ICalendarDate} from "../../../../interfaces/common-interfaces"
 import { useState, useRef, createRef } from "react";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-
+import { Activity } from "@/features/activity/interface/activity";
+import dayjs from "dayjs";
 interface TaskSchedulerContentContainerProps  { 
     schedulerHeight: number;
     timeslotHeight: number;
     week: number;
     weekdays: Array<ICalendarDate>;
-    tasks?: Array<ITask[]>  
+    tasks?: Array<ITask[]>   
 }
 
 const TaskSchedulerContentContainer : React.FC<TaskSchedulerContentContainerProps> = (props) => {  
@@ -40,7 +41,6 @@ const TaskSchedulerContentContainer : React.FC<TaskSchedulerContentContainerProp
     return (
         <>        
             <TaskSchedulerWeekDaysHeader 
-            
                 week={props.week}
                 weekdays={props.weekdays}                        
             /> 
@@ -61,7 +61,10 @@ const TaskSchedulerContentContainer : React.FC<TaskSchedulerContentContainerProp
                     />
                     {
                         props.weekdays.map((weekday: ICalendarDate, i: number) => {
-                                return (<TaskSchedulerDailyContainer key={i} containerHeight={props.schedulerHeight} weekday={weekday} 
+                                return (<TaskSchedulerDailyContainer key={i} 
+                                    containerHeight={props.schedulerHeight} 
+                                    weekday={weekday}                            
+                                    
                                 />);
                         })
                     }

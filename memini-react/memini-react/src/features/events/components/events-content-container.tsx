@@ -28,7 +28,7 @@ const EventsContentContainer : React.FC<EventsContentContainerProps> = (props) =
 
     return (
         <>
-        <ActivityDisplayContainer ref={activityDisplayRef} canToggleActivityView={true}/>
+        <ActivityDisplayContainer ref={activityDisplayRef}/>
 
 
         <div className="grid grid-cols-12 px-2 h-full">

@@ -9,6 +9,7 @@ import { ICoreNode } from "@/features/tasks/interfaces/core-node-interface";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { Activity, IDisplayActivity } from "@/features/activity/interface/activity";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -58,6 +59,74 @@ export const calculateTaskDisplayMetricsSimple = (tasks: Array<ITask>, pixelsPer
     
     return result;
 };
+
+export const calculateActivityDisplayMetrics = (activities: Array<Activity>, pixelsPerHour: number) : Array<IDisplayActivity> => {
+    if (!activities.length) return [];
+
+    // Sort by start time
+    const sortedActivities = _.sortBy(activities, activity => activity.StartTime);
+
+    const result = sortedActivities.reduce<IDisplayActivity[]>((acc, currentActivity) => {
+        const currentStartTime = currentActivity.StartTime;
+        const currentEndTime = currentActivity.EndTime;
+        
+        // Find overlapping activities that are already placed
+        const previousOverlapping = acc.filter(prevActivity => {
+            const prevEndTime = prevActivity.EndDate.hour() * 60 + prevActivity.EndDate.minute();
+            return prevEndTime > currentStartTime;
+        });
+        
+        // Find available slot index
+        const usedSlots = new Set(previousOverlapping.map(activity => activity.slotIndex));
+        let slotIndex = 0;
+        while (usedSlots.has(slotIndex)) slotIndex++;
+        
+        acc.push({           
+            OwnerUserkey: currentActivity.OwnerUserkey,
+            Source: currentActivity.Source,
+            Guid: currentActivity.Guid,
+            Label: currentActivity.Label,
+            Description: currentActivity.Description,
+            StartDate: currentActivity.StartDate,
+            EndDate: currentActivity.EndDate,
+            DateAdded: currentActivity.DateAdded,
+            Country: currentActivity.Country,
+            CountryCode: currentActivity.CountryCode,
+            City: currentActivity.City,
+            Type: currentActivity.Type,
+            ContentInfo: currentActivity.ContentInfo,
+            ContentMedia: currentActivity.ContentMedia,
+            PointOfInterest: currentActivity.PointOfInterest,
+            CommercialInfo: currentActivity.CommercialInfo,
+            
+            // Display metrics
+            yPosition: (currentStartTime / 60) * pixelsPerHour,
+            height: ((currentEndTime - currentStartTime) / 60) * pixelsPerHour,
+            slotIndex,
+            slotCount: 1 // Will be updated in second pass
+        } as any);
+        
+        return acc;
+    }, []);
+    
+    // Second pass: update slot counts based on overlaps
+    result.forEach((currentActivity) => {
+        const currentStartTime = currentActivity.StartDate.hour() * 60 + currentActivity.StartDate.minute();
+        const currentEndTime = currentActivity.EndDate.hour() * 60 + currentActivity.EndDate.minute();
+        
+        const overlappingActivities = result.filter(otherActivity => {
+            const otherStartTime = otherActivity.StartDate.hour() * 60 + otherActivity.StartDate.minute();
+            const otherEndTime = otherActivity.EndDate.hour() * 60 + otherActivity.EndDate.minute();
+            return currentStartTime < otherEndTime && currentEndTime > otherStartTime;
+        });
+        
+        const usedSlotIndices = overlappingActivities.map(activity => activity.slotIndex);
+        const slotCount = Math.max(...usedSlotIndices) + 1;
+        currentActivity.slotCount = slotCount;
+    });
+    
+    return result;
+}
 
 //gets the weekdays of a selected week 
 export const getWeekDates = (year: number, weekNum: number): ICalendarDate[] => {

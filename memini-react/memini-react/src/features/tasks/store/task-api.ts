@@ -7,11 +7,6 @@ export async function fetchTasksForDate(data:any): Promise<ApiResponse<ITask[]>>
   return await getUserTasks(data).then(response => response.data).catch(e => console.log(e));
 }
 
-export async function fetchTasksForRange(startKey: string, endKey: string): Promise<ITask[]> {
-  // TODO
-  return [];
-}
-
 export async function updateTaskApi(task: ITask | Omit<ITask, 'UserKey'>): Promise<ApiResponse<ITask>> { 
   return await saveUserTask(task).then(response => response.data).catch(e => console.log(e));
 }

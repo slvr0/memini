@@ -12,22 +12,25 @@ import MuiStyledDatePicker from "../../../mui-wrappers/mui-datepicker-wrapper";
 import { LucideProps } from "lucide-react";
 
 import FormattedIconField, { FormattedIconFieldRef } from './formatted-field-display';  
-import EditTaskForm from "../../planning/components/edit-task-form";
+import { PackagePlus, FileBox, BookHeart} from "lucide-react";
 import CoreNodeDisplay, {CoreNodeRef} from './core-node-display';
 
 import { Plug, ChevronUp, ChevronDown, Slash, ChevronsUpDown, Globe, Globe2, Boxes, Combine } from 'lucide-react';
 import { Home, Settings, User, Bell, HelpCircle, MessageCircle, MessageSquareText, CircleUserRound, LogOut, AtSign, Heart, UserRoundSearch, Check } from "lucide-react";
 
 import MuiStyledSwitch from "../../../mui-wrappers/mui-switch-wrapper";
+import { PropaneSharp } from '@mui/icons-material';
+import MuiStyledButton from '../../../mui-wrappers/mui-button-wrapper';
 
 interface ActivityDisplayDataProps {
-    activityNode?: any;
-    canToggleActivityView?: boolean;    
+    activityNode?: any;  
+    onSave: (data: any) => void;      
 }
 
 //have to set core node stuff also
-const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode, canToggleActivityView = true}) => {  
-    const [isFullActivity, setIsFullActivity] = useState(canToggleActivityView);
+const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode, onSave}) => { 
+    
+    const formFieldContainerHeight = "h-48";
     const activity = structuredClone(activityNode);
     const [activityTitle, setActivityTitle] = useState<string>(activity?.Label ?? "");
 
@@ -46,58 +49,73 @@ const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode,
     const coreNodeRef = useRef<CoreNodeRef>(null);
 
     const spatialFields = [ 
-        { label: 'Location', value: activity?.Country ?? "", editable:true },
-        { label: 'City', value: activity?.City ?? "", editable:true },
-        { label: 'Address', value: address, editable:true },                
+        { variable: 'country', label: 'Country', value: activity?.Country ?? "", editable:true },
+        { variable: 'city',label: 'City', value: activity?.City ?? "", editable:true },
+        { variable: 'address',label: 'Address', value: address, editable:true },                
     ];
 
+    //not sure how to use this
     const temporalRef = useRef<FormattedIconFieldRef>(null);
     const temporalFields = [ 
-        { label: 'Start Date', value: activity?.StartDate ?? "", editable:false },
-        { label: 'End Date', value: activity?.EndDate ?? "", editable:false },        
+        { variable: 'startDate', label: 'Start Date', value: activity?.StartDate ?? "", editable:false },
+        { variable: 'endDate',label: 'End Date', value: activity?.EndDate ?? "", editable:false },        
     ];
 
     const contentRef = useRef<FormattedIconFieldRef>(null);
     const contentFields = [ 
-        { label: 'Performer', value: activity?.ContentInfo?.PerformerName ??  "", editable:true},        
-        { label: 'Category', value: activity?.ContentInfo?.Category ??  "", editable:true}, 
-        { label: 'Venue', value: activity?.SpatialInfo?.VenueName ?? "", editable:true },         
+        { variable: 'performer', label: 'Performer', value: activity?.ContentInfo?.PerformerName ??  "", editable:true},        
+        { variable: 'category', label: 'Category', value: activity?.ContentInfo?.Category ??  "", editable:true}, 
+        { variable: 'venue', label: 'Venue', value: activity?.SpatialInfo?.VenueName ?? "", editable:true },         
     ];
 
     const commercialRef = useRef<FormattedIconFieldRef>(null);
     const commercialFields = [ 
-        { label: 'Price', value: activity?.CommercialInfo?.Price ?? "", editable:true},        
-        { label: 'Availability', value: activity?.CommercialInfo?.Availability ?? "", editable:true}, 
-        { label: 'Website', value: activity?.CommercialInfo?.Website ?? "", editable:false},         
+        { variable: 'price', label: 'Price', value: activity?.CommercialInfo?.Price ?? "", editable:true},        
+        { variable: 'availability', label: 'Availability', value: activity?.CommercialInfo?.Availability ?? "", editable:true}, 
+        { variable: 'website', label: 'Website', value: activity?.CommercialInfo?.Website ?? "", editable:false},         
     ];
 
     const poiRef = useRef<FormattedIconFieldRef>(null); 
     const poiFields = [ 
-        { label: 'Place category', value: activity?.PoiInfo?.AllCategories ?? "", editable:false},        
-        { label: 'Free', value: activity?.PoiInfo?.Free ?? "", editable:false}, 
-        { label: 'Rating', value: activity?.PoiInfo?.Rating ?? "", editable:false},   
-        { label: 'Website', value: activity?.PoiInfo?.WebsiteUrl ?? "", editable:false},       
+        { variable: 'allCategories', label: 'Place category', value: activity?.PoiInfo?.AllCategories ?? "", editable:false},        
+        { variable: 'free', label: 'Free', value: activity?.PoiInfo?.Free ?? "", editable:false}, 
+        { variable: 'rating', label: 'Rating', value: activity?.PoiInfo?.Rating ?? "", editable:false},   
+        { variable: 'poiWebsite',label: 'Website', value: activity?.PoiInfo?.WebsiteUrl ?? "", editable:false},       
     ];
     
-    const collectAllFuckingData = () => {   
+    const collectFields = () => {   
         const spatialData = spatialRef.current?.getValues();
-        const temporalData = temporalRef.current?.getValues();
+
         const contentData = contentRef.current?.getValues();
         const commercialData = commercialRef.current?.getValues();
         const poiData = poiRef.current?.getValues(); 
 
         const coreNodeData = coreNodeRef.current?.getValues();  
 
-        console.log(spatialData, temporalData, contentData, commercialData, poiData, coreNodeData);
+        // console.log("pre spread fields", spatialData, temporalData, contentData, commercialData, poiData, coreNodeData);
+        
+        const allData = {
+        label: activityTitle,
+        ...coreNodeData     || {},
+        ...spatialData      || {},       
+        ...contentData      || {},
+        ...commercialData   || {},
+        ...poiData          || {},       
+        };
+
+        // console.log("all fields spread", allData);
+
+        onSave(allData);        
     }
 
     return (
     <>
-        <div className="grid grid-cols-8 gap-4 p-8">
+        <div className="grid grid-cols-10 gap-4 p-6 overflow-auto">
            
-             <div className="flex flex-col col-span-6 items-center justify-center mx-auto  w-full">
+             <div className="flex flex-col col-span-5 items-start  mx-auto  w-full">
                     <MuiStyledTextField
                         fullWidth
+                        
                         required
                         size='small'                     
                         id="basic"
@@ -118,149 +136,100 @@ const ActivityDisplayData : React.FC<ActivityDisplayDataProps> = ({activityNode,
                             helperTextFontSize:'11px',
                             helperTextOpacity:0.6                                 
                         }}
-                    />
-
-
-                
+                    />                
             </div>
+                        
+            <div className="flex flex-row col-span-5 gap-2 items-end justify-end">
+                <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'semiStraight' 
+                    opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={true} textOpacity={1.0}        
+                    onClick={() => {console.log("clicked")}}
+                    >
+                    <Trash size={16} style={{ marginLeft: '0', marginRight: '.25rem', opacity:0.85 }}/>
+                    <Typography 
+                            variant="body2" 
+                            color="inherit"                     
+                            > 
+                            Delete
+                        </Typography>            
+                </MuiStyledButton>
 
-            <div className="flex flex-col col-span-1 items-center justify-center mx-auto  w-full">
-                <MuiStyledSwitch 
-                    enabled={canToggleActivityView}
-                    label="Activity"
-                    paletteProfile="meminiThemeProfile_2"
-                    labelFontSize={10}
-                    labelFontVariant="subtitle2"
-                    value={isFullActivity}
-                    onChange={(newValue) => setIsFullActivity(newValue)}
-                />
-            </div>
+                <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'main' borderType = 'semiStraight' 
+                    opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={true} textOpacity={1.0}        
+                    onClick={() => {console.log("clicked")}}
+                    >
+                    <BookHeart size={16} style={{ marginLeft: '0', marginRight: '.25rem', opacity:0.85 }}/>
+                    <Typography 
+                            variant="body2" 
+                            color="inherit"                     
+                            > 
+                            Favorite
+                        </Typography>            
+                </MuiStyledButton>
 
-             <div className="col-span-1 gap-1 items-center justify-center flex">
-                    
 
-                    <LucidIconButton
-                    className="p-2"
-                    icon={Heart}
-                    size={16}
-                    opacity={.75}
-                    palette="harmonicRed"
-                    borderProfile="rounded"
-                    highlightBackgroundOnHover={true}
-                    highlightBorderOnHover={true}
-                    displayBorder={true}
-                    tooltip="Favorite"
-                    onClick={() => {console.log("Clicked")}}
-                    />
-                    <LucidIconButton
-                    className="p-2"
-                    icon={Trash}
-                    size={16}
-                    opacity={.75}
-                    palette="harmonicRed"
-                    borderProfile="rounded"
-                    highlightBackgroundOnHover={true}
-                    highlightBorderOnHover={true}
-                    displayBorder={true}
-                    tooltip="Delete"
-                    onClick={() => {console.log("Clicked")}}
-                    />
-                    <LucidIconButton
-                    className="p-2"
-                    icon={UserRoundSearch}
-                    size={16}
-                    opacity={.75}
-                    palette="harmonicRed"
-                    borderProfile="rounded"
-                    highlightBackgroundOnHover={true}
-                    highlightBorderOnHover={true}
-                    displayBorder={true}
-                    tooltip="Invite"
-                    onClick={() => {console.log("Clicked")}}
-                    />
-                    <LucidIconButton
-                    className="p-2 ml-4"
-                    icon={Check}
-                    size={16}
-                    opacity={.75}
-                    palette="harmonicGreen"
-                    borderProfile="rounded"
-                    highlightBackgroundOnHover={true}
-                    highlightBorderOnHover={true}
-                    displayBorder={true}
-                    tooltip="Save activity"
-                    onClick={() => {collectAllFuckingData()}}
-                    />
-                
-            </div>
-        </div>
-        
-        {
-            isFullActivity &&
-            <>
-                <div className="grid grid-cols-9 gap-4 mt-4 h-full">
-                    <div className="col-span-3 w-full px-4">
+                 <MuiStyledButton themeColor = 'light' buttonSize = 'md' buttonVariant = 'harmonicBlue' borderType = 'semiStraight' 
+                    opacity={1.0} highlightBorderOnHover={true} highlightBackgroundOnHover={true} applyThemeFontColor={true} textOpacity={1.0}        
+                    onClick={() => {console.log("clicked")}}
+                    >
+                    <FileBox size={16} style={{ marginLeft: '0', marginRight: '.25rem', opacity:0.85 }}/>
+                    <Typography 
+                            variant="body2" 
+                            color="inherit"                     
+                            > 
+                            Save/Update
+                    </Typography>            
+                    </MuiStyledButton>
+                </div>          
+   
+
+                <div className="col-span-6 w-full mb-4 items-center justify-center p-4">
                     <CoreNodeDisplay ref={coreNodeRef}/>
+                </div>
+                <div className="flex flex-col col-span-4 items-center justify-center mt-2 p-4">                  
+                
+                {imageUrl && (
+                    <CardMedia
+                    component="img"
+                    height="90"
+                    image={imageUrl}
+                    alt={activity.ContentInfo.Genre || 'Event'}
+                    className="aspect-video w-full object-cover"
+                    />
+                )}
+                        
+                </div>
+                <div className="col-span-10 p-2">
+                     <Typography variant="body2" color="text.secondary">
+                                    Activity details
+                    </Typography>  
+                </div>
+
+                <div className="col-span-5 w-full">
+                
+
+                <div className="mb-8 p-4 rounded-3xl  border border-slate-200" >
+                    <FormattedIconField ref={spatialRef} icon={MapPin} inputFields={spatialFields} label="Location" fixedHeight={formFieldContainerHeight}/>                
+                </div> 
+
+                <div className="mb-8 p-4 rounded-3xl  border border-slate-200" >
+                    <FormattedIconField ref={contentRef} icon={Guitar} inputFields={contentFields} label="Entertainment" fixedHeight={formFieldContainerHeight}/>              
+                </div>
+
+
+                </div>
+                <div className="col-span-5 w-full">
+                      <div className="mb-8 p-4 rounded-3xl  border border-slate-200" >
+                        <FormattedIconField ref={commercialRef} icon={ChartBarStacked} inputFields={commercialFields} label="Commercial" fixedHeight={formFieldContainerHeight}/>                
                     </div>
-                    <div className="col-span-3 w-full">
 
-                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                            <FormattedIconField ref={spatialRef} icon={MapPin} inputFields={spatialFields}/>                
-                        </div>
-                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                            <FormattedIconField ref={temporalRef} icon={ClockFading} inputFields={temporalFields}/>              
-                        </div>
-
-                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                            <FormattedIconField ref={contentRef} icon={Guitar} inputFields={contentFields}/>              
-                        </div>
-
-                        <div>
-                            {imageUrl && (
-                                <CardMedia
-                                component="img"
-                                height="180"
-                                image={imageUrl}
-                                alt={activity.ContentInfo.Genre || 'Event'}
-                                className="aspect-video w-full object-cover px-4"
-                                />
-                            )}
-                        </div>
-
-                    </div>
-
-                    <div className="col-span-3 w-full">
-                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                            <FormattedIconField ref={commercialRef} icon={ChartBarStacked} inputFields={commercialFields}/>                
-                        </div>
-
-                        <div className="mx-4 mb-8 p-4 rounded-3xl  border border-slate-200" >
-                            <FormattedIconField ref={poiRef} icon={Store} inputFields={poiFields}/>                
-                        </div>
-
+                    <div className="mb-8 p-4 rounded-3xl  border border-slate-200">
+                        <FormattedIconField ref={poiRef} icon={Store} inputFields={poiFields} label="Place" fixedHeight={formFieldContainerHeight}/>                
                     </div>
                 </div>
-            </>
-        }
-        {
-            !isFullActivity &&
-            <div className="grid grid-cols-9 gap-4 h-full justify-center mt-4">  
-                    
-                <div className="col-span-3 w-full px-4">
-                    <CoreNodeDisplay ref={coreNodeRef}/>
-                    </div>
-                    <div className="col-span-3">
 
-                    </div>
-
-                    <div className="col-span-3">
-
-                    </div>
-            </div>
-
-        }        
-
-    </>
+                </div>
+      
+        </>
     );  
 }
 

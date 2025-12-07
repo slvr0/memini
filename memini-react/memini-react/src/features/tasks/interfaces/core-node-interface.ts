@@ -2,10 +2,6 @@ import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import MuiStyledStatusCircle , { StatusType } from "../../../mui-wrappers/mui-status-circle-wrapper"
-import MaterialUITheme1Profile from '../../../styling/mui_theme_1/theme-profile';
-import { ICalendarDate, ISimpleDate } from "../../../interfaces/common-interfaces";
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -31,7 +27,7 @@ export enum CoreNodeSource {
 // ============================================
 export interface ICoreNode {
     Key: number; 
-    OwnerKey?: number;
+    OwnerUserkey?: number;
     
     Guid: string;
     Label: string;
@@ -50,6 +46,9 @@ export interface ICoreNode {
     ContentMedia?: IContentMedia;
     PointOfInterest?: IPointOfInterest;
     CommercialInfo?: ICommercialInfo;
+
+    StartTime: number;
+    EndTime: number;
 }
 
 export interface IContentInfo {

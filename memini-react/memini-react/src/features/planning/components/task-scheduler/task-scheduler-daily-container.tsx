@@ -1,13 +1,19 @@
 import type { IDisplayTask, ITask } from "../../../tasks/interfaces/task-interface";
 import DisplayTask from "../../../tasks/components/display-task"
 import {ICalendarDate} from "../../../../interfaces/common-interfaces"
-import { calculateTaskDisplayMetricsSimple, calculateTaskPixelTime } from "../../computes/task-scheduler-computations"
+import { calculateTaskDisplayMetricsSimple, calculateTaskPixelTime, calculateActivityDisplayMetrics } from "../../computes/task-scheduler-computations"
 import { useTaskManager } from "../../../tasks/utils/task-manager"
 import { DragItemType } from "../../../tasks/components/display-task"
 import { useDispatch } from 'react-redux';
 import { useDrop } from 'react-dnd';
-import { useRef } from 'react';
+import { act, useMemo, useRef } from 'react';
 import "../../css/task-scheduler.css"
+import { Activity, IDisplayActivity } from "@/features/activity/interface/activity";
+
+import DisplayActivity from "../../../activity/components/display-activity/display-activity";
+import { useActivityStore } from "../../../activity/store/activity-store"
+import dayjs from "dayjs";
+import { getActivitiesForDate } from "@/services/activity-service";
 
 const hourGridSvg = (height: number) => {
     const hourHeight = height / 24;
@@ -21,14 +27,31 @@ const hourGridSvg = (height: number) => {
 interface TaskDailyContainerProps { 
     containerHeight: number;
     weekday: ICalendarDate;
+   
     }
 
 const TaskSchedulerDailyContainer: React.FC<TaskDailyContainerProps> = ({
     containerHeight, 
     weekday,
 }) => {
-    const { useTasksForDate, updateTaskFromDragEvent } = useTaskManager();
-    const { setSelectedTask, updateTask } = useTaskManager();
+     const pixelsPerHour = containerHeight / 24;
+
+    //remove
+    const { useTasksForDate, updateTaskFromDragEvent } = useTaskManager(); 
+    const dailyTasks : ITask[] = useTasksForDate(weekday.year, weekday.month, weekday.day); 
+    const displayTasks = calculateTaskDisplayMetricsSimple(dailyTasks, pixelsPerHour);  
+
+    //new   
+    
+    const dateAsJs = dayjs().year(weekday.year).month(weekday.month).date(weekday.day);   
+
+    const activities = useActivityStore.getState().getActivitiesForDate(dateAsJs);
+
+    
+    const displayActivities = calculateActivityDisplayMetrics(activities, pixelsPerHour);
+
+
+    console.log("daily container reads activities: ", activities);
     const containerRef = useRef<HTMLDivElement>(null);  
 
     const [{ isOver }, drop] = useDrop(() => ({
@@ -54,11 +77,6 @@ const TaskSchedulerDailyContainer: React.FC<TaskDailyContainerProps> = ({
 
     drop(containerRef);
 
-    const pixelsPerHour = containerHeight / 24;
-    
-    const dailyTasks : ITask[] = useTasksForDate(weekday.year, weekday.month, weekday.day); 
-    const displayTasks = calculateTaskDisplayMetricsSimple(dailyTasks, pixelsPerHour);
-
     return (        
     <div 
     ref={containerRef} 
@@ -70,10 +88,10 @@ const TaskSchedulerDailyContainer: React.FC<TaskDailyContainerProps> = ({
             transition: 'all 0.3s ease-in-out, background-image 0.3s ease-in-out'
         }}>
 
-        { displayTasks.map((task: IDisplayTask, index: number) => {
-            return (<DisplayTask
+        { displayActivities.map((activity: IDisplayActivity, index: number) => {
+            return (<DisplayActivity
                 key={index}  
-                displayTask={task}               
+                activity={activity}               
                 />)
             })            
         } 
